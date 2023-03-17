@@ -1,4 +1,4 @@
-# ola_mobile
+# gig_mobile
 
 A new Flutter project.
 

@@ -1,5 +1,7 @@
 # gig_mobile
 
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/Gig-Client/gig-mobile/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/Gig-Client/gig-mobile/tree/main)
+
 A new Flutter project.
 
 ## Getting Started

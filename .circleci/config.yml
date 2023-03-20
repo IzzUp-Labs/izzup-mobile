@@ -1,0 +1,99 @@
+version: 2.1
+
+orbs:
+  android: circleci/android@2.1.2
+  flutter-orb: circleci/flutter@1.1.0
+  ruby: circleci/ruby@1.8.0
+  macos: circleci/macos@2.3.1
+
+jobs:
+  integration_test_android:
+    executor:
+      name: android/android-machine
+      resource-class: xlarge
+      tag: 2022.03.1
+    steps:
+      - checkout
+      - flutter-orb/install_sdk_and_pub:
+          cache-version: machine
+          flutter_version: 2.10.3
+      - android/create-avd:
+          avd-name: flutter
+          install: true
+          system-image: system-images;android-29;default;x86
+      - android/start-emulator:
+          avd-name: flutter
+          post-emulator-launch-assemble-command: 'flutter build apk --debug'
+          restore-gradle-cache-find-args: ./android -name 'build.gradle'
+      - android/run-tests:
+          test-command: flutter drive --target=test_driver/app.dart
+      - store_artifacts:
+          path: ozzie
+
+  distribute_android:
+    executor:
+      name: android/android-docker
+      resource-class: xlarge
+      tag: 2022.03.1
+    steps:
+      - checkout
+      - flutter-orb/install_sdk_and_pub:
+          cache-version: docker
+          flutter_version: 2.10.3
+      - flutter-orb/install_android_gradle
+      - ruby/install-deps:
+          app-dir: android
+          key: android
+      - run:
+          command: bundle exec fastlane distribute_debug
+          working_directory: android
+
+  integration_test_ios:
+    macos:
+      xcode: 13.3.0
+    resource_class: large
+    steps:
+      - checkout
+      - macos/preboot-simulator:
+          device: iPhone 13
+          version: "15.4"
+      - flutter-orb/install_sdk_and_pub:
+          flutter_version: 2.10.3
+      - flutter-orb/install_ios_pod
+      - run:
+          name: Integration Test
+          command: flutter drive --target=test_driver/app.dart
+      - store_artifacts:
+          path: ozzie
+
+  distribute_ios:
+    macos:
+      xcode: 13.3.0
+    resource_class: large
+    steps:
+      - checkout
+      - flutter-orb/install_sdk_and_pub:
+          flutter_version: 2.10.3
+      - flutter-orb/install_ios_pod
+      - ruby/install-deps:
+          app-dir: ios
+          key: ios
+      - run:
+          command: bundle exec fastlane distribute_debug
+          working_directory: ios
+
+workflows:
+  test_and_distribute:
+    jobs:
+      - flutter-orb/unit_test:
+          version: 2.10.3
+      - flutter-orb/lint:
+          version: 2.10.3
+      - integration_test_ios
+      - distribute_ios:
+          context:
+            - mobile
+      - integration_test_android
+      - distribute_android:
+          context: # Context
+            - mobile

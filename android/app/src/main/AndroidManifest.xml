@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ola_mobile">
+    package="com.gig.gig">
    <application
-        android:label="ola_mobile"
+        android:label="gig"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -1,8 +1,6 @@
-# Gig Mobile Client
+# gig
 
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/Gig-Client/gig-mobile/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/Gig-Client/gig-mobile/tree/main)
-
-This is Gig's mobile interface as you can see on your phones ! :)
+Gig's mobile application
 
 ## Getting Started
 

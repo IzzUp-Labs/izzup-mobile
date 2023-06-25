@@ -7,8 +7,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gig/Views/Welcoming/welcoming.dart';
-import 'package:gig/Views/Welcoming/welcoming_page_type.dart';
+import 'package:izzup/Views/Welcoming/welcoming.dart';
+import 'package:izzup/Views/Welcoming/welcoming_page_type.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

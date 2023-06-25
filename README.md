@@ -1,6 +1,6 @@
-# gig
+# izzup
 
-Gig's mobile application
+Izzup's mobile application
 
 ## Getting Started
 

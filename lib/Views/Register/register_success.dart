@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gig/Services/navigation.dart';
-import 'package:gig/Views/Home/home.dart';
+import 'package:izzup/Models/globals.dart';
+import 'package:izzup/Services/navigation.dart';
+import 'package:izzup/Services/prefs.dart';
+import 'package:izzup/Views/Home/home.dart';
 
 import '../../Models/wave.dart';
 
@@ -16,8 +19,9 @@ class RegisterSuccess extends StatefulWidget {
 class _RegisterSuccessState extends State<RegisterSuccess> {
   @override
   void initState() {
-    Timer(const Duration(milliseconds: 1 * 1000), () {
-      context.navigateWithoutBack(const Home(title: "Home Page"));
+    Timer(const Duration(milliseconds: 750), () {
+      if (kDebugMode) print("timer end");
+      context.navigateWithoutBack(const Home());
     });
     super.initState();
   }
@@ -28,38 +32,44 @@ class _RegisterSuccessState extends State<RegisterSuccess> {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         bottom: false,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: const Image(
-                  image: AssetImage('assets/logo.png'),
-                  width: 70,
+        child: Stack(
+          children: [
+            Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: const Image(
+                      image: AssetImage('assets/logo.png'),
+                      width: 70,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                "Thank you for joining IzzUp !",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 75.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: const Image(
-                  image: AssetImage('assets/thumbsup.png'),
-                  width: 290,
+                const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    "Thank you for joining IzzUp !",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
+                const Spacer(),
+                const Wave(),
+              ],
             ),
-            const Spacer(),
-            const Wave(),
+            Column(
+              children: [
+                const Spacer(),
+                Center(
+                  child: Image(
+                    image: const AssetImage('assets/thumbsup.png'),
+                    height: MediaQuery.of(context).size.height / 3,
+                  ),
+                ),
+                const Spacer()
+              ],
+            ),
           ],
         ),
       ),

@@ -20,4 +20,28 @@ class Prefs {
   static setStringList(String name, List<String> values) async {
     (await SharedPreferences.getInstance()).setStringList(name, values);
   }
+
+  static Future<int?> getInt(String name) async {
+    return (await SharedPreferences.getInstance()).getInt(name);
+  }
+
+  static Future<bool?> getBool(String name) async {
+    return (await SharedPreferences.getInstance()).getBool(name);
+  }
+
+  static Future<double?> getDouble(String name) async {
+    return (await SharedPreferences.getInstance()).getDouble(name);
+  }
+
+  static Future<String?> getString(String name) async {
+    return (await SharedPreferences.getInstance()).getString(name);
+  }
+
+  static Future<List<String>?> getStringList(String name) async {
+    return (await SharedPreferences.getInstance()).getStringList(name);
+  }
+
+  static Future<bool> remove(String name) async {
+    return (await SharedPreferences.getInstance()).remove(name);
+  }
 }

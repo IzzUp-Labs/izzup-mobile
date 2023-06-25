@@ -1,7 +1,7 @@
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:gig/Services/colors.dart';
-import 'package:gig/Views/Welcoming/welcoming_page_type.dart';
+import 'package:izzup/Services/colors.dart';
+import 'package:izzup/Views/Welcoming/welcoming_page_type.dart';
 
 class Welcoming extends StatefulWidget {
   const Welcoming({super.key, required this.pageType});
@@ -33,37 +33,39 @@ class _WelcomingState extends State<Welcoming> {
                 padding: const EdgeInsets.all(20),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
-                  child: const Image(
-                    image: AssetImage('assets/logo.png'),
-                    width: 70,
+                  child: Image(
+                    image: const AssetImage('assets/logo.png'),
+                    width: MediaQuery.of(context).size.width / 5,
                   ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                 child: Text(
                   widget.pageType.title(),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      fontSize: 32, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.height / 20, fontWeight: FontWeight.bold),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 20, top: 20, right: 20),
+                padding: const EdgeInsets.only(left: 20, right: 20),
                 child: Text(
                   widget.pageType.subtitle(),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height / 45,
                   ),
                 ),
               ),
               const Spacer(),
-              Image(
-                image: AssetImage(widget.pageType.assetImageName()),
-                width: 500,
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Image(
+                  image: AssetImage(widget.pageType.assetImageName()),
+                  width: 500,
+                ),
               ),
-              const Spacer(),
               DotsIndicator(
                 dotsCount: 3,
                 position: widget.pageType.pageNumber(),
@@ -74,7 +76,7 @@ class _WelcomingState extends State<Welcoming> {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.only(left: 22, right: 22),
+                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
                 child: ElevatedButton(
                   onPressed: () {
                     widget.pageType

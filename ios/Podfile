@@ -4,6 +4,7 @@
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
+
 project 'Runner', {
   'Debug' => :debug,
   'Profile' => :release,
@@ -46,4 +47,6 @@ post_install do |installer|
       ]
     end
   end
+	installer.pods_project.build_configurations.each do |config|     config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+	end
 end

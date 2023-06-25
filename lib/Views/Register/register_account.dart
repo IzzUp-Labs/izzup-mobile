@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
-import 'package:gig/Services/colors.dart';
-import 'package:gig/Services/navigation.dart';
-import 'package:gig/Views/Register/register_account_type.dart';
-import 'package:gig/Views/Register/register_informations.dart';
+import 'package:izzup/Models/globals.dart';
+import 'package:izzup/Services/colors.dart';
+import 'package:izzup/Services/navigation.dart';
+import 'package:izzup/Views/Register/register_account_type.dart';
+import 'package:izzup/Views/Register/register_informations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Models/wave.dart';
@@ -35,6 +36,16 @@ class _RegisterAccountState extends State<RegisterAccount> {
   void setEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _emailTextFieldController.text = prefs.getString("signInEmail") ?? "";
+  }
+
+  void modifyRegistrationAccount() {
+    if (widget.accountType == RegisterAccountType.jobSeeker) {
+      Globals.tempExtra.email = _emailTextFieldController.text;
+      Globals.tempExtra.password = _passwordTFC.text;
+    } else {
+      Globals.tempEmployer.email = _emailTextFieldController.text;
+      Globals.tempEmployer.password = _passwordTFC.text;
+    }
   }
 
   @override
@@ -70,7 +81,7 @@ class _RegisterAccountState extends State<RegisterAccount> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 20, top: 20, right: 20),
+              padding: const EdgeInsets.only(left: 20, top: 10, right: 20),
               child: Text(
                 widget.accountType == RegisterAccountType.jobSeeker
                     ? "To begin with the registration we will just need a contact email and a password for your account"
@@ -83,7 +94,7 @@ class _RegisterAccountState extends State<RegisterAccount> {
             ),
             Padding(
               padding: const EdgeInsets.only(
-                  left: 20, right: 20, bottom: 10, top: 50),
+                  left: 20, right: 20, bottom: 10, top: 20),
               child: TextField(
                 controller: _emailTextFieldController,
                 keyboardType: TextInputType.emailAddress,
@@ -132,7 +143,7 @@ class _RegisterAccountState extends State<RegisterAccount> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20, bottom: 20),
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
                     child: FlutterPwValidator(
                         controller: _passwordTFC,
                         minLength: 8,
@@ -140,7 +151,7 @@ class _RegisterAccountState extends State<RegisterAccount> {
                         uppercaseCharCount: 1,
                         specialCharCount: 1,
                         width: 400,
-                        height: 100,
+                        height: 125,
                         successColor: AppColors.accent,
                         failureColor: Colors.deepOrange,
                         onSuccess: () {
@@ -158,11 +169,12 @@ class _RegisterAccountState extends State<RegisterAccount> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 20),
+              padding: const EdgeInsets.only(top: 10),
               child: ElevatedButton(
                 onPressed: !_isPasswordValid
                     ? null
                     : () {
+                        modifyRegistrationAccount();
                         context.push(RegisterInformations(
                             accountType: widget.accountType));
                       },
@@ -179,8 +191,8 @@ class _RegisterAccountState extends State<RegisterAccount> {
                 ),
               ),
             ),
-            const Expanded(child: Spacer()),
-            const Wave(),
+            const Spacer(),
+            const Expanded(child: Wave()),
           ],
         ),
       ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gig/Services/navigation.dart';
-import 'package:gig/Views/SignIn/signin_landing.dart';
-import 'package:gig/Views/Welcoming/welcoming.dart';
+import 'package:flutter/services.dart';
+import 'package:izzup/Services/navigation.dart';
+import 'package:izzup/Services/prefs.dart';
+import 'package:izzup/Views/SignIn/signin_landing.dart';
+import 'package:izzup/Views/Welcoming/welcoming.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Services/location.dart';
@@ -15,7 +17,7 @@ enum WelcomingPageType {
   Future<void> onInit() async {
     switch (this) {
       case WelcomingPageType.localisation:
-        (await SharedPreferences.getInstance()).setBool('hasSeenIntro', true);
+        await Prefs.setBool('hasSeenIntro', true);
         break;
       default:
         break;

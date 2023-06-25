@@ -1,14 +1,20 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:gig/Models/wave.dart';
-import 'package:gig/Services/api.dart';
-import 'package:gig/Services/colors.dart';
-import 'package:gig/Services/navigation.dart';
-import 'package:gig/Views/SignIn/signin_status_choice.dart';
-import 'package:gig/Views/SignIn/singin_confirm_password.dart';
+import 'package:izzup/Models/employer.dart';
+import 'package:izzup/Models/extra.dart';
+import 'package:izzup/Models/globals.dart';
+import 'package:izzup/Models/wave.dart';
+import 'package:izzup/Services/api.dart';
+import 'package:izzup/Services/colors.dart';
+import 'package:izzup/Services/navigation.dart';
+import 'package:izzup/Views/SignIn/signin_status_choice.dart';
+import 'package:izzup/Views/SignIn/singin_confirm_password.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Models/classy_loader.dart';
 import '../../Services/email_validator.dart';
+import '../../Services/prefs.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -34,8 +40,11 @@ class _SignInState extends State<SignIn> {
       _isValid = EmailValidator.validate(email);
     });
     if (_isValid) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('signInEmail', email);
+      Globals.tempExtra = Extra.basic;
+      Globals.tempEmployer = Employer.basic;
+      Globals.tempExtra.email = email;
+      Globals.tempEmployer.email = email;
+      Prefs.setString('signInEmail', email);
       _loadNavigation();
     }
   }
@@ -47,6 +56,7 @@ class _SignInState extends State<SignIn> {
       Api.authCheck(_emailTextFieldController.text).then((value) {
         _isLoading = false;
         if (value == true) {
+          Globals.tempExtra.email = _emailTextFieldController.text;
           context.push(const SignInConfirmPassword());
         } else if (value == false) {
           context.push(const SignInStatusChoice());
@@ -134,7 +144,7 @@ class _SignInState extends State<SignIn> {
                   ),
                 ),
                 const Spacer(),
-                const Wave(),
+                const Expanded(child: Wave()),
               ],
             ),
           ),

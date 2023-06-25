@@ -1,24 +1,41 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:gig/Services/colors.dart';
-import 'package:gig/Services/navigation.dart';
-import 'package:gig/Views/Register/register_id_card.dart';
-import 'package:gig/Views/Welcoming/welcoming.dart';
+import 'package:izzup/Models/extra.dart';
+import 'package:izzup/Models/globals.dart';
+import 'package:izzup/Services/api.dart';
+import 'package:izzup/Services/colors.dart';
+import 'package:izzup/Services/navigation.dart';
+import 'package:izzup/Services/prefs.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Views/Home/home.dart';
 import 'Views/SignIn/signin_landing.dart';
+import 'Views/Welcoming/welcoming.dart';
 import 'Views/Welcoming/welcoming_page_type.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  var hasSeenIntro = prefs.getBool('hasSeenIntro');
-  var isLoggedIn = prefs.getString("userId") != null;
+  var hasSeenIntro = await Prefs.getBool('hasSeenIntro');
+  var isLoggedIn = await _renewTokenIfPossible();
+  Globals.initFirstCamera();
 
   runApp(IzzUp(
     hasSeenIntro: hasSeenIntro,
     isLoggedIn: isLoggedIn,
   ));
+}
+
+Future<bool> _renewTokenIfPossible() async {
+  String? email = await Prefs.getString('userEmail');
+  String? pwd = await Prefs.getString('userPwd');
+  if (email != null && pwd != null) {
+    return await Api.login(Extra(email, pwd, DateTime.now()));
+  } else {
+    Prefs.remove('userEmail');
+    Prefs.remove('userPwd');
+    return false;
+  }
 }
 
 class IzzUp extends StatefulWidget {
@@ -32,7 +49,14 @@ class IzzUp extends StatefulWidget {
   State<IzzUp> createState() => _IzzUpState();
 }
 
-class _IzzUpState extends State<IzzUp> {
+class _IzzUpState extends State<IzzUp> with WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(state == AppLifecycleState.resumed) {
+      _renewTokenIfPossible();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -44,8 +68,8 @@ class _IzzUpState extends State<IzzUp> {
             ),
             home: widget.hasSeenIntro != true
                 ? const Welcoming(pageType: WelcomingPageType.landing)
-                : !widget.isLoggedIn
-                    ? const Home(title: 'Home')
+                : widget.isLoggedIn
+                    ? const Home()
                     : const SignIn()
             ));
   }

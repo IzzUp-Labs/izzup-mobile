@@ -42,16 +42,17 @@ class _WelcomingState extends State<Welcoming> {
               Padding(
                 padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                 child: Text(
-                  widget.pageType.title(),
+                  widget.pageType.title(context),
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.height / 20, fontWeight: FontWeight.bold),
+                      fontSize: MediaQuery.of(context).size.height / 20,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20),
                 child: Text(
-                  widget.pageType.subtitle(),
+                  widget.pageType.subtitle(context),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: MediaQuery.of(context).size.height / 45,
@@ -90,7 +91,7 @@ class _WelcomingState extends State<Welcoming> {
                       borderRadius: BorderRadius.circular(12), // <-- Radius
                     ),
                   ),
-                  child: Text(widget.pageType.buttonTitle()),
+                  child: Text(widget.pageType.buttonTitle(context)),
                 ),
               )
             ],

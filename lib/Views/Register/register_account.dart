@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
 import 'package:izzup/Models/globals.dart';
+import 'package:izzup/Models/register_account_type.dart';
 import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/navigation.dart';
-import 'package:izzup/Views/Register/register_account_type.dart';
 import 'package:izzup/Views/Register/register_informations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -72,20 +73,26 @@ class _RegisterAccountState extends State<RegisterAccount> {
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(10),
+            Padding(
+              padding: const EdgeInsets.all(10),
               child: Text(
-                "Nice to meet you !",
+                AppLocalizations.of(context)?.register_niceToMeetYou ??
+                    "Nice to meet you !",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 20, top: 10, right: 20),
               child: Text(
                 widget.accountType == RegisterAccountType.jobSeeker
-                    ? "To begin with the registration we will just need a contact email and a password for your account"
-                    : "To begin with the registration we will just need a contact email and a password for the account linked to your business",
+                    ? AppLocalizations.of(context)
+                            ?.register_toBeginWithRegistration ??
+                        "To begin with the registration we will just need a contact email and a password for your account"
+                    : AppLocalizations.of(context)
+                            ?.register_toBeginWithRegistrationCompany ??
+                        "To begin with the registration we will just need a contact email and a password for the account linked to your business",
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 16,
@@ -98,15 +105,17 @@ class _RegisterAccountState extends State<RegisterAccount> {
               child: TextField(
                 controller: _emailTextFieldController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(
                     Icons.email,
                     color: Colors.grey,
                   ),
-                  focusedBorder: OutlineInputBorder(
+                  focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey)),
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter your email',
+                  border: const OutlineInputBorder(),
+                  hintText:
+                      AppLocalizations.of(context)?.register_enterYourEmail ??
+                          'Enter your email',
                 ),
               ),
             ),
@@ -119,6 +128,7 @@ class _RegisterAccountState extends State<RegisterAccount> {
                     controller: _passwordTFC,
                     obscureText: !_passwordVisible,
                     decoration: InputDecoration(
+                      labelStyle: const TextStyle(fontFamily: 'Roboto'),
                       prefixIcon: const Icon(
                         Icons.password,
                         color: Colors.grey,
@@ -126,7 +136,9 @@ class _RegisterAccountState extends State<RegisterAccount> {
                       focusedBorder: const OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey)),
                       border: const OutlineInputBorder(),
-                      hintText: 'Enter your password',
+                      hintText: AppLocalizations.of(context)
+                              ?.register_enterYourPassword ??
+                          'Enter your password',
                       suffixIcon: IconButton(
                         icon: Icon(
                           _passwordVisible
@@ -185,9 +197,10 @@ class _RegisterAccountState extends State<RegisterAccount> {
                     borderRadius: BorderRadius.circular(30), // <-- Radius
                   ),
                 ),
-                child: const Text(
-                  "Continue",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                child: Text(
+                  AppLocalizations.of(context)?.register_continue ?? "Continue",
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.w600),
                 ),
               ),
             ),

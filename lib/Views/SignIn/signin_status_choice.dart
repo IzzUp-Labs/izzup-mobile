@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:izzup/Models/register_account_type.dart';
 import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Views/Register/register_account.dart';
-import 'package:izzup/Views/Register/register_account_type.dart';
 
 class SignInStatusChoice extends StatefulWidget {
   const SignInStatusChoice({super.key});
@@ -24,7 +25,7 @@ class _SignInStatusChoiceState extends State<SignInStatusChoice> {
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: Center(
-                    child:ClipRRect(
+                    child: ClipRRect(
                       borderRadius: BorderRadius.circular(10.0),
                       child: const Image(
                         image: AssetImage('assets/logo.png'),
@@ -47,13 +48,16 @@ class _SignInStatusChoiceState extends State<SignInStatusChoice> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: (MediaQuery.of(context).size.height / 2) -  MediaQuery.of(context).padding.top + 10,
+                    height: (MediaQuery.of(context).size.height / 2) -
+                        MediaQuery.of(context).padding.top +
+                        10,
                     width: MediaQuery.of(context).size.width,
                   ),
                   Row(
                     children: [
                       Text(
-                        "Continue as",
+                        AppLocalizations.of(context)?.signIn_continueAs ??
+                            "Continue as",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -72,10 +76,10 @@ class _SignInStatusChoiceState extends State<SignInStatusChoice> {
                           backgroundColor: Colors.white,
                           fixedSize: Size(
                               MediaQuery.of(context).size.width / 3 * 2,
-                              MediaQuery.of(context).size.height / 7
-                          ),
+                              MediaQuery.of(context).size.height / 7),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10), // <-- Radius
+                            borderRadius:
+                                BorderRadius.circular(10), // <-- Radius
                           ),
                         ),
                         child: Row(
@@ -90,16 +94,25 @@ class _SignInStatusChoiceState extends State<SignInStatusChoice> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Job seeker",
+                                    AppLocalizations.of(context)
+                                            ?.titles_jobSeeker ??
+                                        "Job seeker",
                                     style: TextStyle(
                                         color: AppColors.accent,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context).size.height / 35),
+                                        fontSize:
+                                            MediaQuery.of(context).size.height /
+                                                35),
                                   ),
                                   Text(
-                                    "You are looking for gigs",
+                                    AppLocalizations.of(context)
+                                            ?.signIn_youAreLookingForGigs ??
+                                        "You are looking for gigs",
                                     style: TextStyle(
-                                        color: AppColors.accent, fontSize: MediaQuery.of(context).size.height / 60),
+                                        color: AppColors.accent,
+                                        fontSize:
+                                            MediaQuery.of(context).size.height /
+                                                60),
                                   ),
                                 ],
                               ),
@@ -119,10 +132,10 @@ class _SignInStatusChoiceState extends State<SignInStatusChoice> {
                           backgroundColor: Colors.white,
                           fixedSize: Size(
                               MediaQuery.of(context).size.width / 3 * 2,
-                              MediaQuery.of(context).size.height / 7
-                          ),
+                              MediaQuery.of(context).size.height / 7),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10), // <-- Radius
+                            borderRadius:
+                                BorderRadius.circular(10), // <-- Radius
                           ),
                         ),
                         child: Row(
@@ -137,17 +150,25 @@ class _SignInStatusChoiceState extends State<SignInStatusChoice> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Company",
+                                    AppLocalizations.of(context)
+                                            ?.titles_company ??
+                                        "Company",
                                     style: TextStyle(
                                         color: AppColors.accent,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: MediaQuery.of(context).size.height / 35),
+                                        fontSize:
+                                            MediaQuery.of(context).size.height /
+                                                35),
                                   ),
                                   Text(
-                                    "You want to find people to work in your establishment",
+                                    AppLocalizations.of(context)
+                                            ?.signIn_youWantToFindPeople ??
+                                        "You want to find people to work in your establishment",
                                     style: TextStyle(
                                       color: AppColors.accent,
-                                      fontSize: MediaQuery.of(context).size.height / 60,
+                                      fontSize:
+                                          MediaQuery.of(context).size.height /
+                                              60,
                                     ),
                                   ),
                                 ],

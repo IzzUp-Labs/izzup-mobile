@@ -19,7 +19,7 @@ class AutocompleteAddressTextfield extends StatelessWidget {
       textEditingController: addressController,
       googleAPIKey: "AIzaSyA0OV0UsfJbZXDg5GKvWgHhuRC5iDqlw_g",
       inputDecoration: inputDecoration,
-      debounceTime: 800,
+      debounceTime: 400,
       // default 600 ms,
       countries: const ["fr"],
       // optional by default null is set

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ClassyLoader extends StatelessWidget {
   final Color loaderColor;
@@ -19,8 +20,10 @@ class ClassyLoader extends StatelessWidget {
           strokeWidth: 4.0,
           backgroundColor: Colors.white,
           value: null,
-          semanticsLabel: 'Loading',
-          semanticsValue: 'Loading',
+          semanticsLabel:
+              AppLocalizations.of(context)?.loader_loading ?? 'Loading',
+          semanticsValue:
+              AppLocalizations.of(context)?.loader_loading ?? 'Loading',
         ),
       ),
     );

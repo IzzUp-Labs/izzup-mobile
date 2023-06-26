@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../Models/wave.dart';
 
@@ -28,12 +29,15 @@ class _RegisterExtraTagsState extends State<RegisterExtraTags> {
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(10),
+            Padding(
+              padding: const EdgeInsets.all(10),
               child: Text(
-                "Thank you for joining IzzUp !",
+                AppLocalizations.of(context)
+                        ?.register_thankYouForJoiningIzzUp ??
+                    "Thank you for joining IzzUp !",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               ),
             ),
             Padding(

@@ -6,8 +6,8 @@ class Extra {
   DateTime dateOfBirth;
   String address;
 
-  Extra(this.email, this.password, this.dateOfBirth, {this.lastName = '', this.firstName = '',
-       this.address = ''});
+  Extra(this.email, this.password, this.dateOfBirth,
+      {this.lastName = '', this.firstName = '', this.address = ''});
 
   static Extra basic = Extra('', '', DateTime.now());
 }

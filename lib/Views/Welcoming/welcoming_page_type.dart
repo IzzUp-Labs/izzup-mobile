@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Services/prefs.dart';
 import 'package:izzup/Views/SignIn/signin_landing.dart';
 import 'package:izzup/Views/Welcoming/welcoming.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Services/location.dart';
 import '../../Services/notifications.dart';
@@ -24,25 +24,31 @@ enum WelcomingPageType {
     }
   }
 
-  String title() {
+  String title(BuildContext context) {
     switch (this) {
       case WelcomingPageType.landing:
-        return "Welcome on IzzUp";
+        return AppLocalizations.of(context)?.welcoming_title ??
+            "Welcome on IzzUp";
       case WelcomingPageType.localisation:
-        return "Find gigs near you";
+        return AppLocalizations.of(context)?.welcoming_findGigs ??
+            "Find gigs near you";
       case WelcomingPageType.notifications:
-        return "Receive job offers in real-time";
+        return AppLocalizations.of(context)?.welcoming_receiveOffers ??
+            "Receive job offers in real-time";
     }
   }
 
-  String subtitle() {
+  String subtitle(BuildContext context) {
     switch (this) {
       case WelcomingPageType.landing:
-        return "We are here to help you find offers in your area";
+        return AppLocalizations.of(context)?.welcoming_weAreHereToHelp ??
+            "We are here to help you find offers in your area";
       case WelcomingPageType.localisation:
-        return "Your location helps us locate the offers that you might be able to go to in the shortest time possible";
+        return AppLocalizations.of(context)?.welcoming_provideLocation ??
+            "Your location helps us locate the offers that you might be able to go to in the shortest time possible";
       case WelcomingPageType.notifications:
-        return "Enable notifications to be alerted of new offers or accepted requests";
+        return AppLocalizations.of(context)?.welcoming_enableNotifications ??
+            "Enable notifications to be alerted of new offers or accepted requests";
     }
   }
 
@@ -57,14 +63,16 @@ enum WelcomingPageType {
     }
   }
 
-  String buttonTitle() {
+  String buttonTitle(BuildContext context) {
     switch (this) {
       case WelcomingPageType.landing:
-        return 'Next';
+        return AppLocalizations.of(context)?.titles_next ?? 'Next';
       case WelcomingPageType.localisation:
-        return 'Enable location ?';
+        return AppLocalizations.of(context)?.questions_enableLocation ??
+            'Enable location ?';
       case WelcomingPageType.notifications:
-        return 'Enable notifications ?';
+        return AppLocalizations.of(context)?.questions_enableNotifications ??
+            'Enable notifications ?';
     }
   }
 
@@ -103,7 +111,7 @@ enum WelcomingPageType {
 
   Future<void> _localisationBtnTapped(
       BuildContext context, Widget widget) async {
-    print(await LocationService.getLocation());
+    Globals.locationData = await LocationService.getLocation();
     if (context.mounted) {
       context.navigateWithTransition(widget, const SignIn());
     }

@@ -1,13 +1,11 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:izzup/Models/extra.dart';
 import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Services/api.dart';
 import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Services/prefs.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Views/Home/home.dart';
 import 'Views/SignIn/signin_landing.dart';
@@ -19,6 +17,10 @@ Future<void> main() async {
   var hasSeenIntro = await Prefs.getBool('hasSeenIntro');
   var isLoggedIn = await _renewTokenIfPossible();
   Globals.initFirstCamera();
+
+  if (await Prefs.getBool('locationServiceEnabled') ?? false) {
+    await Globals.initLocation();
+  }
 
   runApp(IzzUp(
     hasSeenIntro: hasSeenIntro,
@@ -52,7 +54,7 @@ class IzzUp extends StatefulWidget {
 class _IzzUpState extends State<IzzUp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if(state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.resumed) {
       _renewTokenIfPossible();
     }
   }
@@ -62,15 +64,18 @@ class _IzzUpState extends State<IzzUp> with WidgetsBindingObserver {
     return GestureDetector(
         onTap: () => context.dropFocus(),
         child: MaterialApp(
-            title: 'IzzUp',
-            theme: ThemeData(
-              primarySwatch: AppColors.accentMaterialColor,
-            ),
-            home: widget.hasSeenIntro != true
-                ? const Welcoming(pageType: WelcomingPageType.landing)
-                : widget.isLoggedIn
-                    ? const Home()
-                    : const SignIn()
-            ));
+          title: AppLocalizations.of(context)?.appName ?? 'IzzUp',
+          theme: ThemeData(
+            fontFamily: 'Cera Pro SV',
+            primarySwatch: AppColors.accentMaterialColor,
+          ),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: widget.hasSeenIntro != true
+              ? const Welcoming(pageType: WelcomingPageType.landing)
+              : widget.isLoggedIn
+                  ? const Home()
+                  : const SignIn(),
+        ));
   }
 }

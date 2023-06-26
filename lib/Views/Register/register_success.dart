@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:izzup/Models/globals.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:izzup/Services/navigation.dart';
-import 'package:izzup/Services/prefs.dart';
 import 'package:izzup/Views/Home/home.dart';
 
 import '../../Models/wave.dart';
@@ -46,12 +45,15 @@ class _RegisterSuccessState extends State<RegisterSuccess> {
                     ),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(10),
+                Padding(
+                  padding: const EdgeInsets.all(10),
                   child: Text(
-                    "Thank you for joining IzzUp !",
+                    AppLocalizations.of(context)
+                            ?.register_thankYouForJoiningIzzUp ??
+                        "Thank you for joining IzzUp !",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 32, fontWeight: FontWeight.bold),
                   ),
                 ),
                 const Spacer(),

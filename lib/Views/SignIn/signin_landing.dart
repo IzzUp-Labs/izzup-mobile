@@ -1,6 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:izzup/Models/employer.dart';
 import 'package:izzup/Models/extra.dart';
 import 'package:izzup/Models/globals.dart';
@@ -10,7 +9,6 @@ import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Views/SignIn/signin_status_choice.dart';
 import 'package:izzup/Views/SignIn/singin_confirm_password.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Models/classy_loader.dart';
 import '../../Services/email_validator.dart';
@@ -85,20 +83,25 @@ class _SignInState extends State<SignIn> {
                     ),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(10),
+                Padding(
+                  padding: const EdgeInsets.all(10),
                   child: Text(
-                    "Let's get to know each other",
+                    AppLocalizations.of(context)
+                            ?.signIn_letsGetToKnowEachOther ??
+                        "Let's get to know each other",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 32, fontWeight: FontWeight.bold),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 20, top: 20, right: 20),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, top: 20, right: 20),
                   child: Text(
-                    "Do you already have an account or want to create one ? Either way enter your email here and we'll do the rest 😉",
+                    AppLocalizations.of(context)
+                            ?.signIn_doYouAlreadyHaveAnAccount ??
+                        "Do you already have an account or want to create one ? Either way enter your email here and we'll do the rest 😉",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                     ),
                   ),
@@ -117,9 +120,15 @@ class _SignInState extends State<SignIn> {
                         color: Colors.grey,
                       ),
                       border: const OutlineInputBorder(),
-                      labelText: 'Enter your email',
+                      labelText:
+                          AppLocalizations.of(context)?.signIn_enterYourEmail ??
+                              'Enter your email',
                       labelStyle: const TextStyle(color: Colors.grey),
-                      errorText: _isValid ? null : 'Invalid email address',
+                      errorText: _isValid
+                          ? null
+                          : AppLocalizations.of(context)
+                                  ?.signIn_invalidEmailAddress ??
+                              'Invalid email address',
                     ),
                   ),
                 ),
@@ -136,10 +145,10 @@ class _SignInState extends State<SignIn> {
                         borderRadius: BorderRadius.circular(30), // <-- Radius
                       ),
                     ),
-                    child: const Text(
-                      "Next",
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                    child: Text(
+                      AppLocalizations.of(context)?.titles_next ?? "Next",
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),

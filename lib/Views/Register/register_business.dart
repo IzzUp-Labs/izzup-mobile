@@ -1,17 +1,15 @@
-import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:izzup/Models/autocomplete_address_textfield.dart';
 import 'package:izzup/Models/classy_loader.dart';
 import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Services/colors.dart';
-import 'package:izzup/Services/navigation.dart';
-import 'package:izzup/Views/Register/register_id_card.dart';
-import 'package:izzup/Views/Register/register_success.dart';
+import 'package:izzup/Views/Register/register_select_place.dart';
 
 import '../../Models/wave.dart';
 import '../../Services/api.dart';
-import '../../Services/prefs.dart';
 
 class RegisterBusiness extends StatefulWidget {
   const RegisterBusiness({super.key});
@@ -27,11 +25,13 @@ class _RegisterBusinessState extends State<RegisterBusiness> {
   bool _isNameValid = true;
   bool _isAddressValid = true;
   bool _isLoading = false;
+  bool _noPlaceFound = false;
 
   bool _validateFields() {
     setState(() {
       _isNameValid = true;
       _isAddressValid = true;
+      _noPlaceFound = false;
     });
 
     bool noErrors = true;
@@ -55,6 +55,30 @@ class _RegisterBusinessState extends State<RegisterBusiness> {
     Globals.tempEmployer.company.address = _addressController.text;
   }
 
+  _onValidatePressed() async {
+    if (_validateFields()) {
+      modifyRegistrationAccount();
+      setState(() {
+        _isLoading = true;
+      });
+      final place =
+          await Api.getPlace(_nameController.text, _addressController.text);
+      if (place != null) {
+        final placePhotoLinks = await Api.getPlacePhotoLinks(place.placeId);
+        if (context.mounted)
+          Navigator.of(context)
+              .push(RegisterSelectPlaceRoute(place, placePhotoLinks));
+      } else {
+        setState(() {
+          _noPlaceFound = true;
+        });
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -75,20 +99,25 @@ class _RegisterBusinessState extends State<RegisterBusiness> {
                     ),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(10),
+                Padding(
+                  padding: const EdgeInsets.all(10),
                   child: Text(
-                    "Tell us about your business",
+                    AppLocalizations.of(context)
+                            ?.register_tellUsAboutYourBusiness ??
+                        "Tell us about your business",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 32, fontWeight: FontWeight.bold),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(20),
+                Padding(
+                  padding: const EdgeInsets.all(20),
                   child: Text(
-                    "These informations will be displayed on the company profile",
+                    AppLocalizations.of(context)
+                            ?.register_theseInformationsWillBeDisplayed ??
+                        "These informations will be displayed on the company profile",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                     ),
                   ),
@@ -106,8 +135,19 @@ class _RegisterBusinessState extends State<RegisterBusiness> {
                         focusedBorder: const OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey)),
                         border: const OutlineInputBorder(),
-                        hintText: 'Name of the place',
-                        errorText: _isNameValid ? null : "Please provide a name."),
+                        errorMaxLines: 2,
+                        hintText: AppLocalizations.of(context)
+                                ?.register_nameOfThePlace ??
+                            'Name of the place',
+                        errorText: _noPlaceFound
+                            ? AppLocalizations.of(context)
+                                    ?.register_noPlaceFound ??
+                                "We did not found a place matching this address and name."
+                            : _isNameValid
+                                ? null
+                                : AppLocalizations.of(context)
+                                        ?.register_pleaseProvideAName ??
+                                    "Please provide a name."),
                   ),
                 ),
                 Padding(
@@ -122,12 +162,24 @@ class _RegisterBusinessState extends State<RegisterBusiness> {
                         focusedBorder: const OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey)),
                         border: const OutlineInputBorder(),
-                        hintText: 'Address',
-                        errorText:
-                        _isAddressValid ? null : "Please enter an address."),
+                        errorMaxLines: 2,
+                        hintText:
+                            AppLocalizations.of(context)?.register_address ??
+                                'Address',
+                        errorText: _noPlaceFound
+                            ? AppLocalizations.of(context)
+                                    ?.register_noPlaceFound ??
+                                "We did not found a place matching this address and name."
+                            : _isAddressValid
+                                ? null
+                                : AppLocalizations.of(context)
+                                        ?.register_pleaseEnterAnAddress ??
+                                    "Please enter an address."),
                     getPlaceDetailCallback: (Prediction prediction) {
                       // this method will return latlng with place detail
-                      print("${prediction.lat} ${prediction.lng}");
+                      if (kDebugMode) {
+                        print("${prediction.lat} ${prediction.lng}");
+                      }
                     },
                   ),
                 ),
@@ -136,19 +188,7 @@ class _RegisterBusinessState extends State<RegisterBusiness> {
                       left: 20, right: 20, bottom: 20, top: 50),
                   child: ElevatedButton(
                     onPressed: () async {
-                      if (_validateFields()) {
-                        modifyRegistrationAccount();
-                        setState(() { _isLoading = true; });
-                        if (await Api.registerAndLoginEmployer()) {
-                          Prefs.setString('userEmail', Globals.tempEmployer.email);
-                          Prefs.setString('userPwd', Globals.tempEmployer.password);
-                          if (context.mounted) {
-                            context.navigateWithoutBack(const RegisterIdCard());
-                          }
-                        } else {
-                          setState(() { _isLoading = false; });
-                        }
-                      }
+                      _onValidatePressed();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.accent,
@@ -157,14 +197,16 @@ class _RegisterBusinessState extends State<RegisterBusiness> {
                         borderRadius: BorderRadius.circular(30), // <-- Radius
                       ),
                     ),
-                    child: const Text(
-                      "Validate",
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                    child: Text(
+                      AppLocalizations.of(context)?.register_validate ??
+                          "Validate",
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
                 const Spacer(),
-                const Wave(),
+                const Expanded(child: Wave()),
               ],
             ),
           ),

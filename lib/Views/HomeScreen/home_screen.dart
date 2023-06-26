@@ -1,8 +1,14 @@
-import 'dart:async';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:izzup/Models/user.dart';
+import 'package:izzup/Services/api.dart';
 import 'package:izzup/Services/colors.dart';
+import 'package:izzup/Services/navigation.dart';
+
+import '../../Models/company.dart';
+import '../../Models/globals.dart';
+import '../../Models/homepage_card_data.dart';
+import '../AddJobOffer/add_job_offer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,84 +17,179 @@ class HomeScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _HomeScreenState();
 }
 
-class CardData {
-  String title;
-  String description;
-  String? pictureData;
-  String type;
-  String? link;
-  String? companyId;
-
-  CardData(this.title, this.description, this.pictureData, this.type, this.link,
-      this.companyId);
-}
-
 class _HomeScreenState extends State<HomeScreen> {
-
-  final List<MaterialColor> _forYouCards = [Colors.red, Colors.blue, Colors.cyan, Colors.yellow];
-  final List<MaterialColor> _newsCards = [Colors.orange, Colors.grey, Colors.green, Colors.yellow];
-  final List<MaterialColor> _jobsCards = [Colors.yellow, Colors.cyan, Colors.green, Colors.red];
+  final List<HomepageCardData> _forYouCards = [];
+  final List<HomepageCardData> _newsCards = [];
+  final List<HomepageCardData> _jobsCards = [];
 
   final double _cardHeight = 150;
   final double _cardWidth = 250;
-  bool _isLoading = true;
+  bool _profileLoaded = false;
+  Company? _company;
 
-  final Widget _walletWidget = Row(
-    children: [
-      SizedBox(
-        height: WidgetsBinding.instance.platformDispatcher.views.first.physicalSize.height / 6,
-        width: WidgetsBinding.instance.platformDispatcher.views.first.physicalSize.width / 6,
-        child: const Image(image: AssetImage("assets/wallet.png")),
-      ),
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "You earned",
-                style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 14
+  Widget _walletWidget() {
+    return Row(
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height / 6,
+          width: MediaQuery.of(context).size.width / 3,
+          child: const Image(image: AssetImage("assets/wallet.png")),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.of(context)?.homeScreen_youDidNotEarnYet ??
+                      "You must work a first gig to start earning some money !",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey),
                 ),
-              ),
-              const Text(
-                "2,124 €",
-                style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 32
+                /*
+                Text(
+                  AppLocalizations.of(context)?.homeScreen_youEarned ??
+                      "You earned",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w800, fontSize: 14),
                 ),
-              ),
-              Row(
-                children: [
-                  const Spacer(),
-                  RichText(
-                    text: const TextSpan(
-                      text: 'with ',
-                      style: TextStyle(
+                const Text(
+                  "2,124 €",
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 32),
+                ),
+                Row(
+                  children: [
+                    const Spacer(),
+                    RichText(
+                      text: TextSpan(
+                        text: AppLocalizations.of(context)?.homeScreen_with ??
+                            'with ',
+                        style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800),
+                        children: <TextSpan>[
+                          const TextSpan(
+                              text: '24',
+                              style: TextStyle(color: AppColors.accent)),
+                          TextSpan(
+                              text: AppLocalizations.of(context)
+                                  ?.homeScreen_jobs ??
+                                  ' jobs'),
+                        ],
+                      ),
+                    ),
+                    const Spacer()
+                  ],
+                ),
+                */
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget companyWidget() {
+    return Stack(
+      children: [
+        Container(
+          padding: const EdgeInsets.only(left: 30, top: 5),
+          height: MediaQuery.of(context).size.height / 6,
+          width: MediaQuery.of(context).size.width / 2.75,
+          child: Image.asset(
+            'assets/business-vision.png',
+            fit: BoxFit.fitHeight,
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height / 6,
+            width: MediaQuery.of(context).size.width / 2.2,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.of(context)?.homeScreen_noOffersYet ??
+                      "No offers yet",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey),
+                ),
+                const SizedBox(height: 10),
+                /*
+                Text(
+                  AppLocalizations.of(context)?.homeScreen_extras(4) ??
+                      "Extras",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 32
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.width / 6),
+                  child: RichText(
+                    text: TextSpan(
+                      text: AppLocalizations.of(context)?.homeScreen_with ??
+                          'with ',
+                      style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 10,
-                          fontWeight: FontWeight.w800
-                      ),
+                          fontWeight: FontWeight.w800),
                       children: <TextSpan>[
-                        TextSpan(text: '24', style: TextStyle(color: AppColors.accent)),
-                        TextSpan(text: ' jobs'),
+                        const TextSpan(
+                            text: '8',
+                            style: TextStyle(color: AppColors.accent)),
+                        TextSpan(
+                            text: AppLocalizations.of(context)
+                                ?.homeScreen_jobOffers ??
+                                ' job offers'),
                       ],
                     ),
                   ),
-                  const Spacer()
-                ],
-              ),
-            ],
+                ),
+                const SizedBox(height: 10),*/
+                if (_company != null)
+                  ElevatedButton(
+                    onPressed: () {
+                      context.push(
+                        AddJobOffer(
+                            userId: Globals.profile!.id,
+                            companyId: _company!.id),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.accent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      "Ajouter une offre",
+                      style:
+                          TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                    ),
+                  ),
+              ],
+            ),
           ),
-        ),
-      ),
-    ],
-  );
+        )
+      ],
+    );
+  }
 
-  Widget _card(CardData data) {
+  Widget _card(HomepageCardData data) {
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
       child: Column(
@@ -103,31 +204,32 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             child: ClipRRect(
               borderRadius: const BorderRadius.all(Radius.circular(20)),
-              child: CachedNetworkImage(
-                  imageUrl: 'https://googleflutter.com/sample_image.jpg',
-                  placeholder: (context, url) => CircularProgressIndicator(),
-                  fit: BoxFit.fitWidth
-              ),
+              child: Image.network(
+                  data.picLink ?? "",
+                  fit: BoxFit.fitWidth),
             ),
           ),
           const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.only(left: 10, right: 10),
-            child: Text(
-              data.title,
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12
+          Flexible(
+            child: Container(
+              width: _cardWidth,
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: Text(
+                data.title,
+                overflow: TextOverflow.ellipsis,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 10, right: 10),
-            child: Text(
-              data.description,
-              style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12
+          Flexible(
+            child: Container(
+              width: _cardWidth,
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: Text(
+                data.description,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ),
           ),
@@ -151,7 +253,6 @@ class _HomeScreenState extends State<HomeScreen> {
               text,
               style: const TextStyle(
                 fontWeight: FontWeight.w600,
-
               ),
             ),
           ),
@@ -160,14 +261,44 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _instantiateCards() async {
+    final cards = await Api.homepageCards();
+    HomepageCardData.groupByType(cards).forEach((key, value) {
+      switch (key) {
+        case HomepageCardType.jobs:
+          setState(() {
+            _jobsCards.addAll(value);
+          });
+          break;
+        case HomepageCardType.news:
+          setState(() {
+            _newsCards.addAll(value);
+          });
+          break;
+        case HomepageCardType.forYou:
+          setState(() {
+            _forYouCards.addAll(value);
+          });
+          break;
+      }
+    });
+  }
+
+  void _instantiateProfile() async {
+    await Globals.loadProfile();
+    if (Globals.profile?.role == UserRole.employer) {
+      _company = (await Api.getCompaniesFromToken())?.first;
+    }
+    setState(() {
+      _profileLoaded = true;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(milliseconds: 5 * 1000), () {
-      setState(() {
-        _isLoading = false;
-      });
-    });
+    _instantiateCards();
+    _instantiateProfile();
   }
 
   @override
@@ -200,7 +331,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ClipPath(
                         clipper: HeaderClipper(),
                         child: CustomPaint(
-                          size: Size.fromHeight(MediaQuery.of(context).size.height / 2.5),
+                          size: Size.fromHeight(
+                              MediaQuery.of(context).size.height / 2.5),
                           painter: HeaderPainter(color: AppColors.accent),
                         ),
                       ),
@@ -208,122 +340,228 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           children: [
                             Padding(
-                                padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+                                padding: const EdgeInsets.only(
+                                    top: 20, left: 20, right: 20),
                                 child: Row(
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.all(10),
                                       child: Container(
-                                        width: MediaQuery.of(context).size.width / 7,
-                                        height: MediaQuery.of(context).size.width / 7,
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                7,
+                                        height:
+                                            MediaQuery.of(context).size.width /
+                                                7,
                                         decoration: const BoxDecoration(
                                             color: Colors.white38,
-                                            shape: BoxShape.circle
-                                        ),
+                                            shape: BoxShape.circle),
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width / 7)),
-                                          child: CachedNetworkImage(
-                                              imageUrl: 'https://googleflutter.com/sample_image.jpg',
-                                              placeholder: (context, url) => const CircularProgressIndicator(),
-                                              fit: BoxFit.fitWidth
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      7)),
+                                          child: !_profileLoaded
+                                              ? null
+                                              : Globals.profile?.photo == null
+                                              ? const Image(image: AssetImage("assets/blank_profile_picture.png"))
+                                              : Image.network(
+                                                  Globals.profile?.photo ?? "",
+                                                  fit: BoxFit.fitWidth),
+                                        ),
+                                      ),
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        if (_profileLoaded)
+                                          Text(
+                                            AppLocalizations.of(context)
+                                                    ?.homeScreen_hi(Globals
+                                                            .profile
+                                                            ?.firstName ??
+                                                        '') ??
+                                                "Hi ${Globals.profile?.firstName ?? ''},",
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 18),
+                                          ),
+                                        if (_profileLoaded)
+                                          Text(
+                                            AppLocalizations.of(context)
+                                                    ?.homeScreen_welcomeOnIzzUp ??
+                                                "Welcome on IzzUp !",
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          )
+                                      ],
+                                    )
+                                  ],
+                                )),
+                            Stack(
+                              children: [
+                                if (Globals.profile?.role ==
+                                        UserRole.employer &&
+                                    _company != null)
+                                  Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 35, right: 35),
+                                      child: SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                    5 +
+                                                50,
+                                        child: ClipRRect(
+                                          borderRadius: const BorderRadius.only(
+                                              bottomLeft: Radius.circular(20),
+                                              bottomRight: Radius.circular(20)),
+                                          child: Container(
+                                            alignment: Alignment.bottomCenter,
+                                            color: AppColors.accent,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(15.0),
+                                              child: Text(_company!.name,
+                                                  style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18)),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                    const Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Hi ${"Adrien"},",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w800,
-                                              fontSize: 18
-                                          ),
-                                        ),
-                                        Text(
-                                          "Welcome on IzzUp !",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                )
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 5,
-                              child: Column(
-                                children: [
-                                  const Spacer(),
-                                  Container(
-                                      height: MediaQuery.of(context).size.height / 6,
-                                      width: MediaQuery.of(context).size.width - 40,
-                                      decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.all(Radius.circular(20)),
-                                        color: Colors.white,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.8),
-                                            blurRadius: 3,
-                                            offset: const Offset(0, 3), // changes position of shadow
-                                          ),
-                                        ],
-                                      ),
-                                      child: _walletWidget
                                   ),
-                                ],
-                              ),
-                            ),
+                                Center(
+                                  child: SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.height / 5,
+                                    child: Column(
+                                      children: [
+                                        const Spacer(),
+                                        Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                6,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                40,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(20)),
+                                              color: Colors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.8),
+                                                  blurRadius: 3,
+                                                  offset: const Offset(0,
+                                                      3), // changes position of shadow
+                                                ),
+                                              ],
+                                            ),
+                                            child: Globals.profile?.role ==
+                                                    UserRole.extra
+                                                ? _walletWidget()
+                                                : Globals.profile?.role ==
+                                                        UserRole.employer
+                                                    ? companyWidget()
+                                                    : null),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
                           ],
                         ),
                       ),
                     ],
                   ),
-                  _sectionText("assets/notification_icon.png", "For you"),
-                  SizedBox(
-                    height: _cardHeight + 50,
-                    child: ListView(
-                      // This next line does the trick.
-                      scrollDirection: Axis.horizontal,
-                      children: <Widget>[
-                        const SizedBox(width: 10),
-                        for (var card in _forYouCards)
-                          _card(CardData("Title", "Description", "pictureData", "type", "link", "companyId")),
-                        const SizedBox(width: 10),
-                      ],
+                  if (_forYouCards.isEmpty &&
+                      _newsCards.isEmpty &&
+                      _jobsCards.isEmpty)
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height / 2,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).size.height / 5),
+                        child: const Center(
+                          child: Text(
+                            "🏃 Loading data...",
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  _sectionText("assets/notification_icon.png", "News"),
-                  SizedBox(
-                    height: _cardHeight + 50,
-                    child: ListView(
-                      // This next line does the trick.
-                      scrollDirection: Axis.horizontal,
-                      children: <Widget>[
-                        const SizedBox(width: 10),
-                        for (var card in _newsCards)
-                          _card(CardData("Title", "Description", "pictureData", "type", "link", "companyId")),
-                        const SizedBox(width: 10),
-                      ],
+                  if (_forYouCards.isNotEmpty)
+                    _sectionText(
+                        "assets/notification_icon.png",
+                        AppLocalizations.of(context)?.homeScreen_forYou ??
+                            "For you"),
+                  if (_forYouCards.isNotEmpty)
+                    SizedBox(
+                      height: _cardHeight + 50,
+                      child: ListView(
+                        // This next line does the trick.
+                        scrollDirection: Axis.horizontal,
+                        children: <Widget>[
+                          const SizedBox(width: 10),
+                          for (var card in _forYouCards) _card(card),
+                          const SizedBox(width: 10),
+                        ],
+                      ),
                     ),
-                  ),
-                  _sectionText("assets/notification_icon.png", "Jobs near me"),
-                  SizedBox(
-                    height: _cardHeight + 50,
-                    child: ListView(
-                      // This next line does the trick.
-                      scrollDirection: Axis.horizontal,
-                      children: <Widget>[
-                        const SizedBox(width: 10),
-                        for (var card in _jobsCards)
-                          _card(CardData("Title", "Description", "pictureData", "type", "link", "companyId")),
-                        const SizedBox(width: 10),
-                      ],
+                  if (_newsCards.isNotEmpty)
+                    _sectionText(
+                        "assets/notification_icon.png",
+                        AppLocalizations.of(context)?.homeScreen_news ??
+                            "News"),
+                  if (_newsCards.isNotEmpty)
+                    SizedBox(
+                      height: _cardHeight + 50,
+                      child: ListView(
+                        // This next line does the trick.
+                        scrollDirection: Axis.horizontal,
+                        children: <Widget>[
+                          const SizedBox(width: 10),
+                          for (var card in _newsCards) _card(card),
+                          const SizedBox(width: 10),
+                        ],
+                      ),
                     ),
-                  ),
+                  if (_jobsCards.isNotEmpty)
+                    _sectionText(
+                        "assets/notification_icon.png",
+                        AppLocalizations.of(context)?.homeScreen_jobsNearMe ??
+                            "Jobs near me"),
+                  if (_jobsCards.isNotEmpty)
+                    SizedBox(
+                      height: _cardHeight + 50,
+                      child: ListView(
+                        // This next line does the trick.
+                        scrollDirection: Axis.horizontal,
+                        children: <Widget>[
+                          const SizedBox(width: 10),
+                          for (var card in _jobsCards) _card(card),
+                          const SizedBox(width: 10),
+                        ],
+                      ),
+                    ),
                   const SizedBox(
                     height: 50,
                   )
@@ -331,7 +569,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -342,14 +580,10 @@ class HeaderClipper extends CustomClipper<Path> {
   getClip(Size size) {
     final path = Path()
       ..lineTo(0.0, size.height - 100)
-      ..quadraticBezierTo(
-          size.width / 4, (size.height - 50),
-          size.width / 2, (size.height - 50)
-      )
-      ..quadraticBezierTo(
-          size.width - (size.width / 4), (size.height - 50),
-          size.width, size.height - 100
-      )
+      ..quadraticBezierTo(size.width / 4, (size.height - 50), size.width / 2,
+          (size.height - 50))
+      ..quadraticBezierTo(size.width - (size.width / 4), (size.height - 50),
+          size.width, size.height - 100)
       ..lineTo(size.width, 0.0)
       ..close();
 
@@ -363,7 +597,7 @@ class HeaderClipper extends CustomClipper<Path> {
 }
 
 class HeaderPainter extends CustomPainter {
-  HeaderPainter({ required this.color });
+  HeaderPainter({required this.color});
 
   final Color color;
 
@@ -371,7 +605,8 @@ class HeaderPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final shapeBounds = Rect.fromLTRB(0, 0, size.width, size.height - 50);
     final centerAvatar = Offset(shapeBounds.center.dx, shapeBounds.bottom);
-    final avatarBounds = Rect.fromCircle(center: centerAvatar, radius: 50).inflate(3);
+    final avatarBounds =
+        Rect.fromCircle(center: centerAvatar, radius: 50).inflate(3);
     _drawBackground(canvas, shapeBounds, avatarBounds);
   }
 

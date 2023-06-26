@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_places_flutter/model/prediction.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Views/Register/register_id_card.dart';
@@ -9,7 +11,6 @@ import '../../Models/globals.dart';
 import '../../Models/wave.dart';
 import '../../Services/api.dart';
 import '../../Services/colors.dart';
-import '../../Services/prefs.dart';
 
 class RegisterExtraAddress extends StatefulWidget {
   const RegisterExtraAddress({super.key});
@@ -17,7 +18,6 @@ class RegisterExtraAddress extends StatefulWidget {
   @override
   State<RegisterExtraAddress> createState() => _RegisterExtraAddressState();
 }
-
 
 class _RegisterExtraAddressState extends State<RegisterExtraAddress> {
   final _addressController = TextEditingController();
@@ -30,7 +30,9 @@ class _RegisterExtraAddressState extends State<RegisterExtraAddress> {
     });
 
     if (_addressController.text.isEmpty) {
-      setState(() { _isAddressValid = false; });
+      setState(() {
+        _isAddressValid = false;
+      });
       return false;
     }
 
@@ -61,20 +63,24 @@ class _RegisterExtraAddressState extends State<RegisterExtraAddress> {
                     ),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(10),
+                Padding(
+                  padding: const EdgeInsets.all(10),
                   child: Text(
-                    "Tell us about your yourself",
+                    AppLocalizations.of(context)
+                            ?.register_tellUsAboutYourself ??
+                        "Tell us about your yourself",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 32, fontWeight: FontWeight.bold),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(20),
+                Padding(
+                  padding: const EdgeInsets.all(20),
                   child: Text(
-                    "We need your address to provide you gigs when you don't have location services available",
+                    AppLocalizations.of(context)?.register_weNeedYourAddress ??
+                        "We need your address to provide you gigs when you don't have location services available",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                     ),
                   ),
@@ -91,12 +97,19 @@ class _RegisterExtraAddressState extends State<RegisterExtraAddress> {
                         focusedBorder: const OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey)),
                         border: const OutlineInputBorder(),
-                        hintText: 'Address',
-                        errorText:
-                        _isAddressValid ? null : "Please enter an address."),
+                        hintText:
+                            AppLocalizations.of(context)?.register_address ??
+                                'Address',
+                        errorText: _isAddressValid
+                            ? null
+                            : AppLocalizations.of(context)
+                                    ?.register_pleaseEnterAnAddress ??
+                                "Please enter an address."),
                     getPlaceDetailCallback: (Prediction prediction) {
                       // this method will return latlng with place detail
-                      print("${prediction.lat} ${prediction.lng}");
+                      if (kDebugMode) {
+                        print("${prediction.lat} ${prediction.lng}");
+                      }
                     },
                   ),
                 ),
@@ -107,14 +120,18 @@ class _RegisterExtraAddressState extends State<RegisterExtraAddress> {
                     onPressed: () async {
                       if (_validateFields()) {
                         modifyRegistrationAccount();
-                        setState(() { _isLoading = true; });
+                        setState(() {
+                          _isLoading = true;
+                        });
                         if (await Api.registerAndLoginExtra()) {
                           Globals.setUserFromExtra();
                           if (context.mounted) {
                             context.navigateWithoutBack(const RegisterIdCard());
                           }
                         } else {
-                          setState(() { _isLoading = false; });
+                          setState(() {
+                            _isLoading = false;
+                          });
                         }
                       }
                     },
@@ -125,9 +142,11 @@ class _RegisterExtraAddressState extends State<RegisterExtraAddress> {
                         borderRadius: BorderRadius.circular(30), // <-- Radius
                       ),
                     ),
-                    child: const Text(
-                      "Validate",
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                    child: Text(
+                      AppLocalizations.of(context)?.register_validate ??
+                          "Validate",
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -141,5 +160,4 @@ class _RegisterExtraAddressState extends State<RegisterExtraAddress> {
       ],
     );
   }
-
 }

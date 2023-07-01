@@ -14,6 +14,7 @@ import '../Models/extra.dart';
 import '../Models/job_offer.dart';
 import '../Models/map_location.dart';
 import '../Models/place.dart';
+import '../Models/tag.dart';
 import '../Models/user.dart';
 import 'string_to_bool.dart';
 
@@ -29,7 +30,7 @@ class Api {
     var client = http.Client();
     try {
       var response =
-      await client.post(_getUri('auth/check'), body: {'email': email});
+        await client.post(_getUri('auth/check'), body: {'email': email});
       return response.body.toBoolean();
     } finally {
       client.close();
@@ -109,9 +110,16 @@ class Api {
   }
 
   static Future<List<HomepageCardData>> homepageCards() async {
+    final authToken = await Prefs.getString('authToken');
+    final id = JwtDecoder.decode(authToken!)['id'];
     var client = http.Client();
     try {
-      var response = await client.get(_getUri('homepage-card'));
+      var response = await client.get(_getUri('homepage-card'),
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer $authToken',
+        },
+      );
       List<HomepageCardData> cards = [];
       for (var card in jsonDecode(response.body)) {
         cards.add(HomepageCardData.fromJson(card));
@@ -188,11 +196,17 @@ class Api {
     return response.statusCode == 201;
   }
 
-  static Future<List<MapLocation>> jobOffersInRange() async {
+  static Future<List<MapLocation>?> jobOffersInRange() async {
+    final authToken = await Prefs.getString('authToken');
+    if (authToken == null) return null;
+    final id = JwtDecoder.decode(authToken)['id'];
     var client = http.Client();
     try {
       var response = await client.post(_getUri('location/job-offers-in-range'),
-          headers: {"Content-Type": "application/json"},
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $authToken',
+          },
           body: json.encode({
             "longitude": Globals.locationData?.longitude,
             "latitude": Globals.locationData?.latitude,
@@ -258,4 +272,38 @@ class Api {
       client.close();
     }
   }
+
+  static Future<List<Tag>> getTags() async {
+    var client = http.Client();
+    try {
+      var response = await client.get(_getUri('tag'));
+      List<Tag> tags = [];
+      for (var tag in jsonDecode(response.body)) {
+        tags.add(Tag.fromJson(tag));
+      }
+      return tags;
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<void> addTags(List<Tag> tags) async {
+    final authToken = await Prefs.getString('authToken');
+    if (authToken == null) return;
+    var client = http.Client();
+    try {
+      var response = await client.patch(_getUri('extra/add/tags'),
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $authToken',
+          },
+          body: jsonEncode(tags.map((e) => e.id).toList()));
+    } catch (e) {
+      print(e);
+    } finally {
+      client.close();
+    }
+  }
+
+
 }

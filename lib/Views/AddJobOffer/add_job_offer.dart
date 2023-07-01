@@ -205,6 +205,9 @@ class _AddJobOfferState extends State<AddJobOffer> {
                                   widget.companyId,
                                   JobOffer(
                                       _titleController.text,
+                                      "Description",
+                                      DateTime.now(),
+                                      0,
                                       int.parse(_hourlyRateController.text),
                                       true,
                                       int.parse(_numberOfSpotsController.text),

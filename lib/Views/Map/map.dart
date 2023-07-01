@@ -9,6 +9,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import '../../Models/globals.dart';
 import '../../Models/map_location.dart';
 import '../../Services/api.dart';
+import '../CompanyDetail/company_detail.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -43,6 +44,7 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void initState() {
+    _getLocations();
     DefaultAssetBundle.of(context)
         .loadString("assets/map_theme.json")
         .then((value) {
@@ -55,12 +57,15 @@ class _MapScreenState extends State<MapScreen> {
         })
       }
     });
-    _getLocations();
     super.initState();
   }
 
   void _getLocations() async {
-    _locations = await Api.jobOffersInRange();
+    _locations = (await Api.jobOffersInRange())!;
+    for (final location in _locations) {
+      print(location.company.name);
+    }
+    print(Globals.locationData?.latLng);
     getMarkers();
   }
 
@@ -80,14 +85,17 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void getMarkers() async{
-    _markers.add(Marker(
+    Marker marker = Marker(
       markerId: const MarkerId("user"),
       position: Globals.locationData?.latLng ?? _kGooglePlex.target,
       icon: await BitmapDescriptor.fromAssetImage(
           const ImageConfiguration(), "assets/grey_marker.png"),
-    ));
+    );
+    setState(() {
+      _markers.add(marker);
+    });
     for ( final location in _locations) {
-      _markers.add(Marker(
+      Marker marker = Marker(
         markerId: MarkerId(location.company.id.toString()),
         position: LatLng(location.latitude, location.longitude),
         icon: await BitmapDescriptor.fromAssetImage(
@@ -95,9 +103,13 @@ class _MapScreenState extends State<MapScreen> {
         onTap: () {
           messageTransition(location);
         },
-      ));
+      );
+      setState(() {
+        _markers.add(marker);
+      });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +179,12 @@ class _MapScreenState extends State<MapScreen> {
                       children: [
                         const Image(image: AssetImage("assets/stars.png"), height: 30, width: 80,),
                         TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => CompanyPage()),
+                              );
+                            },
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
                                   const Color(0xFF00B096)),

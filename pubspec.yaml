@@ -63,7 +63,8 @@ dependencies:
   carousel_slider: ^4.2.1
   http_parser: ^4.0.2
   blur: ^3.1.0
-
+  grouped_list: ^5.1.2
+  socket_io_client: ^2.0.2
 
 dev_dependencies:
   flutter_test:

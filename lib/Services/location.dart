@@ -1,5 +1,4 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Services/prefs.dart';
 import 'package:location/location.dart';
 

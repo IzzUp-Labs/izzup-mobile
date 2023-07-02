@@ -30,7 +30,7 @@ class Api {
     var client = http.Client();
     try {
       var response =
-        await client.post(_getUri('auth/check'), body: {'email': email});
+          await client.post(_getUri('auth/check'), body: {'email': email});
       return response.body.toBoolean();
     } finally {
       client.close();
@@ -114,7 +114,8 @@ class Api {
     final id = JwtDecoder.decode(authToken!)['id'];
     var client = http.Client();
     try {
-      var response = await client.get(_getUri('homepage-card'),
+      var response = await client.get(
+        _getUri('homepage-card'),
         headers: {
           "Content-Type": "application/json",
           'Authorization': 'Bearer $authToken',
@@ -134,7 +135,7 @@ class Api {
     var client = http.Client();
     try {
       var response =
-      await client.get(_getUri('google-places/search/$name $address'));
+          await client.get(_getUri('google-places/search/$name $address'));
       final jsonBody = jsonDecode(response.body);
       if (jsonBody.length == 0) {
         return null;
@@ -149,7 +150,7 @@ class Api {
     var client = http.Client();
     try {
       var response =
-      await client.get(_getUri('google-places/details/$placeId'));
+          await client.get(_getUri('google-places/details/$placeId'));
       final jsonBody = jsonDecode(response.body);
       if (jsonBody['result'] == null) {
         return null;
@@ -182,13 +183,14 @@ class Api {
   }
 
   static Future<bool> uploadIdPhoto(String imagePath) async {
-    var request = http.MultipartRequest("POST", _getUri('user/upload/id_photo'));
+    var request =
+        http.MultipartRequest("POST", _getUri('user/upload/id_photo'));
     final token = await Prefs.getString('authToken');
     request.files.add(
       await http.MultipartFile.fromPath(
         "file",
         imagePath,
-        contentType: MediaType('image','jpeg'),
+        contentType: MediaType('image', 'jpeg'),
       ),
     );
     request.headers['Authorization'] = 'Bearer $token';
@@ -210,8 +212,7 @@ class Api {
           body: json.encode({
             "longitude": Globals.locationData?.longitude,
             "latitude": Globals.locationData?.latitude,
-          })
-      );
+          }));
       List<MapLocation> locations = [];
       for (var location in jsonDecode(response.body)) {
         locations.add(MapLocation.fromJson(location));
@@ -256,16 +257,19 @@ class Api {
     }
   }
 
-  static Future<bool> uploadJobOffer(int employerId, int companyId, JobOffer jobOffer) async {
+  static Future<bool> uploadJobOffer(
+      int employerId, int companyId, JobOffer jobOffer) async {
     final authToken = await Prefs.getString('authToken');
     if (authToken == null) return false;
     var client = http.Client();
     try {
       var response = await client.post(
           _getUri('employer/$employerId/job-offer/$companyId'),
-          headers: {'Authorization': 'Bearer $authToken', "Content-Type": "application/json"},
-          body: jsonEncode(jobOffer.toJson())
-      );
+          headers: {
+            'Authorization': 'Bearer $authToken',
+            "Content-Type": "application/json"
+          },
+          body: jsonEncode(jobOffer.toJson()));
       if (response.statusCode != 201) return false;
       return true;
     } finally {
@@ -304,6 +308,4 @@ class Api {
       client.close();
     }
   }
-
-
 }

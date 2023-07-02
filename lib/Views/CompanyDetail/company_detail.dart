@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CompanyPage extends StatefulWidget {
+  const CompanyPage({super.key});
+
   @override
-  _CompanyPageState createState() => _CompanyPageState();
+  State<CompanyPage> createState() => _CompanyPageState();
 }
 
 class _CompanyPageState extends State<CompanyPage>
@@ -35,7 +38,7 @@ class _CompanyPageState extends State<CompanyPage>
       appBar: AppBar(
         backgroundColor: const Color(0xFF00B096), // Couleur de l'app bar
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -49,12 +52,12 @@ class _CompanyPageState extends State<CompanyPage>
             TabBar(
               controller: _tabController,
               labelColor: const Color(0xFF00B096),
-              tabs: const [
+              tabs: [
                 Tab(
-                  text: 'About',
+                  text: AppLocalizations.of(context)?.companyDetails_about ?? 'About',
                 ),
                 Tab(
-                  text: 'Jobs',
+                  text: AppLocalizations.of(context)?.companyDetails_jobs ?? 'Jobs',
                 ),
               ],
             ),
@@ -74,7 +77,8 @@ class _CompanyPageState extends State<CompanyPage>
                               width: 200,
                               height: 200,
                             ),
-                            const SizedBox(width: 10), // Espacement entre l'image et le texte
+                            const SizedBox(width: 10),
+                            // Espacement entre l'image et le texte
                             // Description de l'entreprise
                             const Expanded(
                               child: Text(
@@ -84,14 +88,16 @@ class _CompanyPageState extends State<CompanyPage>
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10), // Espacement entre la description de l'entreprise et la ligne
+                        const SizedBox(height: 10),
+                        // Espacement entre la description de l'entreprise et la ligne
                         // Ligne verte
                         Container(
                           height: 2,
                           width: MediaQuery.of(context).size.width * 0.8,
                           color: const Color(0xFF00B096),
                         ),
-                        const SizedBox(height: 10), // Espacement entre la ligne et la description de l'employeur
+                        const SizedBox(height: 10),
+                        // Espacement entre la ligne et la description de l'employeur
                         // Photo de profil de l'employeur
                         Container(
                           width: 100,
@@ -124,7 +130,8 @@ class _CompanyPageState extends State<CompanyPage>
                             onPressed: () {
                               // Action lorsque le bouton est pressé
                               // Ajoutez ici votre code pour la demande d'emploi
-                              print('Demande d\'emploi pour ${jobOffers[index]}');
+                              print(
+                                  'Demande d\'emploi pour ${jobOffers[index]}');
                             },
                             child: const Text('Postuler'),
                           ),

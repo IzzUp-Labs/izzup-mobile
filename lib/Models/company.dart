@@ -15,8 +15,9 @@ class Company {
         json['name'],
         json['place_id'],
         json['address'],
-        json['jobOffers'].map<JobOffer>((jobOffer) => JobOffer.fromJson(jobOffer)).toList()
-    );
+        json['jobOffers']
+            .map<JobOffer>((jobOffer) => JobOffer.fromJson(jobOffer))
+            .toList());
   }
 
   static Company basic = Company(0, '', '', '', [JobOffer.basic]);

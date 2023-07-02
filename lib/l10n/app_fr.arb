@@ -1,22 +1,17 @@
 {
   "@@locale": "fr",
-
   "appName": "IzzUp",
-
   "welcoming_title": "Bienvenue sur IzzUp",
   "welcoming_findGigs": "Trouvez des emplois près de chez vous",
   "welcoming_receiveOffers": "Recevez des offres d'emploi en temps réel",
   "welcoming_weAreHereToHelp": "Nous sommes là pour vous aider à trouver des offres dans votre région",
   "welcoming_provideLocation": "Votre emplacement nous aide à localiser les offres auxquelles vous pourriez vous rendre dans les plus brefs délais",
   "welcoming_enableNotifications": "Activez les notifications pour être alerté des nouvelles offres ou des demandes acceptées",
-
   "titles_next": "Suivant",
   "titles_company": "Entreprise",
   "titles_jobSeeker": "Chercheur d'emploi",
-
   "questions_enableLocation": "Activer la localisation ?",
   "questions_enableNotifications": "Activer les notifications ?",
-
   "signIn_title": "Connexion",
   "signIn_welcomeBack": "Te voilà de retour !",
   "signIn_foundAccount": "Nous avons trouvé ton compte ! Tout ce que tu as à faire maintenant, c'est entrer ton mot de passe",
@@ -29,7 +24,6 @@
   "signIn_doYouAlreadyHaveAnAccount": "Vous avez déjà un compte ou vous souhaitez en créer un ? Dans les deux cas, saisissez votre adresse e-mail ici et nous ferons le reste 😉",
   "signIn_enterYourEmail": "Entrez votre adresse e-mail",
   "signIn_invalidEmailAddress": "Adresse e-mail invalide",
-
   "homeScreen_youEarned": "Vous avez gagné",
   "homeScreen_youDidNotEarnYet": "Participez à votre première mission pour commencer à gagner de l'argent !",
   "homeScreen_with": "avec ",
@@ -42,19 +36,15 @@
   "homeScreen_extras": "{numberOfExtras} Extras",
   "homeScreen_jobOffers": " missions",
   "homeScreen_noOffersYet": "Pas encore d'offres",
-
   "noLocation_title": "Il semble que vous n'avez pas activé les services de localisation",
   "noLocation_description": "Pour pouvoir utiliser l'application, vous devez les activer sur votre téléphone",
   "noLocation_activate": "Activer",
-
   "profile_title": "Profil",
   "profile_reviews": "Avis",
   "profile_aboutMe": "À propos de moi",
   "profile_myContracts": "Mes contrats",
   "profile_myLastJobs": "Mes derniers emplois",
-
   "loader_loading": "Chargement",
-
   "register_title": "S'inscrire",
   "register_niceToMeetYou": "Ravi de vous rencontrer !",
   "register_toBeginWithRegistration": "Pour commencer l'inscription, nous aurons juste besoin d'une adresse e-mail de contact et d'un mot de passe pour votre compte",
@@ -88,7 +78,6 @@
   "register_isThisYourBusiness": "Est-ce votre entreprise ?",
   "register_yesThatsMe": "Oui c'est moi !",
   "register_thisIsNotMyBusiness": "Ce n'est pas mon entreprise",
-
   "createJobOffer_title": "Créer une offre d'emploi",
   "createJobOffer_jobTitle": "Titre du poste",
   "createJobOffer_hourlyRate": "Taux horaire",
@@ -99,11 +88,21 @@
   "createJobOffer_create": "Créer",
   "createJobOffer_hourlyRateCantBeZero": "Le taux horaire ne peut pas être égal à zéro",
   "createJobOffer_spotsCantBeZero": "Le nombre de places ne peut pas être égal à zéro",
-
+  "createJobOffer_startTime": "Horaire",
+  "createJobOffer_invalidStartTime": "Heure de début invalide",
+  "createJobOffer_hoursWorked": "Heures",
+  "createJobOffer_invalidHoursWorked": "Nombre d'heures de travail invalide",
+  "createJobOffer_description": "Description",
+  "createJobOffer_invalidDescription": "Description invalide",
   "success": "Succès",
-
   "homeProfile_reviews": "Avis",
   "homeProfile_aboutMe": "A propos de moi",
   "homeProfile_myContracts": "Mes contrats",
-  "homeProfile_myLastJobs": "Mes derniers emplois"
+  "homeProfile_myLastJobs": "Mes derniers emplois",
+
+  "chat_typing": "En train d'écrire...",
+  "chat_typeAMessage": "Écrivez un message",
+
+  "companyDetails_about": "À propos",
+  "companyDetails_jobs": "Emplois"
 }

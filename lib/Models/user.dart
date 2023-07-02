@@ -36,7 +36,8 @@ class User {
   UserRole role;
   String? idPhoto;
 
-  User(this.id, this.email, this.password, this.lastName, this.firstName, this.dateOfBirth, this.photo, this.role, this.idPhoto);
+  User(this.id, this.email, this.password, this.lastName, this.firstName,
+      this.dateOfBirth, this.photo, this.role, this.idPhoto);
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
@@ -48,21 +49,21 @@ class User {
         DateTime.parse(json['date_of_birth']),
         json['photo'],
         UserRole.fromString(json['role']),
-        json['id_photo']
-    );
+        json['id_photo']);
   }
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "email": email,
-    "password": password,
-    "last_name": lastName,
-    "first_name": firstName,
-    "date_of_birth": dateOfBirth.toIso8601String(),
-    "photo": photo,
-    "role": role.value,
-    "id_photo": idPhoto
-  };
+        "id": id,
+        "email": email,
+        "password": password,
+        "last_name": lastName,
+        "first_name": firstName,
+        "date_of_birth": dateOfBirth.toIso8601String(),
+        "photo": photo,
+        "role": role.value,
+        "id_photo": idPhoto
+      };
 
-  static User basic = User(0, '', '', '', '', DateTime.now(), '', UserRole.extra, '');
+  static User basic =
+      User(0, '', '', '', '', DateTime.now(), '', UserRole.extra, '');
 }

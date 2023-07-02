@@ -98,13 +98,13 @@ class _SignInConfirmPasswordState extends State<SignInConfirmPassword> {
                             borderSide: BorderSide(color: Colors.grey)),
                         border: const OutlineInputBorder(),
                         hintText: AppLocalizations.of(context)
-                            ?.signIn_enterPassword ??
+                                ?.signIn_enterPassword ??
                             'Enter your password',
                         errorText: _isPwdValid
                             ? null
                             : AppLocalizations.of(context)
-                            ?.signIn_passwordNotRecognized ??
-                            'Password not recognized'),
+                                    ?.signIn_passwordNotRecognized ??
+                                'Password not recognized'),
                   ),
                 ),
                 Padding(

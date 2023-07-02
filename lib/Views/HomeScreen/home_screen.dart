@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -52,8 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                       fontStyle: FontStyle.italic,
-                      color: Colors.grey
-                  ),
+                      color: Colors.grey),
                 ),
                 /*
                 Text(
@@ -123,14 +120,13 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  AppLocalizations.of(context)?.homeScreen_noOffersYet
-                      ?? "No offers yet",
+                  AppLocalizations.of(context)?.homeScreen_noOffersYet ??
+                      "No offers yet",
                   style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                       fontStyle: FontStyle.italic,
-                      color: Colors.grey
-                  ),
+                      color: Colors.grey),
                 ),
                 const SizedBox(height: 10),
                 /*
@@ -166,26 +162,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 10),*/
                 if (_company != null)
-                ElevatedButton(
-                  onPressed: () {
-                    context.push(
-                      AddJobOffer(userId: Globals.profile!.id, companyId: _company!.id),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.push(
+                        AddJobOffer(
+                            userId: Globals.profile!.id,
+                            companyId: _company!.id),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.accent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      "Ajouter une offre",
+                      style:
+                          TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
                     ),
                   ),
-                  child: const Text(
-                    "Ajouter une offre",
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -212,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: CachedNetworkImage(
                   imageUrl: data.picLink ?? "",
                   placeholder: (context, url) =>
-                  const CircularProgressIndicator(),
+                      const CircularProgressIndicator(),
                   fit: BoxFit.fitWidth),
             ),
           ),
@@ -225,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 data.title,
                 overflow: TextOverflow.ellipsis,
                 style:
-                const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
               ),
             ),
           ),
@@ -355,11 +351,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       padding: const EdgeInsets.all(10),
                                       child: Container(
                                         width:
-                                        MediaQuery.of(context).size.width /
-                                            7,
+                                            MediaQuery.of(context).size.width /
+                                                7,
                                         height:
-                                        MediaQuery.of(context).size.width /
-                                            7,
+                                            MediaQuery.of(context).size.width /
+                                                7,
                                         decoration: const BoxDecoration(
                                             color: Colors.white38,
                                             shape: BoxShape.circle),
@@ -367,28 +363,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(
                                                   MediaQuery.of(context)
-                                                      .size
-                                                      .width /
+                                                          .size
+                                                          .width /
                                                       7)),
-                                          child: !_profileLoaded ? null :
-                                          CachedNetworkImage(
-                                              imageUrl:
-                                              Globals.profile?.idPhoto ?? "",
-                                              placeholder: (context, url) =>
-                                              const CircularProgressIndicator(),
-                                              fit: BoxFit.fitWidth),
+                                          child: !_profileLoaded
+                                              ? null
+                                              : CachedNetworkImage(
+                                                  imageUrl: Globals
+                                                          .profile?.idPhoto ??
+                                                      "",
+                                                  placeholder: (context, url) =>
+                                                      const CircularProgressIndicator(),
+                                                  fit: BoxFit.fitWidth),
                                         ),
                                       ),
                                     ),
                                     Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         if (_profileLoaded)
                                           Text(
                                             AppLocalizations.of(context)
-                                                ?.homeScreen_hi(
-                                                Globals.profile?.firstName ?? '') ??
+                                                    ?.homeScreen_hi(Globals
+                                                            .profile
+                                                            ?.firstName ??
+                                                        '') ??
                                                 "Hi ${Globals.profile?.firstName ?? ''},",
                                             style: const TextStyle(
                                                 color: Colors.white,
@@ -398,7 +398,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         if (_profileLoaded)
                                           Text(
                                             AppLocalizations.of(context)
-                                                ?.homeScreen_welcomeOnIzzUp ??
+                                                    ?.homeScreen_welcomeOnIzzUp ??
                                                 "Welcome on IzzUp !",
                                             style: const TextStyle(
                                               color: Colors.white,
@@ -411,30 +411,34 @@ class _HomeScreenState extends State<HomeScreen> {
                                 )),
                             Stack(
                               children: [
-                                if (Globals.profile?.role == UserRole.employer && _company != null)
+                                if (Globals.profile?.role ==
+                                        UserRole.employer &&
+                                    _company != null)
                                   Center(
                                     child: Padding(
-                                      padding: const EdgeInsets.only(left: 35, right: 35),
+                                      padding: const EdgeInsets.only(
+                                          left: 35, right: 35),
                                       child: SizedBox(
-                                        height: MediaQuery.of(context).size.height / 5 + 50,
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                    5 +
+                                                50,
                                         child: ClipRRect(
                                           borderRadius: const BorderRadius.only(
                                               bottomLeft: Radius.circular(20),
-                                              bottomRight: Radius.circular(20)
-                                          ),
+                                              bottomRight: Radius.circular(20)),
                                           child: Container(
                                             alignment: Alignment.bottomCenter,
                                             color: AppColors.accent,
                                             child: Padding(
-                                              padding: const EdgeInsets.all(15.0),
-                                              child: Text(
-                                                  _company!.name,
+                                              padding:
+                                                  const EdgeInsets.all(15.0),
+                                              child: Text(_company!.name,
                                                   style: const TextStyle(
                                                       color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 18
-                                                  )
-                                              ),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18)),
                                             ),
                                           ),
                                         ),
@@ -443,35 +447,42 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 Center(
                                   child: SizedBox(
-                                    height: MediaQuery.of(context).size.height / 5,
+                                    height:
+                                        MediaQuery.of(context).size.height / 5,
                                     child: Column(
                                       children: [
                                         const Spacer(),
                                         Container(
-                                            height:
-                                            MediaQuery.of(context).size.height /
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
                                                 6,
-                                            width: MediaQuery.of(context).size.width -
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
                                                 40,
                                             decoration: BoxDecoration(
-                                              borderRadius: const BorderRadius.all(
-                                                  Radius.circular(20)),
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(20)),
                                               color: Colors.white,
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: Colors.grey.withOpacity(0.8),
+                                                  color: Colors.grey
+                                                      .withOpacity(0.8),
                                                   blurRadius: 3,
                                                   offset: const Offset(0,
                                                       3), // changes position of shadow
                                                 ),
                                               ],
                                             ),
-                                            child: Globals.profile?.role == UserRole.extra
+                                            child: Globals.profile?.role ==
+                                                    UserRole.extra
                                                 ? _walletWidget()
-                                                : Globals.profile?.role == UserRole.employer
-                                                ? companyWidget()
-                                                : null
-                                        ),
+                                                : Globals.profile?.role ==
+                                                        UserRole.employer
+                                                    ? companyWidget()
+                                                    : null),
                                       ],
                                     ),
                                   ),
@@ -483,11 +494,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  if (_forYouCards.isEmpty && _newsCards.isEmpty && _jobsCards.isEmpty)
+                  if (_forYouCards.isEmpty &&
+                      _newsCards.isEmpty &&
+                      _jobsCards.isEmpty)
                     SizedBox(
                       height: MediaQuery.of(context).size.height / 2,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height / 5),
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).size.height / 5),
                         child: const Center(
                           child: Text(
                             "🏃 Loading data...",
@@ -597,7 +611,7 @@ class HeaderPainter extends CustomPainter {
     final shapeBounds = Rect.fromLTRB(0, 0, size.width, size.height - 50);
     final centerAvatar = Offset(shapeBounds.center.dx, shapeBounds.bottom);
     final avatarBounds =
-    Rect.fromCircle(center: centerAvatar, radius: 50).inflate(3);
+        Rect.fromCircle(center: centerAvatar, radius: 50).inflate(3);
     _drawBackground(canvas, shapeBounds, avatarBounds);
   }
 

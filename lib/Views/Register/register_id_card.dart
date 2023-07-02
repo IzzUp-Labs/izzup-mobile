@@ -111,7 +111,7 @@ class _RegisterIdCardState extends State<RegisterIdCard> {
                             padding: const EdgeInsets.only(top: 55, bottom: 75),
                             child: Text(
                               AppLocalizations.of(context)
-                                  ?.register_takeAClearPhoto ??
+                                      ?.register_takeAClearPhoto ??
                                   "Take a clear photo of the front of your ID card",
                               style: const TextStyle(
                                   color: Colors.white,
@@ -123,89 +123,88 @@ class _RegisterIdCardState extends State<RegisterIdCard> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: imagePath == null
                                 ? [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: AppColors.accent,
-                                  minimumSize: const Size(222, 56),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        30), // <-- Radius
-                                  ),
-                                ),
-                                onPressed: () async {
-                                  try {
-                                    await _initializeControllerFuture;
-                                    final image =
-                                    await _controller.takePicture();
-                                    if (!mounted) return;
-                                    setState(() {
-                                      imagePath = image.path;
-                                    });
-                                  } catch (e) {
-                                    if (kDebugMode) {
-                                      print(e);
-                                    }
-                                  }
-                                },
-                                child: const Icon(Icons.camera_alt),
-                              ),
-                            ]
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white,
+                                        foregroundColor: AppColors.accent,
+                                        minimumSize: const Size(222, 56),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              30), // <-- Radius
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        try {
+                                          await _initializeControllerFuture;
+                                          final image =
+                                              await _controller.takePicture();
+                                          if (!mounted) return;
+                                          setState(() {
+                                            imagePath = image.path;
+                                          });
+                                        } catch (e) {
+                                          if (kDebugMode) {
+                                            print(e);
+                                          }
+                                        }
+                                      },
+                                      child: const Icon(Icons.camera_alt),
+                                    ),
+                                  ]
                                 : [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: Colors.red,
-                                  minimumSize: const Size(150, 56),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        30), // <-- Radius
-                                  ),
-                                ),
-                                onPressed: () async {
-                                  setState(() {
-                                    imagePath = null;
-                                  });
-                                },
-                                child: Row(
-                                  children: [
-                                    Text(AppLocalizations.of(context)
-                                        ?.register_retake ??
-                                        "Retake" "  "),
-                                    const Icon(Icons.close),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white,
+                                        foregroundColor: Colors.red,
+                                        minimumSize: const Size(150, 56),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              30), // <-- Radius
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        setState(() {
+                                          imagePath = null;
+                                        });
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Text(AppLocalizations.of(context)
+                                                  ?.register_retake ??
+                                              "Retake" "  "),
+                                          const Icon(Icons.close),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 25),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white,
+                                        foregroundColor: AppColors.accent,
+                                        minimumSize: const Size(150, 56),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              30), // <-- Radius
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        _onValidatePressed();
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Text(AppLocalizations.of(context)
+                                                  ?.register_looksGreat ??
+                                              "Looks great" "  "),
+                                          const Icon(Icons.done),
+                                        ],
+                                      ),
+                                    ),
                                   ],
-                                ),
-                              ),
-                              const SizedBox(width: 25),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: AppColors.accent,
-                                  minimumSize: const Size(150, 56),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        30), // <-- Radius
-                                  ),
-                                ),
-                                onPressed: () async {
-                                  _onValidatePressed();
-                                },
-                                child: Row(
-                                  children: [
-                                    Text(AppLocalizations.of(context)
-                                        ?.register_looksGreat ??
-                                        "Looks great" "  "),
-                                    const Icon(Icons.done),
-                                  ],
-                                ),
-                              ),
-                            ],
                           ),
                         ],
                       ),
                     ),
-                  )
-              ),
+                  )),
             ],
           ),
         ),

@@ -1,11 +1,8 @@
-import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:izzup/Services/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:izzup/Services/colors.dart';
 
-import '../../Models/globals.dart';
 import '../../Models/user.dart';
 import '../../Services/api.dart';
 
@@ -65,8 +62,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Padding(
           padding: const EdgeInsets.only(top: 10, left: 60, right: 60),
           child: Container(
-              height: 1,
-              color: Colors.grey.withOpacity(0.5),
+            height: 1,
+            color: Colors.grey.withOpacity(0.5),
           ),
         )
       ],
@@ -121,7 +118,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ClipPath(
                         clipper: HeaderClipper(),
                         child: CustomPaint(
-                          size: Size.fromHeight(MediaQuery.of(context).size.height / 2.5),
+                          size: Size.fromHeight(
+                              MediaQuery.of(context).size.height / 2.5),
                           painter: HeaderPainter(color: AppColors.accent),
                         ),
                       ),
@@ -129,9 +127,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Column(
                           children: [
                             const Padding(
-                                padding: EdgeInsets.only(top: 20, left: 20, right: 20),
-                                child: Row()
-                            ),
+                                padding: EdgeInsets.only(
+                                    top: 20, left: 20, right: 20),
+                                child: Row()),
                             SizedBox(
                               height: MediaQuery.of(context).size.height / 2.7,
                               child: Column(
@@ -142,27 +140,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 24
-                                    ),
+                                        fontSize: 24),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(10),
                                     child: Container(
-                                      width: MediaQuery.of(context).size.width / 3,
-                                      height: MediaQuery.of(context).size.width / 3,
+                                      width:
+                                          MediaQuery.of(context).size.width / 3,
+                                      height:
+                                          MediaQuery.of(context).size.width / 3,
                                       decoration: const BoxDecoration(
                                           color: Colors.white38,
-                                          shape: BoxShape.circle
-                                      ),
+                                          shape: BoxShape.circle),
                                       child: ClipRRect(
-                                        borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.width / 3)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(
+                                                MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    3)),
                                         child: _isLoading
                                             ? null
                                             : CachedNetworkImage(
-                                            imageUrl: user?.idPhoto ?? "",
-                                            placeholder: (context, url) =>
-                                            const CircularProgressIndicator(),
-                                            fit: BoxFit.fitWidth),
+                                                imageUrl: user?.idPhoto ?? "",
+                                                placeholder: (context, url) =>
+                                                    const CircularProgressIndicator(),
+                                                fit: BoxFit.fitWidth),
                                       ),
                                     ),
                                   ),
@@ -179,26 +182,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         _sectionText(
                             "assets/badge.png",
-                            AppLocalizations.of(context)
-                                ?.homeProfile_reviews ??
+                            AppLocalizations.of(context)?.homeProfile_reviews ??
                                 "Reviews",
                             "assets/arrow_right.png"),
                         _sectionText(
                             "assets/badge.png",
-                            AppLocalizations.of(context)
-                                ?.homeProfile_aboutMe ??
+                            AppLocalizations.of(context)?.homeProfile_aboutMe ??
                                 "About me",
                             "assets/arrow_right.png"),
                         _sectionText(
                             "assets/badge.png",
                             AppLocalizations.of(context)
-                                ?.homeProfile_myContracts ??
+                                    ?.homeProfile_myContracts ??
                                 "My contracts",
                             "assets/arrow_right.png"),
                         _sectionText(
                             "assets/badge.png",
                             AppLocalizations.of(context)
-                                ?.homeProfile_myLastJobs ??
+                                    ?.homeProfile_myLastJobs ??
                                 "My last jobs",
                             "assets/arrow_right.png"),
                         const SizedBox(
@@ -225,14 +226,10 @@ class HeaderClipper extends CustomClipper<Path> {
   getClip(Size size) {
     final path = Path()
       ..lineTo(0.0, size.height - 100)
-      ..quadraticBezierTo(
-          size.width / 4, (size.height - 50),
-          size.width / 2, (size.height - 50)
-      )
-      ..quadraticBezierTo(
-          size.width - (size.width / 4), (size.height - 50),
-          size.width, size.height - 100
-      )
+      ..quadraticBezierTo(size.width / 4, (size.height - 50), size.width / 2,
+          (size.height - 50))
+      ..quadraticBezierTo(size.width - (size.width / 4), (size.height - 50),
+          size.width, size.height - 100)
       ..lineTo(size.width, 0.0)
       ..close();
 
@@ -246,7 +243,7 @@ class HeaderClipper extends CustomClipper<Path> {
 }
 
 class HeaderPainter extends CustomPainter {
-  HeaderPainter({ required this.color });
+  HeaderPainter({required this.color});
 
   final Color color;
 
@@ -254,7 +251,8 @@ class HeaderPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final shapeBounds = Rect.fromLTRB(0, 0, size.width, size.height - 50);
     final centerAvatar = Offset(shapeBounds.center.dx, shapeBounds.bottom);
-    final avatarBounds = Rect.fromCircle(center: centerAvatar, radius: 50).inflate(3);
+    final avatarBounds =
+        Rect.fromCircle(center: centerAvatar, radius: 50).inflate(3);
     _drawBackground(canvas, shapeBounds, avatarBounds);
   }
 

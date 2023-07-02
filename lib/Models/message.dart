@@ -9,11 +9,7 @@ class Message {
   Message(this.id, this.author, this.content, this.creationDate);
 
   factory Message.fromJson(Map<String, dynamic> json) {
-    return Message(
-      json['id'],
-      User.fromJson(json['author']),
-      json['content'],
-      DateTime.parse(json['creationDate'])
-    );
+    return Message(json['id'], User.fromJson(json['author']), json['content'],
+        DateTime.parse(json['creationDate']));
   }
 }

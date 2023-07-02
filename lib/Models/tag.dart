@@ -10,19 +10,11 @@ class Tag {
   });
 
   factory Tag.fromJson(Map<String, dynamic> json) {
-    return Tag(
-        id: json['id'],
-        name: json['name'],
-        color: json['color']
-    );
+    return Tag(id: json['id'], name: json['name'], color: json['color']);
   }
 
   toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'color': color
-    };
+    return {'id': id, 'name': name, 'color': color};
   }
 
   static Tag basic = Tag(id: 0, name: '', color: '');

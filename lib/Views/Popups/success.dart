@@ -16,36 +16,34 @@ class _SuccessPopupState extends State<SuccessPopup> {
       backgroundColor: Colors.transparent,
       body: Center(
         child: Container(
-          height: 200,
-          width: 200,
-          decoration: BoxDecoration(
-            color: Colors.white,
+            height: 200,
+            width: 200,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            )).blurred(
+            blur: 10,
+            blurColor: Colors.black.withOpacity(0.1),
             borderRadius: BorderRadius.circular(20),
-          )
-        ).blurred(
-          blur: 10,
-          blurColor: Colors.black.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(20),
-          overlay: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.check,
-                color: Colors.white54,
-                size: 100,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                AppLocalizations.of(context)?.success ?? 'Success',
-                style: const TextStyle(
+            overlay: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.check,
                   color: Colors.white54,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  size: 100,
                 ),
-              ),
-            ],
-          )
-        ),
+                const SizedBox(height: 20),
+                Text(
+                  AppLocalizations.of(context)?.success ?? 'Success',
+                  style: const TextStyle(
+                    color: Colors.white54,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            )),
       ),
     );
   }

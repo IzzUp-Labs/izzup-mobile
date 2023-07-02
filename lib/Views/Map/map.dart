@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:izzup/Services/location.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../../Models/globals.dart';
 import '../../Models/map_location.dart';
@@ -20,7 +19,7 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controller =
-  Completer<GoogleMapController>();
+      Completer<GoogleMapController>();
   final LocationService locationService = LocationService();
 
   String mapTheme = '';
@@ -51,12 +50,13 @@ class _MapScreenState extends State<MapScreen> {
       mapTheme = value;
     });
     LocationService.getLocation().then((value) => {
-      if (value != null && value != Globals.locationData) {
-        setState(() {
-          Globals.locationData = value;
-        })
-      }
-    });
+          if (value != null && value != Globals.locationData)
+            {
+              setState(() {
+                Globals.locationData = value;
+              })
+            }
+        });
     super.initState();
   }
 
@@ -70,12 +70,11 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void messageTransition(MapLocation currentShownCard) {
-    if(currentCard == currentShownCard.company.id) {
+    if (currentCard == currentShownCard.company.id) {
       setState(() {
         showMessages = !showMessages;
       });
-    }
-    else {
+    } else {
       setState(() {
         selectedLocation = currentShownCard;
         currentCard = currentShownCard.company.id;
@@ -84,7 +83,7 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  void getMarkers() async{
+  void getMarkers() async {
     Marker marker = Marker(
       markerId: const MarkerId("user"),
       position: Globals.locationData?.latLng ?? _kGooglePlex.target,
@@ -94,7 +93,7 @@ class _MapScreenState extends State<MapScreen> {
     setState(() {
       _markers.add(marker);
     });
-    for ( final location in _locations) {
+    for (final location in _locations) {
       Marker marker = Marker(
         markerId: MarkerId(location.company.id.toString()),
         position: LatLng(location.latitude, location.longitude),
@@ -110,7 +109,6 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,7 +117,9 @@ class _MapScreenState extends State<MapScreen> {
           GoogleMap(
             mapType: MapType.normal,
             myLocationButtonEnabled: false,
-            initialCameraPosition: CameraPosition(target: Globals.locationData?.latLng ?? _kGooglePlex.target, zoom: 16),
+            initialCameraPosition: CameraPosition(
+                target: Globals.locationData?.latLng ?? _kGooglePlex.target,
+                zoom: 16),
             onMapCreated: (GoogleMapController controller) {
               controller.setMapStyle(mapTheme);
               _controller.complete(controller);
@@ -147,8 +147,10 @@ class _MapScreenState extends State<MapScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         CachedNetworkImage(
-                          imageUrl: 'https://googleflutter.com/sample_image.jpg',
-                          placeholder: (context, url) => const CircularProgressIndicator(),
+                          imageUrl:
+                              'https://googleflutter.com/sample_image.jpg',
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(),
                           height: 60,
                           width: 60,
                         ),
@@ -161,12 +163,15 @@ class _MapScreenState extends State<MapScreen> {
                                 Text(
                                   selectedLocation.company.name,
                                   style: const TextStyle(
-                                      fontSize: 15, fontWeight: FontWeight.bold),
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  selectedLocation.company.jobOffers[0].jobTitle,
+                                  selectedLocation
+                                      .company.jobOffers[0].jobTitle,
                                   style: const TextStyle(
-                                    fontSize: 10,),
+                                    fontSize: 10,
+                                  ),
                                 ),
                               ],
                             ),
@@ -177,12 +182,17 @@ class _MapScreenState extends State<MapScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Image(image: AssetImage("assets/stars.png"), height: 30, width: 80,),
+                        const Image(
+                          image: AssetImage("assets/stars.png"),
+                          height: 30,
+                          width: 80,
+                        ),
                         TextButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => CompanyPage()),
+                                MaterialPageRoute(
+                                    builder: (context) => CompanyPage()),
                               );
                             },
                             style: ButtonStyle(
@@ -198,8 +208,7 @@ class _MapScreenState extends State<MapScreen> {
                                   fontSize: 20,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
-                            )
-                        )
+                            ))
                       ],
                     ),
                   ],

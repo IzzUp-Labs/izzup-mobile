@@ -18,7 +18,6 @@ class Place {
         json['place_id'],
         LatLng(json['geometry']['location']['lat'],
             json['geometry']['location']['lng']),
-        double.parse(json['rating'].toString())
-    );
+        double.parse(json['rating'].toString()));
   }
 }

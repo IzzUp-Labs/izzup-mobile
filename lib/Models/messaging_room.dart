@@ -9,11 +9,7 @@ class MessagingRoom {
   MessagingRoom(this.id, this.participant, this.createdBy, this.creationDate);
 
   factory MessagingRoom.fromJson(Map<String, dynamic> json) {
-    return MessagingRoom(
-      json['id'],
-      User.fromJson(json['participant']),
-      User.fromJson(json['createdBy']),
-      DateTime.parse(json['creationDate'])
-    );
+    return MessagingRoom(json['id'], User.fromJson(json['participant']),
+        User.fromJson(json['createdBy']), DateTime.parse(json['creationDate']));
   }
 }

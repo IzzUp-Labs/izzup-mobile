@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class RequestListPage extends StatefulWidget {
@@ -8,7 +7,18 @@ class RequestListPage extends StatefulWidget {
 
 class _RequestListPageState extends State<RequestListPage> {
   // List of requests
-  List<String> requests = ['Request 1', 'Request 2', 'Request 3', 'Request 4', 'Request 5', 'Request 6', 'Request 7', 'Request 8', 'Request 9', 'Request 10'];
+  List<String> requests = [
+    'Request 1',
+    'Request 2',
+    'Request 3',
+    'Request 4',
+    'Request 5',
+    'Request 6',
+    'Request 7',
+    'Request 8',
+    'Request 9',
+    'Request 10'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +57,9 @@ class _RequestListPageState extends State<RequestListPage> {
                         style: TextButton.styleFrom(
                           foregroundColor: Colors.red,
                         ),
-                        onPressed: () {/* ... */},
+                        onPressed: () {
+                          /* ... */
+                        },
                         child: const Text('Decline'),
                       ),
                       const SizedBox(width: 8),
@@ -55,7 +67,9 @@ class _RequestListPageState extends State<RequestListPage> {
                         style: TextButton.styleFrom(
                           foregroundColor: const Color(0xFF00B096),
                         ),
-                        onPressed: () {/* ... */},
+                        onPressed: () {
+                          /* ... */
+                        },
                         child: const Text('Accept'),
                       ),
                     ],

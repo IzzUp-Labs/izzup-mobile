@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:izzup/Services/colors.dart';
-
+import 'package:izzup/Views/Discussions/discussions_page.dart';
 import '../../Models/user.dart';
 import '../../Services/api.dart';
 
@@ -180,6 +180,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SafeArea(
                     child: Column(
                       children: [
+                        TextButton(
+                            onPressed: () {Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const DiscussionPage())
+                            );},
+                            child: const Text("test", style: TextStyle(color: Colors.black))),
                         _sectionText(
                             "assets/badge.png",
                             AppLocalizations.of(context)?.homeProfile_reviews ??

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
+import 'package:izzup/Services/api.dart';
+import '../../Models/company.dart';
 
 class CompanyPage extends StatefulWidget {
-  const CompanyPage({super.key});
+  Company company;
 
+  CompanyPage({super.key, required this.company});
   @override
   State<CompanyPage> createState() => _CompanyPageState();
 }
@@ -13,13 +17,16 @@ class _CompanyPageState extends State<CompanyPage>
   late TabController _tabController;
   int _currentTab = 0;
 
-  // Liste des offres d'emploi
-  List<String> jobOffers = [
-    'Job Offer 1',
-    'Job Offer 2',
-    'Job Offer 3',
-    'Job Offer 4',
-  ];
+  List<int> _appliedJobOffers = [];
+
+  _applyToJobOffer(int jobOfferId) async {
+    bool isApplied = await Api.applyToJobOffer(jobOfferId);
+    if(isApplied) {
+      setState(() {
+        _appliedJobOffers.add(jobOfferId);
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -28,6 +35,7 @@ class _CompanyPageState extends State<CompanyPage>
       setState(() {
         _currentTab = _tabController.index;
       });
+      print(_appliedJobOffers.contains(widget.company.jobOffers[0].id));
     });
     super.initState();
   }
@@ -43,7 +51,7 @@ class _CompanyPageState extends State<CompanyPage>
             Navigator.pop(context);
           },
         ),
-        title: const Text('Company Name'),
+        title: Text( widget.company.name ), // Nom de l'entreprise
       ),
       body: SafeArea(
         child: Column(
@@ -121,20 +129,52 @@ class _CompanyPageState extends State<CompanyPage>
                     ),
                   ),
                   ListView.builder(
-                    itemCount: jobOffers.length,
+                    itemCount: widget.company.jobOffers.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Card(
                         child: ListTile(
-                          title: Text(jobOffers[index]),
-                          trailing: ElevatedButton(
-                            onPressed: () {
-                              // Action lorsque le bouton est pressé
-                              // Ajoutez ici votre code pour la demande d'emploi
-                              print(
-                                  'Demande d\'emploi pour ${jobOffers[index]}');
-                            },
-                            child: const Text('Postuler'),
+                          title: Text(widget.company.jobOffers[index].jobTitle),
+                          subtitle: Text(widget.company.jobOffers[index].jobDescription),
+                          trailing: _appliedJobOffers.contains(widget.company.jobOffers[index].id) == false ? ElevatedButton(
+                            onPressed: () => showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: const Center(child: Text('Avant de postuler')),
+                              content: Text(
+                                  'Êtes vous surs de vouloir postuler à l\'offre d\'emploi ${widget.company.jobOffers[index].jobTitle} de '
+                                      '${DateFormat.Hm().format(widget.company.jobOffers[index].startingDate)}h ?',
+                                  textAlign: TextAlign.center,
+                              ),
+                              actionsAlignment: MainAxisAlignment.spaceEvenly,
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, 'Annuler'),
+                                  child: const Text('Annuler', style: TextStyle(color: Colors.red)),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    final id = widget.company.jobOffers[index].id;
+                                    if (id != null) {
+                                      _applyToJobOffer(id);
+                                    }
+                                    Navigator.pop(context, 'Postuler');
+                                  },
+                                  child: const Text('Postuler', style: TextStyle(color: Color(0xFF00B096))),
+                                ),
+                              ],
+                              elevation: 24.0,
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                            ),
                           ),
+                            child: const Text('Postuler'),
+                          ) :
+                              ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF00B096),
+                                  ),
+                                  child: const Text('Postulé'))
                         ),
                       );
                     },

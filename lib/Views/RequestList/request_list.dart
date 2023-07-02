@@ -1,24 +1,119 @@
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:socket_io_client/socket_io_client.dart';
+
+import '../../Models/job_offer_requests.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+
+import '../../Models/messaging_room.dart';
+import '../../Services/api.dart';
+import '../../Services/prefs.dart';
+import '../Chat/chat.dart';
 
 class RequestListPage extends StatefulWidget {
+  List<JobRequests> extraRequest;
+  RequestListPage({super.key, required this.extraRequest});
+
   @override
-  _RequestListPageState createState() => _RequestListPageState();
+  State<RequestListPage> createState() => _RequestListPageState();
 }
 
 class _RequestListPageState extends State<RequestListPage> {
-  // List of requests
-  List<String> requests = [
-    'Request 1',
-    'Request 2',
-    'Request 3',
-    'Request 4',
-    'Request 5',
-    'Request 6',
-    'Request 7',
-    'Request 8',
-    'Request 9',
-    'Request 10'
-  ];
+  List<JobRequests> requests = [];
+
+  late IO.Socket socket;
+
+  String authToken = "";
+
+  List<MessagingRoom> _messageRooms = [];
+
+  _getAllRooms() async {
+    socket.emit("request_all_rooms", {
+      "userId": JwtDecoder.decode(authToken)["id"]
+    });
+  }
+
+  _createChat(int participantId) async {
+    socket.emit("create_room", {{
+      "createdBy": JwtDecoder.decode(authToken)["id"],
+      "participant": participantId
+    }});
+  }
+
+
+  _connectToWebsocket() async {
+    socket.connect();
+    socket.onConnect((data) => print(data));
+    socket.onConnectError((data) => print(data));
+    _getAllRooms();
+    socket.on('message', (data) => print(data));
+    socket.on('room_created', (data) => {
+      _getAllRooms()
+    });
+    socket.on('receive_all_rooms', (data) => {
+      setState(() {
+        _messageRooms = [];
+        for (var room in data) {
+          _messageRooms.add(MessagingRoom.fromJson(room));
+        }
+      })
+    });
+  }
+
+  _createSocket() async {
+    final authToken = await Prefs.getString('authToken');
+    setState(() {
+      this.authToken = authToken!;
+    });
+    socket = io('https://izzup-api-production.up.railway.app/messaging',
+        OptionBuilder()
+            .setTransports(['websocket']) // for Flutter or Dart VM
+            .setExtraHeaders({'Authorization': 'Bearer $authToken'}) // optional
+            .disableAutoConnect()  // disable auto-connection
+            .build()
+    );
+
+    _connectToWebsocket();
+  }
+
+  _checkIfRoomAllreadyCreated(int participantId) {
+    for (var room in _messageRooms) {
+      if (room.participant.id == participantId) {
+        return room;
+      }
+    }
+    return null;
+  }
+
+  Future<bool> _acceptRequest(int requestId) async {
+    final validation = await Api.acceptRequest(requestId);
+    if(validation) {
+      setState(() {
+        for (var request in requests) {
+          if (request.id == requestId) {
+            request.status = "ACCEPTED";
+          }
+        }
+      });
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  void initState() {
+    _createSocket();
+    setState(() {
+      requests = widget.extraRequest;
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    socket.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,18 +136,92 @@ class _RequestListPageState extends State<RequestListPage> {
         child: ListView.builder(
           itemCount: requests.length,
           itemBuilder: (context, index) {
-            return Card(
+            return Container(
+              height: 150,
+              padding: const EdgeInsets.all(15),
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              decoration: const BoxDecoration(
+                color: Color(0xFF00B096),
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: <Color>[
+                    Color(0xFF00B096),
+                    Color(0xFF008073),
+                  ],
+                ),
+              ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   ListTile(
-                    leading: const Icon(Icons.album),
-                    title: Text(requests[index]),
-                    subtitle: Text('${requests[index]} description'),
+                    leading: requests[index].extra.user.photo != null
+                        ? CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                requests[index].extra.user.photo!),
+                          )
+                        : const Image(image: AssetImage("assets/blank_profile_picture.png")),
+                    title: Text(
+                        '${requests[index].extra.user.firstName} ${requests[index].extra.user.lastName}',
+                        style: const TextStyle(
+                            color: Colors.white)
+                    ),
+                    subtitle: Text(
+                        requests[index].extra.address,
+                    ),
+                    trailing: requests[index].status == "PENDING"
+                        ? const Icon(
+                      Icons.timer_outlined,
+                      color: Colors.yellow,
+                    )
+                        : requests[index].status == "ACCEPTED"
+                        ? const Icon(
+                      Icons.check_circle_outline,
+                      color: Colors.green,
+                    )
+                        : const Icon(
+                      Icons.cancel_outlined,
+                      color: Colors.red,
+                    ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
+                      IconButton(
+                        icon: const Icon(Icons.message, color: Color(0xFFA5A5A5)),
+                        onPressed: () {
+                          final requestsUserId = requests[index].extra.user.id;
+                          if (requestsUserId != null) {
+                            final roomCheck = _checkIfRoomAllreadyCreated(requestsUserId);
+                            if (roomCheck != null) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatPage(
+                                  room : roomCheck,
+                                  authToken: authToken,
+                                  socket: socket,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              _createChat(requestsUserId);
+                              final roomCheck = _checkIfRoomAllreadyCreated(requestsUserId);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatPage(
+                                    room : roomCheck,
+                                    authToken: authToken,
+                                    socket: socket,
+                                  ),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                      const Spacer(),
                       TextButton(
                         style: TextButton.styleFrom(
                           foregroundColor: Colors.red,
@@ -63,15 +232,28 @@ class _RequestListPageState extends State<RequestListPage> {
                         child: const Text('Decline'),
                       ),
                       const SizedBox(width: 8),
+                      requests[index].status != "ACCEPTED"
+                      ?
                       TextButton(
                         style: TextButton.styleFrom(
                           foregroundColor: const Color(0xFF00B096),
                         ),
                         onPressed: () {
-                          /* ... */
+                          final requestId = requests[index].id;
+                          if(requestId != null) {
+                            _acceptRequest(requestId);
+                          }
                         },
                         child: const Text('Accept'),
-                      ),
+                      )
+                          :
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: const Color(0xFF00B096),
+                        ),
+                        onPressed: () {},
+                        child: const Text('Accepted'),
+                      )
                     ],
                   ),
                 ],

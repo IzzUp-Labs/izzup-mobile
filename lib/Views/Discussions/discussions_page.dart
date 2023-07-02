@@ -50,8 +50,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
     setState(() {
       this.authToken = authToken!;
     });
-    socket = io(
-        'https://izzup-api-vzc7bhefca-od.a.run.app/messaging',
+    socket = io('https://izzup-api-production.up.railway.app/messaging',
         OptionBuilder()
             .setTransports(['websocket']) // for Flutter or Dart VM
             .setExtraHeaders({'Authorization': 'Bearer $authToken'}) // optional

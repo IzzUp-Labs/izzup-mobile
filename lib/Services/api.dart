@@ -12,6 +12,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import '../Models/company.dart';
 import '../Models/extra.dart';
 import '../Models/job_offer.dart';
+import '../Models/job_offer_requests.dart';
 import '../Models/map_location.dart';
 import '../Models/place.dart';
 import '../Models/tag.dart';
@@ -308,4 +309,94 @@ class Api {
       client.close();
     }
   }
+
+  static Future<Company?> getCompanyById(int id) async {
+    final authToken = await Prefs.getString('authToken');
+    if (authToken == null) return null;
+    var client = http.Client();
+    try {
+      var response = await client.get(_getUri('company/$id'),
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer $authToken',
+        },
+      );
+      Company company = Company.fromJson(jsonDecode(response.body));
+      return company;
+    } catch (e) {
+      print(e);
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<bool> applyToJobOffer(int jobOfferId) async {
+    final authToken = await Prefs.getString('authToken');
+    if (authToken == null) false;
+    var client = http.Client();
+    try {
+      var response = await client.post(_getUri('extra-job-request/$jobOfferId'),
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer $authToken',
+        },
+      );
+      if (response.statusCode != 201) return false;
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<List<JobOfferRequests>?> getMyJobOffers() async {
+    final authToken = await Prefs.getString('authToken');
+    if (authToken == null) return null;
+    var client = http.Client();
+    try {
+      var response = await client.get(_getUri("employer/my/jobOffers/requests"),
+        headers: {
+          'Authorization': 'Bearer $authToken',
+        },
+      );
+      List<JobOfferRequests> jobOffers = [];
+      for (var jobOffer in jsonDecode(response.body)) {
+        jobOffers.add(JobOfferRequests.fromJson(jobOffer));
+      }
+      for (var jobOffer in jobOffers) {
+        for (var request in jobOffer.requests) {
+        }
+      }
+      return jobOffers;
+    } catch (e) {
+      print(e);
+      return [];
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<bool> acceptRequest(int requestId) async {
+    final authToken = await Prefs.getString('authToken');
+    if (authToken == null) return false;
+    var client = http.Client();
+    try {
+      var response = await client.patch(_getUri("employer/accept/request/$requestId"),
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer $authToken',
+        },
+      );
+      if (response.statusCode != 200) return false;
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    } finally {
+      client.close();
+    }
+  }
+
 }

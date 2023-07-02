@@ -191,8 +191,7 @@ class _MapScreenState extends State<MapScreen> {
                             onPressed: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                    builder: (context) => CompanyPage()),
+                                MaterialPageRoute(builder: (context) => CompanyPage( company: selectedLocation.company,)),
                               );
                             },
                             style: ButtonStyle(

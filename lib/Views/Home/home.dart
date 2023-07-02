@@ -5,6 +5,8 @@ import 'package:izzup/Views/Map/map.dart';
 import 'package:izzup/Views/Profile/profile.dart';
 
 import '../HomeScreen/home_screen.dart';
+import '../JobOfferList/job_offer_list.dart';
+import '../RequestList/request_list.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -41,7 +43,7 @@ enum _CurrentPage {
       case _CurrentPage.map:
         return const MapScreen();
       case _CurrentPage.posts:
-        return _CurrentPage.home.icon(_CurrentPage.posts);
+        return const JobOfferListPage();
       case _CurrentPage.profile:
         return const ProfileScreen();
       default:
@@ -87,7 +89,7 @@ class _HomeState extends State<Home> {
     listScreens = [
       const HomeScreen(),
       const MapScreen(),
-      _CurrentPage.home.icon(_CurrentPage.posts),
+      const JobOfferListPage(),
       const ProfileScreen()
     ];
     super.initState();

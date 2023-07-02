@@ -12,6 +12,7 @@ import 'package:izzup/Views/Discussions/discussions_page.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../../Models/user.dart';
 import '../../Services/api.dart';
+import '../Tag/tagpage.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -241,11 +242,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               MaterialPageRoute(builder: (context) => const DiscussionPage())
                             );},
                             child: const Text("test", style: TextStyle(color: Colors.black))),
-                        _sectionText(
-                            "assets/badge.png",
-                            AppLocalizations.of(context)?.homeProfile_reviews ??
-                                "Reviews",
-                            "assets/arrow_right.png"),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const TagsScreen()));
+                          },
+                          child: _sectionText(
+                              "assets/badge.png",
+                              "Tags",
+                              "assets/arrow_right.png"),
+                        ),
                         _sectionText(
                             "assets/badge.png",
                             AppLocalizations.of(context)?.homeProfile_aboutMe ??

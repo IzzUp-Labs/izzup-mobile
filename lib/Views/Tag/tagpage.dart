@@ -63,27 +63,32 @@ class _TagsScreenState extends State<TagsScreen> {
                                 width: 70,
                               ),
                             ),
-                            const Expanded(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(right: 5),
-                                    child: Text(
-                                      'Skip',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: Color(0xFFA5A5A5),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(right: 5),
+                                      child: Text(
+                                        'Skip',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: Color(0xFFA5A5A5),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Image(
-                                    image: AssetImage("assets/arrow_right.png"),
-                                    height: 15,
-                                  ),
-                                ],
+                                    Image(
+                                      image: AssetImage("assets/arrow_right.png"),
+                                      height: 15,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],

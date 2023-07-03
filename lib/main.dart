@@ -22,6 +22,10 @@ Future<void> main() async {
     await Globals.initLocation();
   }
 
+  if (isLoggedIn) {
+    await Globals.loadProfile();
+  }
+
   runApp(IzzUp(
     hasSeenIntro: hasSeenIntro,
     isLoggedIn: isLoggedIn,
@@ -52,6 +56,9 @@ class IzzUp extends StatefulWidget {
 }
 
 class _IzzUpState extends State<IzzUp> with WidgetsBindingObserver {
+
+
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {

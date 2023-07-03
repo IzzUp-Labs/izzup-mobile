@@ -21,17 +21,22 @@ import 'string_to_bool.dart';
 
 class Api {
   static const _baseRoute =
-      'https://izzup-api-production.up.railway.app/api/v1/';
+      'https://izzup-api-vzc7bhefca-od.a.run.app/';
+  static const _apiRoute = "${_baseRoute}api/v1/";
 
-  static _getUri(String route) {
-    return Uri.parse(_baseRoute + route);
+  static getUri(String route, [forApi = true]) {
+    return Uri.parse(forApi ? _apiRoute + route : _baseRoute + route);
+  }
+
+  static getUriString(String route) {
+    return 'https://izzup-api-vzc7bhefca-od.a.run.app/$route';
   }
 
   static Future<bool?> authCheck(String email) async {
     var client = http.Client();
     try {
       var response =
-          await client.post(_getUri('auth/check'), body: {'email': email});
+          await client.post(getUri('auth/check'), body: {'email': email});
       return response.body.toBoolean();
     } finally {
       client.close();
@@ -41,7 +46,7 @@ class Api {
   static Future<int> _registerExtra(Extra extra) async {
     var client = http.Client();
     try {
-      var response = await client.post(_getUri('auth/register/extra'), body: {
+      var response = await client.post(getUri('auth/register/extra'), body: {
         "email": extra.email,
         "password": extra.password,
         "last_name": extra.lastName,
@@ -59,7 +64,7 @@ class Api {
     var client = http.Client();
     print(json.encode(employer.toJson()));
     try {
-      var response = await client.post(_getUri('auth/register/employer'),
+      var response = await client.post(getUri('auth/register/employer'),
           headers: {"Content-Type": "application/json"},
           body: json.encode(employer.toJson()));
       return response.statusCode;
@@ -86,7 +91,7 @@ class Api {
   static Future<Map<String, dynamic>> _login(Extra extra) async {
     var client = http.Client();
     try {
-      var response = await client.post(_getUri('auth/login'),
+      var response = await client.post(getUri('auth/login'),
           body: {"email": extra.email, "password": extra.password});
       return jsonDecode(response.body);
     } finally {
@@ -116,7 +121,7 @@ class Api {
     var client = http.Client();
     try {
       var response = await client.get(
-        _getUri('homepage-card'),
+        getUri('homepage-card'),
         headers: {
           "Content-Type": "application/json",
           'Authorization': 'Bearer $authToken',
@@ -136,7 +141,7 @@ class Api {
     var client = http.Client();
     try {
       var response =
-          await client.get(_getUri('google-places/search/$name $address'));
+          await client.get(getUri('google-places/search/$name $address'));
       final jsonBody = jsonDecode(response.body);
       if (jsonBody.length == 0) {
         return null;
@@ -151,7 +156,7 @@ class Api {
     var client = http.Client();
     try {
       var response =
-          await client.get(_getUri('google-places/details/$placeId'));
+          await client.get(getUri('google-places/details/$placeId'));
       final jsonBody = jsonDecode(response.body);
       if (jsonBody['result'] == null) {
         return null;
@@ -185,7 +190,7 @@ class Api {
 
   static Future<bool> uploadProfilePhoto(String imagePath) async {
     var request =
-        http.MultipartRequest("POST", _getUri('user/upload/photo'));
+        http.MultipartRequest("POST", getUri('user/upload/photo'));
     final token = await Prefs.getString('authToken');
     request.files.add(
       await http.MultipartFile.fromPath(
@@ -201,7 +206,7 @@ class Api {
 
   static Future<bool> uploadIdPhoto(String imagePath) async {
     var request =
-        http.MultipartRequest("POST", _getUri('user/upload/id_photo'));
+        http.MultipartRequest("POST", getUri('user/upload/id_photo'));
     final token = await Prefs.getString('authToken');
     request.files.add(
       await http.MultipartFile.fromPath(
@@ -221,7 +226,7 @@ class Api {
     final id = JwtDecoder.decode(authToken)['id'];
     var client = http.Client();
     try {
-      var response = await client.post(_getUri('location/job-offers-in-range'),
+      var response = await client.post(getUri('location/job-offers-in-range'),
           headers: {
             "Content-Type": "application/json",
             'Authorization': 'Bearer $authToken',
@@ -247,7 +252,7 @@ class Api {
     final id = JwtDecoder.decode(authToken)['id'];
     var client = http.Client();
     try {
-      var response = await client.get(_getUri('user/$id'), headers: {
+      var response = await client.get(getUri('user/$id'), headers: {
         'Authorization': 'Bearer $authToken',
       });
       final Map<String, dynamic> jsonBody = jsonDecode(response.body);
@@ -262,7 +267,7 @@ class Api {
     if (authToken == null) return null;
     var client = http.Client();
     try {
-      var response = await client.get(_getUri('employer/my/company'), headers: {
+      var response = await client.get(getUri('employer/my/company'), headers: {
         'Authorization': 'Bearer $authToken',
       });
       if (response.statusCode != 200) return null;
@@ -282,7 +287,7 @@ class Api {
     var client = http.Client();
     try {
       var response = await client.post(
-          _getUri('employer/$employerId/job-offer/$companyId'),
+          getUri('employer/$employerId/job-offer/$companyId'),
           headers: {
             'Authorization': 'Bearer $authToken',
             "Content-Type": "application/json"
@@ -298,7 +303,7 @@ class Api {
   static Future<List<Tag>> getTags() async {
     var client = http.Client();
     try {
-      var response = await client.get(_getUri('tag'));
+      var response = await client.get(getUri('tag'));
       List<Tag> tags = [];
       for (var tag in jsonDecode(response.body)) {
         tags.add(Tag.fromJson(tag));
@@ -314,7 +319,7 @@ class Api {
     if (authToken == null) return;
     var client = http.Client();
     try {
-      var response = await client.patch(_getUri('extra/add/tags'),
+      var response = await client.patch(getUri('extra/add/tags'),
           headers: {
             "Content-Type": "application/json",
             'Authorization': 'Bearer $authToken',
@@ -332,7 +337,7 @@ class Api {
     if (authToken == null) return null;
     var client = http.Client();
     try {
-      var response = await client.get(_getUri('company/$id'),
+      var response = await client.get(getUri('company/$id'),
         headers: {
           "Content-Type": "application/json",
           'Authorization': 'Bearer $authToken',
@@ -352,7 +357,7 @@ class Api {
     if (authToken == null) false;
     var client = http.Client();
     try {
-      var response = await client.post(_getUri('extra-job-request/$jobOfferId'),
+      var response = await client.post(getUri('extra-job-request/$jobOfferId'),
         headers: {
           "Content-Type": "application/json",
           'Authorization': 'Bearer $authToken',
@@ -373,7 +378,7 @@ class Api {
     if (authToken == null) return null;
     var client = http.Client();
     try {
-      var response = await client.get(_getUri("employer/my/jobOffers/requests"),
+      var response = await client.get(getUri("employer/my/jobOffers/requests"),
         headers: {
           'Authorization': 'Bearer $authToken',
         },
@@ -400,7 +405,7 @@ class Api {
     if (authToken == null) return false;
     var client = http.Client();
     try {
-      var response = await client.patch(_getUri("employer/accept/request/$requestId"),
+      var response = await client.patch(getUri("employer/accept/request/$requestId"),
         headers: {
           "Content-Type": "application/json",
           'Authorization': 'Bearer $authToken',

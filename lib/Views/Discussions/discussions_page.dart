@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:izzup/Services/api.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:socket_io_client/socket_io_client.dart';
@@ -51,7 +52,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
     setState(() {
       this.authToken = authToken!;
     });
-    socket = io.io('https://izzup-api-production.up.railway.app/messaging',
+    socket = io.io(Api.getUri('messaging', false),
         OptionBuilder()
             .setTransports(['websocket']) // for Flutter or Dart VM
             .setExtraHeaders({'Authorization': 'Bearer $authToken'}) // optional

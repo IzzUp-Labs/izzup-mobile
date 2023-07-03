@@ -93,7 +93,7 @@ class _RequestListPageState extends State<RequestListPage> {
     setState(() {
       this.authToken = authToken!;
     });
-    socket = io.io('https://izzup-api-production.up.railway.app/messaging',
+    socket = io.io(Api.getUriString('messaging'),
         OptionBuilder()
             .setTransports(['websocket']) // for Flutter or Dart VM
             .setExtraHeaders({'Authorization': 'Bearer $authToken'}) // optional

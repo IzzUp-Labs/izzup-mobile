@@ -115,12 +115,12 @@ class _AddJobOfferState extends State<AddJobOffer> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        bottom: false,
-        child: Stack(
-          children: [
-            Scaffold(
-              body: SingleChildScrollView(
+    return Scaffold(
+      body: SafeArea(
+          bottom: false,
+          child: Stack(
+            children: [
+              SingleChildScrollView(
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -145,7 +145,7 @@ class _AddJobOfferState extends State<AddJobOffer> {
                       ),
                       Padding(
                         padding:
-                            const EdgeInsets.only(left: 20, right: 20, top: 20),
+                        const EdgeInsets.only(left: 20, right: 20, top: 20),
                         child: TextField(
                           controller: _titleController,
                           decoration: InputDecoration(
@@ -157,14 +157,14 @@ class _AddJobOfferState extends State<AddJobOffer> {
                             ),
                             border: const OutlineInputBorder(),
                             labelText: AppLocalizations.of(context)
-                                    ?.createJobOffer_jobTitle ??
+                                ?.createJobOffer_jobTitle ??
                                 'Job title',
                             labelStyle: const TextStyle(color: Colors.grey),
                             errorText: _isTitleValid
                                 ? null
                                 : AppLocalizations.of(context)
-                                        ?.createJobOffer_invalidTitle ??
-                                    'Invalid title',
+                                ?.createJobOffer_invalidTitle ??
+                                'Invalid title',
                           ),
                         ),
                       ),
@@ -182,26 +182,26 @@ class _AddJobOfferState extends State<AddJobOffer> {
                                   errorMaxLines: 3,
                                   focusedBorder: const OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Colors.grey)),
+                                      BorderSide(color: Colors.grey)),
                                   prefixIcon: const Icon(
                                     Icons.euro,
                                     color: Colors.grey,
                                   ),
                                   border: const OutlineInputBorder(),
                                   labelText: AppLocalizations.of(context)
-                                          ?.createJobOffer_hourlyRate ??
+                                      ?.createJobOffer_hourlyRate ??
                                       'Hourly rate',
                                   labelStyle:
-                                      const TextStyle(color: Colors.grey),
+                                  const TextStyle(color: Colors.grey),
                                   errorText: _isHourlyRateValid
                                       ? _hourlyRateisZero
-                                          ? AppLocalizations.of(context)
-                                                  ?.createJobOffer_hourlyRateCantBeZero ??
-                                              "Hourly rate can't be zero"
-                                          : null
+                                      ? AppLocalizations.of(context)
+                                      ?.createJobOffer_hourlyRateCantBeZero ??
+                                      "Hourly rate can't be zero"
+                                      : null
                                       : AppLocalizations.of(context)
-                                              ?.createJobOffer_invalidHourlyRate ??
-                                          'Invalid hourly rate',
+                                      ?.createJobOffer_invalidHourlyRate ??
+                                      'Invalid hourly rate',
                                 ),
                               ),
                             ),
@@ -215,26 +215,26 @@ class _AddJobOfferState extends State<AddJobOffer> {
                                   errorMaxLines: 3,
                                   focusedBorder: const OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Colors.grey)),
+                                      BorderSide(color: Colors.grey)),
                                   prefixIcon: const Icon(
                                     Icons.person_4,
                                     color: Colors.grey,
                                   ),
                                   border: const OutlineInputBorder(),
                                   labelText: AppLocalizations.of(context)
-                                          ?.createJobOffer_numberOfSpots ??
+                                      ?.createJobOffer_numberOfSpots ??
                                       'Number of spots',
                                   labelStyle:
-                                      const TextStyle(color: Colors.grey),
+                                  const TextStyle(color: Colors.grey),
                                   errorText: _isNumberOfSpotsValid
                                       ? _spotsIsZero
-                                          ? AppLocalizations.of(context)
-                                                  ?.createJobOffer_spotsCantBeZero ??
-                                              "Spots can't be zero"
-                                          : null
+                                      ? AppLocalizations.of(context)
+                                      ?.createJobOffer_spotsCantBeZero ??
+                                      "Spots can't be zero"
+                                      : null
                                       : AppLocalizations.of(context)
-                                              ?.createJobOffer_invalidNumberOfSpots ??
-                                          'Invalid number of spots',
+                                      ?.createJobOffer_invalidNumberOfSpots ??
+                                      'Invalid number of spots',
                                 ),
                               ),
                             ),
@@ -250,49 +250,49 @@ class _AddJobOfferState extends State<AddJobOffer> {
                               width: MediaQuery.of(context).size.width / 2 - 30,
                               child: TextfieldDateAndTimePicker(
                                 cupertinoDatePickerBackgroundColor:
-                                    AppColors.accent,
+                                null,
                                 cupertinoDatePickerMaximumDate:
-                                    DateTime(DateTime.now().year, 12, 31),
+                                DateTime(DateTime.now().year, 12, 31),
                                 cupertinoDatePickerMaximumYear:
-                                    DateTime.now().year + 1,
+                                DateTime.now().year + 1,
                                 cupertinoDatePickerMinimumYear:
-                                    DateTime.now().year,
+                                DateTime.now().year,
                                 cupertinoDatePickerMinimumDate:
-                                    DateTime(DateTime.now().year),
+                                DateTime(DateTime.now().year),
                                 cupertinoDateInitialDateTime: DateTime.now(),
                                 materialDatePickerFirstDate:
-                                    DateTime(DateTime.now().year),
+                                DateTime(DateTime.now().year),
                                 materialDatePickerInitialDate: DateTime.now(),
                                 materialDatePickerLastDate:
-                                    DateTime(DateTime.now().year, 12, 31),
+                                DateTime(DateTime.now().year, 12, 31),
                                 preferredDateFormat: DateFormat('dd/MM'),
                                 materialTimePickerUse24hrFormat: true,
-                                cupertinoTimePickerMinuteInterval: 10,
+                                cupertinoTimePickerMinuteInterval: 1,
                                 cupertinoTimePickerUse24hFormat: true,
                                 textfieldDateAndTimePickerController:
-                                    _startTimeController,
+                                _startTimeController,
                                 textCapitalization:
-                                    TextCapitalization.sentences,
+                                TextCapitalization.sentences,
                                 decoration: InputDecoration(
                                   errorMaxLines: 3,
                                   focusedBorder: const OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Colors.grey)),
+                                      BorderSide(color: Colors.grey)),
                                   prefixIcon: const Icon(
                                     Icons.access_time,
                                     color: Colors.grey,
                                   ),
                                   border: const OutlineInputBorder(),
                                   labelText: AppLocalizations.of(context)
-                                          ?.createJobOffer_startTime ??
+                                      ?.createJobOffer_startTime ??
                                       'Start time',
                                   labelStyle:
-                                      const TextStyle(color: Colors.grey),
+                                  const TextStyle(color: Colors.grey),
                                   errorText: _isStartTimeValid
                                       ? null
                                       : AppLocalizations.of(context)
-                                              ?.createJobOffer_invalidStartTime ??
-                                          'Invalid start time',
+                                      ?.createJobOffer_invalidStartTime ??
+                                      'Invalid start time',
                                 ),
                                 materialInitialTime: TimeOfDay.now(),
                                 materialDatePickerBuilder: (context, child) {
@@ -304,7 +304,7 @@ class _AddJobOfferState extends State<AddJobOffer> {
                                         onPrimary: Colors.white,
                                         // header text color
                                         onSurface:
-                                            AppColors.accent, // body text color
+                                        AppColors.accent, // body text color
                                       ),
                                       textButtonTheme: TextButtonThemeData(
                                         style: TextButton.styleFrom(
@@ -325,7 +325,7 @@ class _AddJobOfferState extends State<AddJobOffer> {
                                         onPrimary: Colors.white,
                                         // header text color
                                         onSurface:
-                                            AppColors.accent, // body text color
+                                        AppColors.accent, // body text color
                                       ),
                                       textButtonTheme: TextButtonThemeData(
                                         style: TextButton.styleFrom(
@@ -349,22 +349,22 @@ class _AddJobOfferState extends State<AddJobOffer> {
                                   errorMaxLines: 3,
                                   focusedBorder: const OutlineInputBorder(
                                       borderSide:
-                                          BorderSide(color: Colors.grey)),
+                                      BorderSide(color: Colors.grey)),
                                   prefixIcon: const Icon(
                                     Icons.timelapse,
                                     color: Colors.grey,
                                   ),
                                   border: const OutlineInputBorder(),
                                   labelText: AppLocalizations.of(context)
-                                          ?.createJobOffer_hoursWorked ??
+                                      ?.createJobOffer_hoursWorked ??
                                       'Hours worked',
                                   labelStyle:
-                                      const TextStyle(color: Colors.grey),
+                                  const TextStyle(color: Colors.grey),
                                   errorText: _isHoursWorkedValid
                                       ? null
                                       : AppLocalizations.of(context)
-                                              ?.createJobOffer_invalidHoursWorked ??
-                                          'Invalid number of hours worked',
+                                      ?.createJobOffer_invalidHoursWorked ??
+                                      'Invalid number of hours worked',
                                 ),
                               ),
                             ),
@@ -388,14 +388,14 @@ class _AddJobOfferState extends State<AddJobOffer> {
                             ),
                             border: const OutlineInputBorder(),
                             labelText: AppLocalizations.of(context)
-                                    ?.createJobOffer_description ??
+                                ?.createJobOffer_description ??
                                 'Description',
                             labelStyle: const TextStyle(color: Colors.grey),
                             errorText: _isDescriptionValid
                                 ? null
                                 : AppLocalizations.of(context)
-                                        ?.createJobOffer_invalidDescription ??
-                                    'Invalid dscription',
+                                ?.createJobOffer_invalidDescription ??
+                                'Invalid dscription',
                           ),
                         ),
                       ),
@@ -440,12 +440,12 @@ class _AddJobOfferState extends State<AddJobOffer> {
                             minimumSize: const Size(222, 56),
                             shape: RoundedRectangleBorder(
                               borderRadius:
-                                  BorderRadius.circular(30), // <-- Radius
+                              BorderRadius.circular(30), // <-- Radius
                             ),
                           ),
                           child: Text(
                             AppLocalizations.of(context)
-                                    ?.createJobOffer_create ??
+                                ?.createJobOffer_create ??
                                 "Create",
                             style: const TextStyle(
                                 fontSize: 15, fontWeight: FontWeight.w600),
@@ -459,13 +459,13 @@ class _AddJobOfferState extends State<AddJobOffer> {
                       const SizedBox(height: 75)
                     ]),
               ),
-            ),
-            const Column(
-              children: [Spacer(), Wave()],
-            ),
-            if (_isLoading) const ClassyLoader(),
-            if (_success) const SuccessPopup()
-          ],
-        ));
+              const Column(
+                children: [Spacer(), Wave()],
+              ),
+              if (_isLoading) const ClassyLoader(),
+              if (_success) const SuccessPopup()
+            ],
+          )),
+    );
   }
 }

@@ -54,13 +54,16 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
                 );
               } else {
                 if (jobOfferRequests.isEmpty) {
-                  return Center(
-                    child: Text(
-                      AppLocalizations.of(context)?.jobOffersList_noJobsOffersYet ?? "No job offers yet 😢",
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height / 3),
+                    child: Center(
+                      child: Text(
+                        AppLocalizations.of(context)?.jobOffersList_noJobsOffersYet ?? "No job offers yet 😢",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   );

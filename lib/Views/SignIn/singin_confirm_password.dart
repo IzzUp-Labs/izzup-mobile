@@ -33,6 +33,7 @@ class _SignInConfirmPasswordState extends State<SignInConfirmPassword> {
       _isLoading = false;
     });
     if (loginSuccess) {
+      await Globals.loadProfile();
       if (context.mounted) context.navigateWithoutBack(const Home());
     } else {
       setState(() {

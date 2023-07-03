@@ -11,6 +11,7 @@ import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Views/Discussions/discussions_page.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import '../../Models/scale.dart';
 import '../../Models/user.dart';
 import '../../Services/api.dart';
 import '../Tag/tagpage.dart';
@@ -40,19 +41,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future pickImage(ImageSource source) async {
     try {
+      if (context.mounted) Navigator.of(context).pop();
       final image = await ImagePicker().pickImage(source: source);
       if(image == null) return;
       final imageTemp = File(image.path);
       setState(() => this.image = imageTemp);
       print(await Api.uploadProfilePhoto(imageTemp.path));
       await _loadUser();
-      if (context.mounted) Navigator.of(context).pop();
     } on PlatformException catch(e) {
       if (kDebugMode) print('Failed to pick image: $e');
     }
   }
 
-  Widget _sectionText(String assetName, String text, String arrowAssetName, VoidCallback onTap) {
+  Widget _sectionText(String text, String arrowAssetName, VoidCallback onTap, {String? assetName, IconData? icon}) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -62,10 +63,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Image(
-                  image: AssetImage(assetName),
-                  height: 30,
-                ),
+                if (assetName != null)
+                  Image(
+                    image: AssetImage(assetName),
+                    height: 30,
+                  ),
+                if (icon != null)
+                  Icon(
+                    icon,
+                    size: 30,
+                    color: AppColors.accent,
+                  ),
                 Padding(
                   padding: const EdgeInsets.only(left: 5, right: 5),
                   child: Center(
@@ -75,12 +83,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
                       ),
+                      textScaleFactor: ScaleSize.textScaleFactor(context),
                     ),
                   ),
                 ),
                 Image(
                   image: AssetImage(arrowAssetName),
                   height: 20,
+                  color: AppColors.accent,
                 ),
               ],
             ),
@@ -138,158 +148,161 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         Scaffold(
           backgroundColor: Colors.transparent,
-          body: SingleChildScrollView(
-            child: Container(
-              color: Colors.white,
-              child: Column(
-                children: [
-                  Stack(
-                    children: [
-                      ClipPath(
-                        clipper: HeaderClipper(),
-                        child: CustomPaint(
-                          size: Size.fromHeight(
-                              MediaQuery.of(context).size.height / 2.5),
-                          painter: HeaderPainter(color: AppColors.accent),
-                        ),
+          body: Container(
+            color: Colors.white,
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    ClipPath(
+                      clipper: HeaderClipper(),
+                      child: CustomPaint(
+                        size: Size.fromHeight(
+                            MediaQuery.of(context).size.height / 3),
+                        painter: HeaderPainter(color: AppColors.accent),
                       ),
-                      SafeArea(
-                        child: Column(
-                          children: [
-                            const Padding(
-                                padding: EdgeInsets.only(
-                                    top: 20, left: 20, right: 20),
-                                child: Row()),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height / 2.7,
-                              child: Column(
-                                children: [
-                                  const Spacer(),
-                                  Text(
-                                    "${user?.firstName} ${user?.lastName}",
-                                    style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 24),
+                    ),
+                    SafeArea(
+                      child: Column(
+                        children: [
+                          const Padding(
+                              padding: EdgeInsets.only(
+                                  top: 20, left: 20, right: 20),
+                              child: Row()),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height / 3.5,
+                            child: Column(
+                              children: [
+                                const Spacer(),
+                                Text(
+                                  "${user?.firstName} ${user?.lastName}",
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 24
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        showFloatingModalBottomSheet(
-                                          context: context,
-                                          builder: (context) => Material(
-                                              child: SafeArea(
-                                                top: false,
-                                                child: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: <Widget>[
-                                                    ListTile(
-                                                      title: Text(AppLocalizations.of(context)?.homeProfile_camera ?? 'Camera'),
-                                                      leading: const Icon(Icons.camera),
-                                                      onTap: () => pickImage(ImageSource.camera),
+                                  textScaleFactor: ScaleSize.textScaleFactor(context),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showFloatingModalBottomSheet(
+                                        context: context,
+                                        builder: (context) => Material(
+                                            child: SafeArea(
+                                              top: false,
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  ListTile(
+                                                    title: Text(
+                                                      AppLocalizations.of(context)?.homeProfile_camera ?? 'Camera',
+                                                      textScaleFactor: ScaleSize.textScaleFactor(context),
                                                     ),
-                                                    ListTile(
-                                                      title: Text(AppLocalizations.of(context)?.homeProfile_gallery ?? 'Gallery'),
-                                                      leading: const Icon(Icons.photo),
-                                                      onTap: () => pickImage(ImageSource.gallery),
-                                                    )
-                                                  ],
-                                                ),
-                                              )
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
-                                        width:
-                                        MediaQuery.of(context).size.width / 3,
-                                        height:
-                                        MediaQuery.of(context).size.width / 3,
-                                        decoration: const BoxDecoration(
-                                            color: Colors.white38,
-                                            shape: BoxShape.circle,
-                                            border: Border.fromBorderSide(BorderSide(color: Colors.white, width: 10))
+                                                    leading: const Icon(Icons.camera),
+                                                    onTap: () => pickImage(ImageSource.camera),
+                                                  ),
+                                                  ListTile(
+                                                    title: Text(
+                                                      AppLocalizations.of(context)?.homeProfile_gallery ?? 'Gallery',
+                                                      textScaleFactor: ScaleSize.textScaleFactor(context),
+                                                    ),
+                                                    leading: const Icon(Icons.photo),
+                                                    onTap: () => pickImage(ImageSource.gallery),
+                                                  )
+                                                ],
+                                              ),
+                                            )
                                         ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                      3)),
-                                          child: _isLoading
-                                              ? null
-                                              : user?.photo == null
-                                              ? const Image(image: AssetImage("assets/blank_profile_picture.png"))
-                                              : Image.network(
-                                              user?.photo ?? "",
-                                              fit: BoxFit.fitWidth
-                                          ),
+                                      );
+                                    },
+                                    child: Container(
+                                      width:
+                                      MediaQuery.of(context).size.width / 3,
+                                      height:
+                                      MediaQuery.of(context).size.width / 3,
+                                      decoration: const BoxDecoration(
+                                          color: Colors.white38,
+                                          shape: BoxShape.circle,
+                                          border: Border.fromBorderSide(BorderSide(color: Colors.white, width: 10))
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                    3)),
+                                        child: _isLoading
+                                            ? null
+                                            : user?.photo == null
+                                            ? const Image(image: AssetImage("assets/blank_profile_picture.png"))
+                                            : Image.network(
+                                            user?.photo ?? "",
+                                            fit: BoxFit.fitWidth
                                         ),
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                    ),
+                  ],
+                ),
+                SafeArea(
+                  child: Column(
+                    children: [
+                      _sectionText(
+                          "Discussions",
+                          "assets/arrow_right.png",
+                              () {
+                            context.push(const DiscussionPage());
+                          },
+                          icon: Icons.chat_rounded
+                      ),
+                      _sectionText(
+                          "Tags",
+                          "assets/arrow_right.png",
+                              () {
+                            context.push(const TagsScreen());
+                          },
+                          assetName: "assets/badge.png"
+                      ),
+                      _sectionText(
+                          AppLocalizations.of(context)?.homeProfile_aboutMe ??
+                              "About me",
+                          "assets/arrow_right.png",
+                              () {},
+                          icon: Icons.description
+                      ),
+                      _sectionText(
+                          AppLocalizations.of(context)
+                              ?.homeProfile_myContracts ??
+                              "My contracts",
+                          "assets/arrow_right.png",
+                              () {},
+                          icon: Icons.handyman_rounded
+                      ),
+                      _sectionText(
+                          AppLocalizations.of(context)
+                              ?.homeProfile_myLastJobs ??
+                              "My last jobs",
+                          "assets/arrow_right.png",
+                              () {},
+                          icon: Icons.work
+                      ),
+                      const SizedBox(
+                        height: 50,
+                      )
                     ],
                   ),
-                  SafeArea(
-                    child: Column(
-                      children: [
-                        _sectionText(
-                            "assets/badge.png",
-                            "Discussions",
-                            "assets/arrow_right.png",
-                                () {
-                              context.push(const DiscussionPage());
-                            }
-                        ),
-                        _sectionText(
-                            "assets/badge.png",
-                            "Tags",
-                            "assets/arrow_right.png",
-                                () {
-                              context.push(const TagsScreen());
-                            }
-                        ),
-                        _sectionText(
-                            "assets/badge.png",
-                            AppLocalizations.of(context)?.homeProfile_aboutMe ??
-                                "About me",
-                            "assets/arrow_right.png",
-                            () {}
-                        ),
-                        _sectionText(
-                            "assets/badge.png",
-                            AppLocalizations.of(context)
-                                ?.homeProfile_myContracts ??
-                                "My contracts",
-                            "assets/arrow_right.png",
-                            () {}
-                        ),
-                        _sectionText(
-                            "assets/badge.png",
-                            AppLocalizations.of(context)
-                                ?.homeProfile_myLastJobs ??
-                                "My last jobs",
-                            "assets/arrow_right.png",
-                            () {}
-                        ),
-                        const SizedBox(
-                          height: 50,
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 50,
-                  )
-                ],
-              ),
+                )
+              ],
             ),
           ),
         )

@@ -141,10 +141,10 @@ class _CompanyPageState extends State<CompanyPage>
                             onPressed: () => showDialog<String>(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
-                              title: const Center(child: Text('Avant de postuler')),
+                              title: Center(child: Text(AppLocalizations.of(context)?.companyDetails_beforeApplying ?? 'Avant de postuler')),
                               content: Text(
-                                  'Êtes vous surs de vouloir postuler à l\'offre d\'emploi ${widget.company.jobOffers[index].jobTitle} de '
-                                      '${DateFormat.Hm().format(widget.company.jobOffers[index].startingDate)}h ?',
+                                AppLocalizations.of(context)?.companyDetails_areYouSure(widget.company.jobOffers[index].jobTitle, DateFormat.Hm().format(widget.company.jobOffers[index].startingDate)) ??
+                                    "Êtes vous surs de vouloir postuler à l'offre d'emploi ?",
                                   textAlign: TextAlign.center,
                               ),
                               actionsAlignment: MainAxisAlignment.spaceEvenly,

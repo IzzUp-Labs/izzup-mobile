@@ -8,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Services/colors.dart';
+import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Views/Discussions/discussions_page.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../../Models/user.dart';
@@ -51,45 +52,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Widget _sectionText(String assetName, String text, String arrowAssetName) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 60, right: 60, top: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Image(
-                image: AssetImage(assetName),
-                height: 30,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 5, right: 5),
-                child: Center(
-                  child: Text(
-                    text,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+  Widget _sectionText(String assetName, String text, String arrowAssetName, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 60, right: 60, top: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Image(
+                  image: AssetImage(assetName),
+                  height: 30,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 5, right: 5),
+                  child: Center(
+                    child: Text(
+                      text,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Image(
-                image: AssetImage(arrowAssetName),
-                height: 20,
-              ),
-            ],
+                Image(
+                  image: AssetImage(arrowAssetName),
+                  height: 20,
+                ),
+              ],
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10, left: 60, right: 60),
-          child: Container(
-            height: 1,
-            color: Colors.grey.withOpacity(0.5),
-          ),
-        )
-      ],
+          Padding(
+            padding: const EdgeInsets.only(top: 10, left: 60, right: 60),
+            child: Container(
+              height: 1,
+              color: Colors.grey.withOpacity(0.5),
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -181,12 +185,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: <Widget>[
                                                     ListTile(
-                                                      title: const Text('Camera'),
+                                                      title: Text(AppLocalizations.of(context)?.homeProfile_camera ?? 'Camera'),
                                                       leading: const Icon(Icons.camera),
                                                       onTap: () => pickImage(ImageSource.camera),
                                                     ),
                                                     ListTile(
-                                                      title: const Text('Gallery'),
+                                                      title: Text(AppLocalizations.of(context)?.homeProfile_gallery ?? 'Gallery'),
                                                       leading: const Icon(Icons.photo),
                                                       onTap: () => pickImage(ImageSource.gallery),
                                                     )
@@ -218,8 +222,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               : user?.photo == null
                                               ? const Image(image: AssetImage("assets/blank_profile_picture.png"))
                                               : Image.network(
-                                            user?.photo ?? "",
-                                            fit: BoxFit.fitWidth
+                                              user?.photo ?? "",
+                                              fit: BoxFit.fitWidth
                                           ),
                                         ),
                                       ),
@@ -236,41 +240,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SafeArea(
                     child: Column(
                       children: [
-                        TextButton(
-                            onPressed: () {Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const DiscussionPage())
-                            );},
-                            child: const Text("test", style: TextStyle(color: Colors.black))),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const TagsScreen()));
-                          },
-                          child: _sectionText(
-                              "assets/badge.png",
-                              "Tags",
-                              "assets/arrow_right.png"),
+                        _sectionText(
+                            "assets/badge.png",
+                            "Discussions",
+                            "assets/arrow_right.png",
+                                () {
+                              context.push(const DiscussionPage());
+                            }
+                        ),
+                        _sectionText(
+                            "assets/badge.png",
+                            "Tags",
+                            "assets/arrow_right.png",
+                                () {
+                              context.push(const TagsScreen());
+                            }
                         ),
                         _sectionText(
                             "assets/badge.png",
                             AppLocalizations.of(context)?.homeProfile_aboutMe ??
                                 "About me",
-                            "assets/arrow_right.png"),
+                            "assets/arrow_right.png",
+                            () {}
+                        ),
                         _sectionText(
                             "assets/badge.png",
                             AppLocalizations.of(context)
                                 ?.homeProfile_myContracts ??
                                 "My contracts",
-                            "assets/arrow_right.png"),
+                            "assets/arrow_right.png",
+                            () {}
+                        ),
                         _sectionText(
                             "assets/badge.png",
                             AppLocalizations.of(context)
                                 ?.homeProfile_myLastJobs ??
                                 "My last jobs",
-                            "assets/arrow_right.png"),
+                            "assets/arrow_right.png",
+                            () {}
+                        ),
                         const SizedBox(
                           height: 50,
                         )

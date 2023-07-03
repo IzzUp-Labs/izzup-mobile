@@ -94,16 +94,23 @@
   "createJobOffer_invalidHoursWorked": "Nombre d'heures de travail invalide",
   "createJobOffer_description": "Description",
   "createJobOffer_invalidDescription": "Description invalide",
+
   "success": "Succès",
+
   "homeProfile_reviews": "Avis",
   "homeProfile_aboutMe": "A propos de moi",
   "homeProfile_myContracts": "Mes contrats",
   "homeProfile_myLastJobs": "Mes derniers emplois",
+  "homeProfile_camera": "Appareil photo",
+  "homeProfile_gallery": "Galerie",
 
   "chat_typing": "En train d'écrire...",
   "chat_typeAMessage": "Écrivez un message",
 
   "companyDetails_about": "À propos",
   "companyDetails_jobs": "Emplois",
-  "companyDetails_apply": "Postuler"
+  "companyDetails_apply": "Postuler",
+
+  "jobOffersList_jobOffers": "Offres d'emploi",
+  "jobOffersList_noJobsOffersYet": "Pas encore d'offres d'emploi 😢"
 }

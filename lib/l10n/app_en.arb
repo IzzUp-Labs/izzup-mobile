@@ -99,11 +99,18 @@
   "homeProfile_aboutMe": "About me",
   "homeProfile_myContracts": "My contracts",
   "homeProfile_myLastJobs": "My last jobs",
+  "homeProfile_camera": "Camera",
+  "homeProfile_gallery": "Gallery",
 
   "chat_typing": "Typing...",
   "chat_typeAMessage": "Type a message",
 
   "companyDetails_about": "About",
   "companyDetails_jobs": "Jobs",
-  "companyDetails_apply": "Apply"
+  "companyDetails_apply": "Apply",
+  "companyDetails_beforeApplying":  "Before applying",
+  "companyDetails_areYouSure": "Êtes vous surs de vouloir postuler à l'offre d'emploi {jobTitle} de {startingDate}h ?",
+
+  "jobOffersList_jobOffers": "Job offers",
+  "jobOffersList_noJobsOffersYet": "No job offers yet 😢"
 }

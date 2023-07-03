@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:izzup/Models/classy_loader.dart';
+import 'package:izzup/Models/globals.dart';
+import 'package:izzup/Services/navigation.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -7,14 +10,16 @@ import '../../Models/job_offer_requests.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 import '../../Models/messaging_room.dart';
+import '../../Models/user.dart';
 import '../../Services/api.dart';
 import '../../Services/prefs.dart';
 import '../Chat/chat.dart';
 
 class RequestListPage extends StatefulWidget {
-  const RequestListPage({super.key, required this.extraRequest});
+  const RequestListPage({super.key, required this.extraRequest, required this.indexOfJobOffer});
 
   final List<JobRequests> extraRequest;
+  final int indexOfJobOffer;
 
   @override
   State<RequestListPage> createState() => _RequestListPageState();
@@ -22,22 +27,22 @@ class RequestListPage extends StatefulWidget {
 
 class _RequestListPageState extends State<RequestListPage> {
   List<JobRequests> requests = [];
-
   late io.Socket socket;
-
-  String authToken = "";
+  String? authToken;
+  bool _isLoading = true;
+  UserRequest? lastUserClicked;
 
   List<MessagingRoom> _messageRooms = [];
 
-  _getAllRooms() async {
+  _getAllRooms() {
     socket.emit("request_all_rooms", {
-      "userId": JwtDecoder.decode(authToken)["id"]
+      "userId": JwtDecoder.decode(authToken!)["id"]
     });
   }
 
   _createChat(int participantId) async {
     socket.emit("create_room", {{
-      "createdBy": JwtDecoder.decode(authToken)["id"],
+      "createdBy": JwtDecoder.decode(authToken!)["id"],
       "participant": participantId
     }});
   }
@@ -45,25 +50,46 @@ class _RequestListPageState extends State<RequestListPage> {
 
   _connectToWebsocket() async {
     socket.connect();
-    socket.onConnect((data) => print(data));
-    socket.onConnectError((data) => print(data));
+    socket.onConnect((data) {
+      if (kDebugMode) print(data);
+    });
+    socket.onConnectError((data) {
+      if (kDebugMode) print(data);
+    });
     _getAllRooms();
-    socket.on('message', (data) => print(data));
-    socket.on('room_created', (data) => {
-      _getAllRooms()
+    socket.on('message', (data) {
+      if (kDebugMode) print(data);
+    });
+    socket.on('room_created', (data) {
+      _getAllRooms();
     });
     socket.on('receive_all_rooms', (data) => {
       setState(() {
+        _isLoading = false;
         _messageRooms = [];
         for (var room in data) {
           _messageRooms.add(MessagingRoom.fromJson(room));
+        }
+        if (lastUserClicked?.id != null) {
+          for (var room in _messageRooms) {
+            if (room.participant.id == lastUserClicked?.id) {
+
+              context.push(ChatPage(
+                room: room,
+                authToken: authToken!,
+                socket: socket,
+                name: lastUserClicked!.firstName,
+                photoUrl: lastUserClicked!.photo,
+              ));
+            }
+          }
         }
       })
     });
   }
 
   _createSocket() async {
-    final authToken = await Prefs.getString('authToken');
+    final authToken = await Globals.authToken();
     setState(() {
       this.authToken = authToken!;
     });
@@ -78,7 +104,7 @@ class _RequestListPageState extends State<RequestListPage> {
     _connectToWebsocket();
   }
 
-  _checkIfRoomAllreadyCreated(int participantId) {
+  MessagingRoom? _checkIfRoomAllreadyCreated(int participantId) {
     for (var room in _messageRooms) {
       if (room.participant.id == participantId) {
         return room;
@@ -123,158 +149,170 @@ class _RequestListPageState extends State<RequestListPage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF00B096),
         title: const Text('Request List'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.message),
-            onPressed: () {
-              // Navigate to messaging page
-              if (kDebugMode) print("Messaging page");
-            },
-          ),
-        ],
       ),
-      body: Container(
-        color: Colors.grey[200], // Background color for the card
-        child: requests.isEmpty
-            ?
-        const Center(
-            child: Text(
-              "No requests yet 😢",
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.grey,
-                fontWeight: FontWeight.bold,
-              ),
+      body: Stack(
+        children: [
+          Container(
+            color: Colors.grey[200], // Background color for the card
+            child: requests.isEmpty
+                ?
+            const Center(
+                child: Text(
+                  "No requests yet 😢",
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
             )
-        )
-            : ListView.builder(
-          itemCount: requests.length,
-          itemBuilder: (context, index) {
-            return Container(
-              height: 150,
-              padding: const EdgeInsets.all(15),
-              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              decoration: const BoxDecoration(
-                color: Color(0xFF00B096),
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[
-                    Color(0xFF00B096),
-                    Color(0xFF008073),
-                  ],
-                ),
-              ),
-              child: Column(
-                children: <Widget>[
-                  ListTile(
-                    leading: requests[index].extra.user.photo != null
-                        ? CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          requests[index].extra.user.photo!),
-                    )
-                        : const Image(image: AssetImage("assets/blank_profile_picture.png")),
-                    title: Text(
-                        '${requests[index].extra.user.firstName} ${requests[index].extra.user.lastName}',
-                        style: const TextStyle(
-                            color: Colors.white)
-                    ),
-                    subtitle: Text(
-                      requests[index].extra.address,
-                    ),
-                    trailing: requests[index].status == "PENDING"
-                        ? const Icon(
-                      Icons.timer_outlined,
-                      color: Colors.yellow,
-                    )
-                        : requests[index].status == "ACCEPTED"
-                        ? const Icon(
-                      Icons.check_circle_outline,
-                      color: Colors.green,
-                    )
-                        : const Icon(
-                      Icons.cancel_outlined,
-                      color: Colors.red,
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      IconButton(
-                        icon: const Icon(Icons.message, color: Color(0xFFA5A5A5)),
-                        onPressed: () {
-                          final requestsUserId = requests[index].extra.user.id;
-                          if (requestsUserId != null) {
-                            final roomCheck = _checkIfRoomAllreadyCreated(requestsUserId);
-                            if (roomCheck != null) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChatPage(
-                                    room : roomCheck,
-                                    authToken: authToken,
-                                    socket: socket,
-                                  ),
-                                ),
-                              );
-                            } else {
-                              _createChat(requestsUserId);
-                              final roomCheck = _checkIfRoomAllreadyCreated(requestsUserId);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChatPage(
-                                    room : roomCheck,
-                                    authToken: authToken,
-                                    socket: socket,
-                                  ),
-                                ),
-                              );
-                            }
+                : RefreshIndicator(
+              onRefresh: () async {
+                final jobOffers = await Api.getMyJobOffers();
+                if (jobOffers != null) {
+                  setState(() {
+                    requests = jobOffers[widget.indexOfJobOffer].requests;
+                  });
+                }
+              },
+              child: ListView.builder(
+                itemCount: requests.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      if (requests[index].status == "ACCEPTED") {
+                        lastUserClicked = requests[index].extra.user;
+                        if (lastUserClicked?.id != null) {
+                          MessagingRoom? room = _checkIfRoomAllreadyCreated(lastUserClicked!.id!);
+                          if (room != null) {
+                            context.push(ChatPage(
+                              room : room,
+                              authToken: authToken!,
+                              socket: socket,
+                              name: requests[index].extra.user.firstName,
+                              photoUrl: requests[index].extra.user.photo,
+                            ));
+                          } else {
+                            setState(() => _isLoading = true);
+                            _createChat(lastUserClicked!.id!);
                           }
-                        },
+                        }
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(15),
+                      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF00B096),
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: <Color>[
+                            Color(0xFF00B096),
+                            Color(0xFF008073),
+                          ],
+                        ),
                       ),
-                      const Spacer(),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.red,
-                        ),
-                        onPressed: () {
-                          /* ... */
-                        },
-                        child: const Text('Decline'),
+                      child: Column(
+                        children: <Widget>[
+                          ListTile(
+                            leading: requests[index].extra.user.photo != null
+                                ? CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  requests[index].extra.user.photo!
+                              ),
+                            )
+                                : const Image(image: AssetImage("assets/blank_profile_picture.png")),
+                            title: Text(
+                                '${requests[index].extra.user.firstName} ${requests[index].extra.user.lastName}',
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20
+                                )
+                            ),
+                            subtitle: Text(
+                              requests[index].extra.address,
+                              style: const TextStyle(
+                                  color: Colors.white54
+                              ),
+                            ),
+                            trailing: requests[index].status == "PENDING"
+                                ? const Icon(
+                              Icons.timer_outlined,
+                              color: Colors.white,
+                            )
+                                : requests[index].status == "ACCEPTED"
+                                ? const Icon(
+                              Icons.keyboard_arrow_right_outlined,
+                              color: Colors.white,
+                            )
+                                : const Icon(
+                              Icons.cancel_outlined,
+                              color: Colors.white,
+                            ),
+                          ),
+                          if (requests[index].status == "PENDING")
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              IconButton(
+                                icon: const Icon(Icons.message, color: Colors.white),
+                                onPressed: () {
+                                  lastUserClicked = requests[index].extra.user;
+                                  if (lastUserClicked?.id != null) {
+                                    MessagingRoom? room = _checkIfRoomAllreadyCreated(lastUserClicked!.id!);
+                                    if (room != null) {
+                                      context.push(ChatPage(
+                                        room : room,
+                                        authToken: authToken!,
+                                        socket: socket,
+                                        name: requests[index].extra.user.firstName,
+                                        photoUrl: requests[index].extra.user.photo,
+                                      ));
+                                    } else {
+                                      setState(() => _isLoading = true);
+                                      _createChat(lastUserClicked!.id!);
+                                    }
+                                  }
+                                },
+                              ),
+                              const Spacer(),
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: Colors.red,
+                                  ),
+                                  onPressed: () {
+                                    /* ... */
+                                  },
+                                  child: const Text('Decline'),
+                                ),
+                                const SizedBox(width: 8),
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: const Color(0xFF00B096),
+                                  ),
+                                  onPressed: () {
+                                    final requestId = requests[index].id;
+                                    if(requestId != null) {
+                                      _acceptRequest(requestId);
+                                    }
+                                  },
+                                  child: const Text('Accept'),
+                                )
+                            ],
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      requests[index].status != "ACCEPTED"
-                          ?
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF00B096),
-                        ),
-                        onPressed: () {
-                          final requestId = requests[index].id;
-                          if(requestId != null) {
-                            _acceptRequest(requestId);
-                          }
-                        },
-                        child: const Text('Accept'),
-                      )
-                          :
-                      TextButton(
-                        style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF00B096),
-                        ),
-                        onPressed: () {},
-                        child: const Text('Accepted'),
-                      )
-                    ],
-                  ),
-                ],
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
+            ),
+          ),
+          if (_isLoading) const ClassyLoader()
+        ],
       ),
     );
   }

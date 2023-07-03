@@ -28,6 +28,10 @@ class Api {
     return Uri.parse(forApi ? _apiRoute + route : _baseRoute + route);
   }
 
+  static getUriString(String route) {
+    return 'https://izzup-api-vzc7bhefca-od.a.run.app/$route';
+  }
+
   static Future<bool?> authCheck(String email) async {
     var client = http.Client();
     try {

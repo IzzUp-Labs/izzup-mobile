@@ -122,12 +122,12 @@ class _HomeState extends State<Home> {
       const JobOfferListPage(),
       const ProfileScreen()
     ];
-
+    _createSocket();
   }
 
   _createSocket() async {
     final authToken = await Globals.authToken();
-    socket = io.io(Api.getUri('app-socket', false),
+    socket = io.io(Api.getUriString('app-socket'),
         OptionBuilder()
             .setTransports(['websocket']) // for Flutter or Dart VM
             .setExtraHeaders({'Authorization': 'Bearer $authToken'}) // optional

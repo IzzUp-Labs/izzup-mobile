@@ -6,6 +6,8 @@ import 'package:http_parser/http_parser.dart';
 import 'package:izzup/Models/employer.dart';
 import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Models/homepage_card_data.dart';
+import 'package:izzup/Models/stats.dart';
+import 'package:izzup/Models/user_with_request.dart';
 import 'package:izzup/Services/prefs.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
@@ -62,7 +64,6 @@ class Api {
 
   static Future<int> _registerEmployer(Employer employer) async {
     var client = http.Client();
-    print(json.encode(employer.toJson()));
     try {
       var response = await client.post(getUri('auth/register/employer'),
           headers: {"Content-Type": "application/json"},
@@ -117,7 +118,6 @@ class Api {
 
   static Future<List<HomepageCardData>> homepageCards() async {
     final authToken = await Prefs.getString('authToken');
-    final id = JwtDecoder.decode(authToken!)['id'];
     var client = http.Client();
     try {
       var response = await client.get(
@@ -223,7 +223,6 @@ class Api {
   static Future<List<MapLocation>?> jobOffersInRange() async {
     final authToken = await Prefs.getString('authToken');
     if (authToken == null) return null;
-    final id = JwtDecoder.decode(authToken)['id'];
     var client = http.Client();
     try {
       var response = await client.post(getUri('location/job-offers-in-range'),
@@ -326,7 +325,7 @@ class Api {
           },
           body: jsonEncode(tags.map((e) => e.id).toList()));
     } catch (e) {
-      print(e);
+      if (kDebugMode) print(e);
     } finally {
       client.close();
     }
@@ -346,7 +345,8 @@ class Api {
       Company company = Company.fromJson(jsonDecode(response.body));
       return company;
     } catch (e) {
-      print(e);
+      if (kDebugMode) print(e);
+      return null;
     } finally {
       client.close();
     }
@@ -363,17 +363,18 @@ class Api {
           'Authorization': 'Bearer $authToken',
         },
       );
+      print(response.body);
       if (response.statusCode != 201) return false;
       return true;
     } catch (e) {
-      print(e);
+      if (kDebugMode) print(e);
       return false;
     } finally {
       client.close();
     }
   }
 
-  static Future<List<JobOfferRequests>?> getMyJobOffers() async {
+  static Future<List<JobOfferRequest>?> getMyJobOffers() async {
     final authToken = await Prefs.getString('authToken');
     if (authToken == null) return null;
     var client = http.Client();
@@ -383,17 +384,13 @@ class Api {
           'Authorization': 'Bearer $authToken',
         },
       );
-      List<JobOfferRequests> jobOffers = [];
+      List<JobOfferRequest> jobOffers = [];
       for (var jobOffer in jsonDecode(response.body)) {
-        jobOffers.add(JobOfferRequests.fromJson(jobOffer));
-      }
-      for (var jobOffer in jobOffers) {
-        for (var request in jobOffer.requests) {
-        }
+        jobOffers.add(JobOfferRequest.fromJson(jobOffer));
       }
       return jobOffers;
     } catch (e) {
-      print(e);
+      if (kDebugMode) print(e);
       return [];
     } finally {
       client.close();
@@ -414,11 +411,67 @@ class Api {
       if (response.statusCode != 200) return false;
       return true;
     } catch (e) {
-      print(e);
+      if (kDebugMode) print(e);
       return false;
     } finally {
       client.close();
     }
   }
 
+  static Future<ExtraStats?> getStatsExtra() async {
+    final authToken = await Globals.authToken();
+    if (authToken == null) return null;
+    var client = http.Client();
+    try {
+      var response = await client.get(getUri("extra/statistics"),
+        headers: { 'Authorization': 'Bearer $authToken'},
+      );
+      var stats = ExtraStats.fromJson(jsonDecode(response.body));
+      return stats;
+    } catch (e) {
+      if (kDebugMode) print(e);
+      return null;
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<EmployerStats?> getStatsEmployer() async {
+    final authToken = await Globals.authToken();
+    if (authToken == null) return null;
+    var client = http.Client();
+    try {
+      var response = await client.get(getUri("employer/statistics"),
+        headers: { 'Authorization': 'Bearer $authToken'},
+      );
+      print(response.body);
+      var stats = EmployerStats.fromJson(jsonDecode(response.body));
+      return stats;
+    } catch (e) {
+      if (kDebugMode) print(e);
+      return null;
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<UserWithRequests?> getExtraRequests() async {
+    final authToken = await Globals.authToken();
+    if (authToken == null) return null;
+    var client = http.Client();
+    try {
+      var response = await client.get(getUri("extra/with/request"),
+        headers: { 'Authorization': 'Bearer $authToken'},
+      );
+      print(response.body);
+      var requests = UserWithRequests.fromJson(jsonDecode(response.body));
+      print(requests);
+      return requests;
+    } catch (e) {
+      if (kDebugMode) print(e);
+      return null;
+    } finally {
+      client.close();
+    }
+  }
 }

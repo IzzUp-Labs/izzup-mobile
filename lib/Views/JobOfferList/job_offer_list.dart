@@ -16,7 +16,7 @@ class JobOfferListPage extends StatefulWidget {
 
 class _JobOfferListPageState extends State<JobOfferListPage> {
 
-  List<JobOfferRequests> jobOfferRequests = [];
+  List<JobOfferRequest> jobOfferRequests = [];
 
   _getMyJobOffers() async {
     jobOfferRequests = (await Api.getMyJobOffers())!;

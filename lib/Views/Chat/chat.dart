@@ -16,12 +16,12 @@ class ChatPage extends StatefulWidget {
   final String name;
 
   const ChatPage(
-      {super.key,
-        required this.room,
-        required this.authToken,
-        required this.socket,
-        this.photoUrl,
-        required this.name});
+  {super.key,
+  required this.room,
+  required this.authToken,
+  required this.socket,
+  this.photoUrl,
+  required this.name});
 
 
 
@@ -117,12 +117,8 @@ class _ChatPageState extends State<ChatPage> {
         title: Row(
           children: [
             widget.photoUrl != null
-                ? CircleAvatar(
-              backgroundImage: NetworkImage(
-                  widget.photoUrl!
-              ),
-            )
-                : const Image(image: AssetImage("assets/blank_profile_picture.png")),
+                ? CircleAvatar(backgroundImage: NetworkImage(widget.photoUrl!))
+                : const SizedBox(width: 35, height: 35, child: CircleAvatar(backgroundImage: AssetImage("assets/blank_profile_picture.png"))),
             const SizedBox(width: 10),
             Text(
               widget.name,
@@ -212,7 +208,9 @@ class _ChatPageState extends State<ChatPage> {
                 ),
                 IconButton(
                   onPressed: () {
-                    _sendMessage();
+                    if (textController.text.trim().isNotEmpty) {
+                      _sendMessage();
+                    }
                     textController.clear();
                   },
                   icon: const Icon(Icons.send, color: AppColors.accent),

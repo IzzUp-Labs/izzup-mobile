@@ -110,6 +110,10 @@
   "companyDetails_about": "À propos",
   "companyDetails_jobs": "Emplois",
   "companyDetails_apply": "Postuler",
+  "companyDetails_beforeApplying":  "Avant de postuler",
+  "companyDetails_areYouSure": "Êtes vous surs de vouloir postuler à l'offre d'emploi \"{jobTitle}\" - {startingDate} ?",
+  "companyDetails_cancel": "Annuler",
+  "companyDetails_applied": "Postulé",
 
   "jobOffersList_jobOffers": "Offres d'emploi",
   "jobOffersList_noJobsOffersYet": "Pas encore d'offres d'emploi 😢"

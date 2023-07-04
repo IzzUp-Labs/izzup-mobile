@@ -1,4 +1,4 @@
-class JobOfferRequests {
+class JobOfferRequest {
   int? id;
   String jobTitle;
   String jobDescription;
@@ -10,10 +10,10 @@ class JobOfferRequests {
   int acceptedSpots;
   List<JobRequests> requests;
 
-  JobOfferRequests(this.jobTitle, this.jobDescription, this.startingDate, this.workingHours, this.price, this.isAvailable, this.spots, this.acceptedSpots, this.requests, {this.id});
+  JobOfferRequest(this.jobTitle, this.jobDescription, this.startingDate, this.workingHours, this.price, this.isAvailable, this.spots, this.acceptedSpots, this.requests, {this.id});
 
-  factory JobOfferRequests.fromJson(Map<String, dynamic> json) {
-    return JobOfferRequests(
+  factory JobOfferRequest.fromJson(Map<String, dynamic> json) {
+    return JobOfferRequest(
       json['job_title'],
       json['job_description'],
       DateTime.parse(json['starting_date']),
@@ -26,8 +26,47 @@ class JobOfferRequests {
       id: json['id'],
     );
   }
+}
 
+enum JobRequestStatus {
+  pending,
+  accepted,
+  rejected,
+  waitingForVerification,
+  finished;
 
+  static JobRequestStatus fromString(String status) {
+    switch (status) {
+      case 'PENDING':
+        return JobRequestStatus.pending;
+      case 'ACCEPTED':
+        return JobRequestStatus.accepted;
+      case 'REJECTED':
+        return JobRequestStatus.rejected;
+      case 'WAITING_FOR_VERIFICATION':
+        return JobRequestStatus.waitingForVerification;
+      case 'FINISHED':
+        return JobRequestStatus.finished;
+      default:
+        return JobRequestStatus.pending;
+    }
+  }
+}
+
+class JobRequestWithVerificationCode {
+  int? id;
+  JobRequestStatus status;
+  int? verificationCode;
+
+  JobRequestWithVerificationCode(this.id, this.status, this.verificationCode);
+
+  factory JobRequestWithVerificationCode.fromJson(Map<String, dynamic> json) {
+    return JobRequestWithVerificationCode(
+      json['id'],
+      JobRequestStatus.fromString(json['status']),
+      json['verification_code'],
+    );
+  }
 }
 
 class JobRequests {

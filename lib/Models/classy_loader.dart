@@ -4,16 +4,18 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class ClassyLoader extends StatelessWidget {
   final Color loaderColor;
   final double loaderSize;
+  final Color loaderBackground;
 
   const ClassyLoader(
       {super.key,
       this.loaderColor = const Color(0xFF00B096),
-      this.loaderSize = 48.0});
+      this.loaderSize = 48.0,
+      this.loaderBackground = Colors.black54});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.black54,
+      color: loaderBackground,
       child: Center(
         child: CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(loaderColor),

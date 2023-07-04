@@ -109,7 +109,9 @@
   "companyDetails_jobs": "Jobs",
   "companyDetails_apply": "Apply",
   "companyDetails_beforeApplying":  "Before applying",
-  "companyDetails_areYouSure": "Êtes vous surs de vouloir postuler à l'offre d'emploi {jobTitle} de {startingDate}h ?",
+  "companyDetails_areYouSure": "Are you sure you want to apply for the job offer \"{jobTitle}\" - {startingDate}?",
+  "companyDetails_cancel": "Cancel",
+  "companyDetails_applied": "Applied",
 
   "jobOffersList_jobOffers": "Job offers",
   "jobOffersList_noJobsOffersYet": "No job offers yet 😢"

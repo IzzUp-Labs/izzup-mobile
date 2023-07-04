@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:izzup/Models/globals.dart';
+import 'package:izzup/Models/job_offer_requests.dart';
 import 'package:izzup/Models/user.dart';
 import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/location.dart';
@@ -123,6 +126,18 @@ class _HomeState extends State<Home> {
       const ProfileScreen()
     ];
     _createSocket();
+    Timer(const Duration(seconds: 1), () {
+      showJobRequestSuccessModal(context, JobOfferRequest("Titre du job", "Description", DateTime.now(), 1, 1, true, 1, 0, []));
+    });
+    _checkForAwaitingRequests();
+  }
+
+  _checkForAwaitingRequests() {
+    Api.getExtraRequests().then((value) {
+      if (value == null) return;
+      var requests = value.requests.where((element) => element.status == JobRequestStatus.waitingForVerification);
+      showJobEndModalExtra(context, requests.first);
+    });
   }
 
   _createSocket() async {
@@ -141,17 +156,30 @@ class _HomeState extends State<Home> {
     socket.connect();
     socket.onConnect((data) => print(data));
     socket.onConnectError((data) => print(data));
-    socket.on('job-request-accepted', (data) {
+
+    socket.on('job-request-accepted', (data) { // modal extra job accepted
       print('accepted');
-      print(data);
+      JobOfferRequest jobOffer = JobOfferRequest.fromJson(data["jobOffer"]);
+      JobRequests request = JobRequests.fromJson(data["request"]);
+      showJobRequestSuccessModal(context, jobOffer);
     });
 
-    socket.on('job-request-confirmed', (data) {
+
+    socket.on('job-request-confirmed', (data) { // modal extra code - modal employer entry
+      JobOfferRequest jobOffer = JobOfferRequest.fromJson(data["jobOffer"]);
+      JobRequests request = JobRequests.fromJson(data["request"]);
+      if (Globals.profile?.role == UserRole.extra) {
+        print("extra");
+        //showJobEndModalExtra(context, request);
+      } else {
+        print("employer");
+        //showJobEndModalEmployer(context, request);
+      }
       print('confirmed');
       print(data);
     });
 
-    socket.on('job-request-finished', (data) {
+    socket.on('job-request-finished', (data) { // pop modal extra code
       print('finished');
       print(data);
     });
@@ -196,7 +224,7 @@ class _HomeState extends State<Home> {
   }
 }
 
-Future<T> showJobRequestSuccessModal<T>(BuildContext context) async {
+Future<T> showJobRequestSuccessModal<T>(BuildContext context, JobOfferRequest jobOffer) async {
   return await showModal(
       context, (context) => Scaffold(
       body: Stack(
@@ -204,7 +232,6 @@ Future<T> showJobRequestSuccessModal<T>(BuildContext context) async {
           Container(
             decoration: const BoxDecoration(
               color: AppColors.accent,
-              borderRadius: BorderRadius.all(Radius.circular(20)),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -215,18 +242,18 @@ Future<T> showJobRequestSuccessModal<T>(BuildContext context) async {
               ),
             ),
           ),
-          const Center(
+          Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.check,
                   color: Colors.white,
                   size: 50,
                 ),
-                SizedBox(height: 20),
-                Text(
+                const SizedBox(height: 20),
+                const Text(
                   "A job offer has been accepted !",
                   style: TextStyle(
                       color: Colors.white,
@@ -234,15 +261,55 @@ Future<T> showJobRequestSuccessModal<T>(BuildContext context) async {
                       fontWeight: FontWeight.bold
                   ),
                 ),
+                const SizedBox(height: 100),
+                Text(
+                  jobOffer.jobTitle,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  DateFormat('dd/MM - HH:mm').format(jobOffer.startingDate),
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontStyle: FontStyle.italic
+                  ),
+                ),
+                const SizedBox(height: 100),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppColors.accent,
+                      fixedSize: const Size(150, 60),
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                        BorderRadius.circular(30), // <-- Radius
+                      )
+                  ),
+                  child: const Text(
+                    "Super !",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ],
             ),
           )
         ],
       )
-  ));
+  ), isDismissible: false);
 }
 
-Future<T> showJobEndModalExtra<T>(BuildContext context) async {
+Future<T> showJobEndModalExtra<T>(BuildContext context, JobRequestWithVerificationCode request) async {
   return await showModal(
       context, (context) => Scaffold(
       body: Stack(
@@ -285,7 +352,7 @@ Future<T> showJobEndModalExtra<T>(BuildContext context) async {
           )
         ],
       )
-  ));
+  ), isDismissible: false);
 }
 
 Future<T> showJobEndModalEmployer<T>(BuildContext context) async {

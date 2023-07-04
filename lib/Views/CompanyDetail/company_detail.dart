@@ -141,17 +141,17 @@ class _CompanyPageState extends State<CompanyPage>
                             onPressed: () => showDialog<String>(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
-                              title: Center(child: Text(AppLocalizations.of(context)?.companyDetails_beforeApplying ?? 'Avant de postuler')),
+                              title: Center(child: Text(AppLocalizations.of(context)?.companyDetails_beforeApplying ?? "Before applying")),
                               content: Text(
                                 AppLocalizations.of(context)?.companyDetails_areYouSure(widget.company.jobOffers[index].jobTitle, DateFormat.Hm().format(widget.company.jobOffers[index].startingDate)) ??
-                                    "Êtes vous surs de vouloir postuler à l'offre d'emploi ?",
+                                    "Are you sure you want to apply ?",
                                   textAlign: TextAlign.center,
                               ),
                               actionsAlignment: MainAxisAlignment.spaceEvenly,
                               actions: <Widget>[
                                 TextButton(
-                                  onPressed: () => Navigator.pop(context, 'Annuler'),
-                                  child: const Text('Annuler', style: TextStyle(color: Colors.red)),
+                                  onPressed: () => Navigator.pop(context, AppLocalizations.of(context)?.companyDetails_cancel ?? "Cancel"),
+                                  child: Text(AppLocalizations.of(context)?.companyDetails_cancel ?? "Cancel", style: const TextStyle(color: Colors.red)),
                                 ),
                                 TextButton(
                                   onPressed: () {
@@ -159,10 +159,10 @@ class _CompanyPageState extends State<CompanyPage>
                                     if (id != null) {
                                       _applyToJobOffer(id);
                                     }
-                                    Navigator.pop(context, AppLocalizations.of(context)?.companyDetails_apply ?? 'Apply');
+                                    Navigator.pop(context, AppLocalizations.of(context)?.companyDetails_apply ?? "Apply");
                                   },
                                   child: Text(
-                                      AppLocalizations.of(context)?.companyDetails_apply ?? 'Apply',
+                                      AppLocalizations.of(context)?.companyDetails_apply ?? "Apply",
                                       style: const TextStyle(color: Color(0xFF00B096))
                                   ),
                                 ),
@@ -172,14 +172,14 @@ class _CompanyPageState extends State<CompanyPage>
                                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
                             ),
                           ),
-                            child: Text(AppLocalizations.of(context)?.companyDetails_apply ?? 'Apply'),
+                            child: Text(AppLocalizations.of(context)?.companyDetails_apply ?? "Apply"),
                           ) :
                               ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF00B096),
                                   ),
-                                  child: const Text('Postulé'))
+                                  child: Text(AppLocalizations.of(context)?.companyDetails_applied ?? "Applied"))
                         ),
                       );
                     },

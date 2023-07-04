@@ -116,6 +116,7 @@ class _AddJobOfferState extends State<AddJobOffer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
           bottom: false,
           child: Stack(

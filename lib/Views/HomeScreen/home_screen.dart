@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:izzup/Models/stats.dart';
 import 'package:izzup/Models/user.dart';
 import 'package:izzup/Services/api.dart';
 import 'package:izzup/Services/colors.dart';
@@ -8,6 +9,7 @@ import 'package:izzup/Services/navigation.dart';
 import '../../Models/company.dart';
 import '../../Models/globals.dart';
 import '../../Models/homepage_card_data.dart';
+import '../../Models/scale.dart';
 import '../AddJobOffer/add_job_offer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -26,6 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final double _cardWidth = 250;
   bool _profileLoaded = false;
   Company? _company;
+  ExtraStats? extraStats;
+  EmployerStats? employerStats;
 
   Widget _walletWidget() {
     return Row(
@@ -42,52 +46,66 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  AppLocalizations.of(context)?.homeScreen_youDidNotEarnYet ??
-                      "You must work a first gig to start earning some money !",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      fontStyle: FontStyle.italic,
-                      color: Colors.grey),
-                ),
-                /*
-                Text(
-                  AppLocalizations.of(context)?.homeScreen_youEarned ??
-                      "You earned",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w800, fontSize: 14),
-                ),
-                const Text(
-                  "2,124 €",
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 32),
-                ),
-                Row(
-                  children: [
-                    const Spacer(),
-                    RichText(
-                      text: TextSpan(
-                        text: AppLocalizations.of(context)?.homeScreen_with ??
-                            'with ',
-                        style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800),
-                        children: <TextSpan>[
-                          const TextSpan(
-                              text: '24',
-                              style: TextStyle(color: AppColors.accent)),
-                          TextSpan(
-                              text: AppLocalizations.of(context)
-                                  ?.homeScreen_jobs ??
-                                  ' jobs'),
-                        ],
-                      ),
+                if (extraStats == null || extraStats?.finishedRequest == 0)
+                  Text(
+                    AppLocalizations.of(context)?.homeScreen_youDidNotEarnYet ??
+                        "You must work a first gig to start earning some money !",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey),
+                  ),
+                if (extraStats != null && extraStats?.finishedRequest != 0)
+                  Text(
+                    AppLocalizations.of(context)?.homeScreen_youEarned ??
+                        "You earned",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800, fontSize: 14
                     ),
-                    const Spacer()
-                  ],
-                ),
-                */
+                    textScaleFactor: ScaleSize.textScaleFactor(context),
+                  ),
+                if (extraStats != null && extraStats?.finishedRequest != 0)
+                  Text(
+                    "${extraStats!.totalEarned.toString().split(".")[0]} €",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 32
+                    ),
+                    textScaleFactor: ScaleSize.textScaleFactor(context),
+                  ),
+                if (extraStats != null && extraStats?.finishedRequest != 0)
+                  Row(
+                    children: [
+                      const Spacer(),
+                      RichText(
+                        text: TextSpan(
+                          text: AppLocalizations.of(context)?.homeScreen_with ??
+                              'with ',
+                          style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(
+                                text: extraStats!.finishedRequest.toString().split('.')[0],
+                                style: const TextStyle(
+                                    color: AppColors.accent
+
+                                )
+                            ),
+                            TextSpan(
+                                text: AppLocalizations.of(context)
+                                    ?.homeScreen_jobs ??
+                                    ' jobs'),
+                          ],
+                        ),
+                        textScaleFactor: ScaleSize.textScaleFactor(context),
+                      ),
+                      const Spacer()
+                    ],
+                  ),
               ],
             ),
           ),
@@ -118,6 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (employerStats == null || employerStats?.totalFinishedJobRequests == 0)
                 Text(
                   AppLocalizations.of(context)?.homeScreen_noOffersYet ??
                       "No offers yet",
@@ -127,16 +146,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontStyle: FontStyle.italic,
                       color: Colors.grey),
                 ),
-                const SizedBox(height: 10),
-                /*
+                if (employerStats != null && employerStats?.totalFinishedJobRequests != 0)
                 Text(
-                  AppLocalizations.of(context)?.homeScreen_extras(4) ??
+                  AppLocalizations.of(context)?.homeScreen_extras(int.parse(employerStats!.totalFinishedJobRequests.toString())) ??
                       "Extras",
                   style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 32
                   ),
                 ),
+                if (employerStats != null && employerStats?.totalFinishedJobRequests != 0)
                 Padding(
                   padding: EdgeInsets.only(left: MediaQuery.of(context).size.width / 6),
                   child: RichText(
@@ -148,9 +167,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           fontSize: 10,
                           fontWeight: FontWeight.w800),
                       children: <TextSpan>[
-                        const TextSpan(
-                            text: '8',
-                            style: TextStyle(color: AppColors.accent)),
+                        TextSpan(
+                            text: employerStats!.totalJobOffers.toString().split('.')[0],
+                            style: const TextStyle(color: AppColors.accent)),
                         TextSpan(
                             text: AppLocalizations.of(context)
                                 ?.homeScreen_jobOffers ??
@@ -159,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),*/
+                const SizedBox(height: 10),
                 if (_company != null)
                   ElevatedButton(
                     onPressed: () {
@@ -178,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: const Text(
                       "Ajouter une offre",
                       style:
-                          TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                      TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
                     ),
                   ),
               ],
@@ -218,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 data.title,
                 overflow: TextOverflow.ellipsis,
                 style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
               ),
             ),
           ),
@@ -294,11 +313,22 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _initStats() async {
+    if (Globals.profile?.role == UserRole.employer) {
+      EmployerStats? employerStatsTemp = await Api.getStatsEmployer();
+      setState(() => employerStats = employerStatsTemp);
+    } else if (Globals.profile?.role == UserRole.extra) {
+      ExtraStats? extraStatsTemp = await Api.getStatsExtra();
+      setState(() => extraStats = extraStatsTemp);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _instantiateCards();
     _instantiateProfile();
+    _initStats();
   }
 
   @override
@@ -348,11 +378,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       padding: const EdgeInsets.all(10),
                                       child: Container(
                                         width:
-                                            MediaQuery.of(context).size.width /
-                                                7,
+                                        MediaQuery.of(context).size.width /
+                                            7,
                                         height:
-                                            MediaQuery.of(context).size.width /
-                                                7,
+                                        MediaQuery.of(context).size.width /
+                                            7,
                                         decoration: const BoxDecoration(
                                             color: Colors.white38,
                                             shape: BoxShape.circle),
@@ -360,30 +390,30 @@ class _HomeScreenState extends State<HomeScreen> {
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(
                                                   MediaQuery.of(context)
-                                                          .size
-                                                          .width /
+                                                      .size
+                                                      .width /
                                                       7)),
                                           child: !_profileLoaded
                                               ? null
                                               : Globals.profile?.photo == null
                                               ? const Image(image: AssetImage("assets/blank_profile_picture.png"))
                                               : Image.network(
-                                                  Globals.profile?.photo ?? "",
-                                                  fit: BoxFit.fitWidth),
+                                              Globals.profile?.photo ?? "",
+                                              fit: BoxFit.fitWidth),
                                         ),
                                       ),
                                     ),
                                     Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         if (_profileLoaded)
                                           Text(
                                             AppLocalizations.of(context)
-                                                    ?.homeScreen_hi(Globals
-                                                            .profile
-                                                            ?.firstName ??
-                                                        '') ??
+                                                ?.homeScreen_hi(Globals
+                                                .profile
+                                                ?.firstName ??
+                                                '') ??
                                                 "Hi ${Globals.profile?.firstName ?? ''},",
                                             style: const TextStyle(
                                                 color: Colors.white,
@@ -393,7 +423,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         if (_profileLoaded)
                                           Text(
                                             AppLocalizations.of(context)
-                                                    ?.homeScreen_welcomeOnIzzUp ??
+                                                ?.homeScreen_welcomeOnIzzUp ??
                                                 "Welcome on IzzUp !",
                                             style: const TextStyle(
                                               color: Colors.white,
@@ -407,7 +437,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Stack(
                               children: [
                                 if (Globals.profile?.role ==
-                                        UserRole.employer &&
+                                    UserRole.employer &&
                                     _company != null)
                                   Center(
                                     child: Padding(
@@ -415,9 +445,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           left: 35, right: 35),
                                       child: SizedBox(
                                         height:
-                                            MediaQuery.of(context).size.height /
-                                                    5 +
-                                                50,
+                                        MediaQuery.of(context).size.height /
+                                            5 +
+                                            50,
                                         child: ClipRRect(
                                           borderRadius: const BorderRadius.only(
                                               bottomLeft: Radius.circular(20),
@@ -427,12 +457,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                             color: AppColors.accent,
                                             child: Padding(
                                               padding:
-                                                  const EdgeInsets.all(15.0),
+                                              const EdgeInsets.all(15.0),
                                               child: Text(_company!.name,
                                                   style: const TextStyle(
                                                       color: Colors.white,
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                      FontWeight.bold,
                                                       fontSize: 18)),
                                             ),
                                           ),
@@ -443,23 +473,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Center(
                                   child: SizedBox(
                                     height:
-                                        MediaQuery.of(context).size.height / 5,
+                                    MediaQuery.of(context).size.height / 5,
                                     child: Column(
                                       children: [
                                         const Spacer(),
                                         Container(
                                             height: MediaQuery.of(context)
-                                                    .size
-                                                    .height /
+                                                .size
+                                                .height /
                                                 6,
                                             width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
+                                                .size
+                                                .width -
                                                 40,
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(20)),
+                                              const BorderRadius.all(
+                                                  Radius.circular(20)),
                                               color: Colors.white,
                                               boxShadow: [
                                                 BoxShadow(
@@ -472,12 +502,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ],
                                             ),
                                             child: Globals.profile?.role ==
-                                                    UserRole.extra
+                                                UserRole.extra
                                                 ? _walletWidget()
                                                 : Globals.profile?.role ==
-                                                        UserRole.employer
-                                                    ? companyWidget()
-                                                    : null),
+                                                UserRole.employer
+                                                ? companyWidget()
+                                                : null),
                                       ],
                                     ),
                                   ),
@@ -606,7 +636,7 @@ class HeaderPainter extends CustomPainter {
     final shapeBounds = Rect.fromLTRB(0, 0, size.width, size.height - 50);
     final centerAvatar = Offset(shapeBounds.center.dx, shapeBounds.bottom);
     final avatarBounds =
-        Rect.fromCircle(center: centerAvatar, radius: 50).inflate(3);
+    Rect.fromCircle(center: centerAvatar, radius: 50).inflate(3);
     _drawBackground(canvas, shapeBounds, avatarBounds);
   }
 

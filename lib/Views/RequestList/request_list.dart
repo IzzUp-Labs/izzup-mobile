@@ -168,11 +168,15 @@ class _RequestListPageState extends State<RequestListPage> {
             )
                 : RefreshIndicator(
               onRefresh: () async {
-                final jobOffers = await Api.getMyJobOffers();
-                if (jobOffers != null) {
-                  setState(() {
-                    requests = jobOffers[widget.indexOfJobOffer].requests;
-                  });
+                if (Globals.profile?.role == UserRole.extra) {
+                  final requests = await Api.getMyJobOffers();
+                } else {
+                  final jobOffers = await Api.getMyJobOffers();
+                  if (jobOffers != null) {
+                    setState(() {
+                      requests = jobOffers[widget.indexOfJobOffer].requests;
+                    });
+                  }
                 }
               },
               child: ListView.builder(
@@ -223,7 +227,7 @@ class _RequestListPageState extends State<RequestListPage> {
                                   requests[index].extra.user.photo!
                               ),
                             )
-                                : const Image(image: AssetImage("assets/blank_profile_picture.png")),
+                                : const CircleAvatar(backgroundImage: AssetImage("assets/blank_profile_picture.png")),
                             title: Text(
                                 '${requests[index].extra.user.firstName} ${requests[index].extra.user.lastName}',
                                 style: const TextStyle(

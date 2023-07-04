@@ -174,13 +174,6 @@ class _DiscussionPageState extends State<DiscussionPage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text(
-                                "${_messageRooms[index].creationDate.hour} hours ago",
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
-                              ),
                             ],
                           ),
                           const Spacer(),

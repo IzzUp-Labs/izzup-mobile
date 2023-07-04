@@ -14,6 +14,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../../Models/scale.dart';
 import '../../Models/user.dart';
 import '../../Services/api.dart';
+import '../LastJobOffers/last_job_offers.dart';
 import '../Tag/tagpage.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -265,6 +266,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           },
                           icon: Icons.chat_rounded
                       ),
+                      user?.role.value == "EXTRA" ?
                       _sectionText(
                           "Tags",
                           "assets/arrow_right.png",
@@ -272,22 +274,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             context.push(const TagsScreen());
                           },
                           assetName: "assets/badge.png"
-                      ),
-                      _sectionText(
-                          AppLocalizations.of(context)?.homeProfile_aboutMe ??
-                              "About me",
-                          "assets/arrow_right.png",
-                              () {},
-                          icon: Icons.description
-                      ),
+                      )
+                      : const SizedBox()
+                      ,
+                      user?.role.value == "EMPLOYER" ?
                       _sectionText(
                           AppLocalizations.of(context)
                               ?.homeProfile_myContracts ??
                               "My contracts",
                           "assets/arrow_right.png",
-                              () {},
+                              () {
+                            context.push(const LastJobOfferListPage());
+                              },
                           icon: Icons.handyman_rounded
-                      ),
+                      ): const SizedBox(),
+                      user?.role.value == "EXTRA" ?
                       _sectionText(
                           AppLocalizations.of(context)
                               ?.homeProfile_myLastJobs ??
@@ -295,7 +296,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           "assets/arrow_right.png",
                               () {},
                           icon: Icons.work
-                      ),
+                      ): const SizedBox(),
                       const SizedBox(
                         height: 50,
                       )

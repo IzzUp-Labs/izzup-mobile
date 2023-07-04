@@ -52,7 +52,7 @@ class _DiscussionPageState extends State<DiscussionPage> {
     setState(() {
       this.authToken = authToken!;
     });
-    socket = io.io(Api.getUri('messaging', false),
+    socket = io.io(Api.getUriString('messaging'),
         OptionBuilder()
             .setTransports(['websocket']) // for Flutter or Dart VM
             .setExtraHeaders({'Authorization': 'Bearer $authToken'}) // optional
@@ -82,42 +82,30 @@ class _DiscussionPageState extends State<DiscussionPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      leading: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: const Icon(
+          Icons.arrow_back,
+          color: Colors.black,
+        ),
+      ),
+      title: const Text(
+        "Discussions",
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
     body: SafeArea(
       child: Column(
         children: [
-          Column(
-            children: [
-              const SizedBox(height: 20),
-              const Row(
-                children: [
-                  Spacer(),
-                  Text(
-                    'Discussions',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Spacer(),
-                ],
-              ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  _createChat();
-                },
-                child: const Text(
-                  'Create Chat',
-                  style: TextStyle(
-                    color: Colors.black,
-                    backgroundColor: Color(0xFFA5A5A5),
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
           Expanded(
             child: ListView.builder(
               itemCount: _messageRooms.length,
@@ -141,6 +129,26 @@ class _DiscussionPageState extends State<DiscussionPage> {
                     children: [
                       Row(
                         children: [
+                          _messageRooms[index].createdBy.id == JwtDecoder.decode(authToken)["id"]
+                              ? _messageRooms[index].participant.photo != null
+                                  ? CircleAvatar(
+                                radius: 20,
+                                backgroundImage: NetworkImage(
+                                    _messageRooms[index].participant.photo!),
+                              )
+                                  : const CircleAvatar(
+                                radius: 20,
+                                backgroundImage: AssetImage(
+                                    'assets/blank_profile_picture.png'),
+                              )
+                          :
+                          _messageRooms[index].createdBy.photo != null
+                              ? CircleAvatar(
+                            radius: 20,
+                            backgroundImage: NetworkImage(
+                                _messageRooms[index].createdBy.photo!),
+                          )
+                              :
                           const CircleAvatar(
                             radius: 20,
                             backgroundImage: AssetImage(
@@ -166,9 +174,9 @@ class _DiscussionPageState extends State<DiscussionPage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const Text(
-                                '2 hours ago',
-                                style: TextStyle(
+                              Text(
+                                "${_messageRooms[index].creationDate.hour} hours ago",
+                                style: const TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey,
                                 ),

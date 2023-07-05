@@ -167,13 +167,16 @@ class _HomeState extends State<Home> {
       JobOfferRequest jobOffer = JobOfferRequest.fromJson(data["jobOffer"]);
       JobRequests request = JobRequests.fromJson(data["request"]);
       if (Globals.profile?.role == UserRole.extra) {
-        showJobEndModalExtra(context, "");
+        showJobEndModalExtra(context, data["request"]["verification_code"]);
       } else {
         //showJobEndModalEmployer(context, request);
       }
     });
 
     socket.on('job-request-finished', (data) { // pop modal extra code
+      if (Globals.profile?.role == UserRole.extra) {
+        Navigator.of(context).pop();
+      }
     });
   }
 

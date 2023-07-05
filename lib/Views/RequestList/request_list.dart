@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:izzup/Models/classy_loader.dart';
 import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Services/navigation.dart';
@@ -145,6 +146,15 @@ class _RequestListPageState extends State<RequestListPage> {
     socket.dispose();
   }
 
+  bool _jobRequestOngoing(int index) {
+    print("Checking if job request is ongoing");
+    print("Now: ${DateTime.parse(DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(DateTime.now()))}");
+    print("Starting date: ${widget.jobOffer.startingDate}");
+    print("Ending date: ${widget.jobOffer.startingDate.add(Duration(hours: widget.jobOffer.workingHours))}");
+    var now = DateTime.parse(DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(DateTime.now()));
+    return requests[index].status == "ACCEPTED" && widget.jobOffer.startingDate.isBefore(now) && widget.jobOffer.startingDate.add(Duration(hours: widget.jobOffer.workingHours)).isAfter(now);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -186,8 +196,8 @@ class _RequestListPageState extends State<RequestListPage> {
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            color: requests[index].status == "ACCEPTED" ? Colors.blueGrey : Colors.transparent,
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                            color: _jobRequestOngoing(index) ? Colors.blueGrey : Colors.transparent,
+                            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                           ),
                           child: GestureDetector(
                             onTap: () {
@@ -336,7 +346,7 @@ class _RequestListPageState extends State<RequestListPage> {
                             ),
                           ),
                         ),
-                        if (requests[index].status == "ACCEPTED")
+                        if (_jobRequestOngoing(index))
                           GestureDetector(
                               onTap: () {
                                 if (requests[index].id != null) Api.confirmWork(requests[index].id!);

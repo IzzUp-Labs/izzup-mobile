@@ -126,7 +126,7 @@ class _HomeState extends State<Home> {
       const ProfileScreen()
     ];
     _createSocket();
-    //_checkForAwaitingRequests();
+    _checkForAwaitingRequests();
   }
 
   _checkForAwaitingRequests() {

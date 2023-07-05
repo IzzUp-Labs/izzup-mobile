@@ -148,6 +148,7 @@ class _RequestListPageState extends State<RequestListPage> {
 
   bool _jobRequestOngoing(int index) {
     print("Checking if job request is ongoing");
+    print("Name: ${widget.jobOffer.jobTitle}");
     print("Now: ${DateTime.parse(DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(DateTime.now()))}");
     print("Starting date: ${widget.jobOffer.startingDate}");
     print("Ending date: ${widget.jobOffer.startingDate.add(Duration(hours: widget.jobOffer.workingHours))}");

@@ -31,6 +31,7 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
 
   bool _jobRequestOngoing(JobOfferRequest jobOffer) {
     print("Checking if job offer is ongoing");
+    print("Name: ${jobOffer.jobTitle}");
     print("Now: ${DateTime.parse(DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(DateTime.now()))}");
     print("Starting date: ${jobOffer.startingDate}");
     print("Ending date: ${jobOffer.startingDate.add(Duration(hours: jobOffer.workingHours))}");

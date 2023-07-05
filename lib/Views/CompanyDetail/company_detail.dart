@@ -16,6 +16,21 @@ class CompanyPage extends StatefulWidget {
 
 class _CompanyPageState extends State<CompanyPage>
     with SingleTickerProviderStateMixin {
+
+  _splitDate(String date) {
+    final splitted = date.split(': ');
+    String openingHours = splitted[1].split('–')[0];
+    openingHours = DateFormat("HH:mm").parse(openingHours.trim()).toString();
+    openingHours = DateFormat("HH:mm").format(DateTime.parse(openingHours));
+    String closingHours = splitted[1].split('–')[1];
+    closingHours = DateFormat("HH:mm").parse(closingHours.trim()).toString();
+    closingHours = DateFormat("HH:mm").format(DateTime.parse(closingHours));
+    print(closingHours);
+    return "${openingHours}h - ${closingHours}h";
+  }
+
+  String companyPhoto = "";
+  Map<String, dynamic> _companyDetails = {};
   late TabController _tabController;
   int _currentTab = 0;
 
@@ -30,8 +45,24 @@ class _CompanyPageState extends State<CompanyPage>
     }
   }
 
+  _getCompanyDetails() async {
+    var result = await Api.getPlaceDetails(widget.company.placeId);
+    setState(() {
+      if(result != null) {
+        _companyDetails = result;
+      }
+    });
+    var googlePhoto = await Api.getPlacePhotoLinks(widget.company.placeId);
+    setState(() {
+      if (googlePhoto != null) {
+        companyPhoto = googlePhoto.first;
+      }
+    });
+  }
+
   @override
   void initState() {
+    _getCompanyDetails();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {
       setState(() {
@@ -78,25 +109,75 @@ class _CompanyPageState extends State<CompanyPage>
                   Center(
                     child: Column(
                       children: [
-                        Row(
-                          children: [
-                            // Photo de l'entreprise
-                            Image.network(
-                              'https://toohotel.com/wp-content/uploads/2022/09/TOO_restaurant_Panoramique_vue_Paris_nuit_v2-scaled.jpg',
-                              width: 200,
-                              height: 200,
+                        companyPhoto == ""
+                            ? const CircularProgressIndicator()
+                            : Container(
+                                margin: const EdgeInsets.symmetric( vertical: 10, horizontal: 20),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: const Color(0xFF00B096),
+                                    width: 2,
+                                  ),
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: <Color>[
+                                      Color(0xFF00B096),
+                                      Color(0xFF008073),
+                                    ],
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    companyPhoto,
+
+                                  ),
+                                ),
                             ),
-                            const SizedBox(width: 10),
-                            // Espacement entre l'image et le texte
-                            // Description de l'entreprise
-                            const Expanded(
-                              child: Text(
-                                'Description de l\'entreprise',
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
+                        const SizedBox(height: 10),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Icon(Icons.location_on, color: Color(0xFF00B096)),
+                              const SizedBox(width: 10),
+                              Text(widget.company.address),
+                            ],
+                          ),
                         ),
+                        const SizedBox(height: 10),
+                        _companyDetails['formatted_phone_number'] != null
+                            ?
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Icon(Icons.phone, color: Color(0xFF00B096)),
+                              const SizedBox(width: 10),
+                              Text(_companyDetails['formatted_phone_number']),
+                            ],
+                          ),
+                        ) :
+                        const SizedBox(),
+                        const SizedBox(height: 10),
+                        _companyDetails['opening_hours'] != null
+                            ?
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const Icon(Icons.access_time, color: Color(0xFF00B096)),
+                              const SizedBox(width: 10),
+                              Text(_splitDate(_companyDetails['opening_hours']['weekday_text'][DateTime.now().weekday - 1])),
+                            ],
+                          ),
+                        ) :
+                        const SizedBox(),
                         const SizedBox(height: 10),
                         // Espacement entre la description de l'entreprise et la ligne
                         // Ligne verte
@@ -106,79 +187,102 @@ class _CompanyPageState extends State<CompanyPage>
                           color: const Color(0xFF00B096),
                         ),
                         const SizedBox(height: 10),
-                        // Espacement entre la ligne et la description de l'employeur
-                        // Photo de profil de l'employeur
-                        Container(
-                          width: 100,
-                          height: 100,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: NetworkImage(
-                                'https://www.sdp.ulaval.ca/blogue/wp-content/uploads/2017/10/shutterstock_343001735-bien-choisir-employeur-blogue-768x530.jpg',
-                              ),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        // Texte décrivant l'employeur
-                        const Text(
-                          'Description de l\'employeur',
-                          textAlign: TextAlign.center,
-                        ),
                       ],
                     ),
                   ),
                   ListView.builder(
                     itemCount: widget.company.jobOffers.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return Card(
-                        child: ListTile(
-                          title: Text(widget.company.jobOffers[index].jobTitle),
-                          subtitle: Text(widget.company.jobOffers[index].jobDescription),
-                          trailing: _appliedJobOffers.contains(widget.company.jobOffers[index].id) == false ? ElevatedButton(
-                            onPressed: () => showDialog<String>(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                              title: Center(child: Text(AppLocalizations.of(context)?.companyDetails_beforeApplying ?? "Before applying")),
-                              content: Text(
-                                AppLocalizations.of(context)?.companyDetails_areYouSure(widget.company.jobOffers[index].jobTitle, DateFormat.Hm().format(widget.company.jobOffers[index].startingDate)) ??
-                                    "Are you sure you want to apply ?",
-                                  textAlign: TextAlign.center,
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        child: Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: const Color(0xFF00B096),
+                                  width: 2,
+                                ),
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: <Color>[
+                                    Color(0xFF00B096),
+                                    Color(0xFF008073),
+                                  ],
+                                ),
                               ),
-                              actionsAlignment: MainAxisAlignment.spaceEvenly,
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, AppLocalizations.of(context)?.companyDetails_cancel ?? "Cancel"),
-                                  child: Text(AppLocalizations.of(context)?.companyDetails_cancel ?? "Cancel", style: const TextStyle(color: Colors.red)),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    final id = widget.company.jobOffers[index].id;
-                                    if (id != null) {
-                                      _applyToJobOffer(id);
-                                    }
-                                    Navigator.pop(context, AppLocalizations.of(context)?.companyDetails_apply ?? "Apply");
-                                  },
-                                  child: Text(
-                                      AppLocalizations.of(context)?.companyDetails_apply ?? "Apply",
-                                      style: const TextStyle(color: Color(0xFF00B096))
-                                  ),
-                                ),
-                              ],
-                              elevation: 24.0,
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    title: Text(
+                                        widget.company.jobOffers[index].jobTitle,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
+                                    ),
+                                    subtitle: Text(
+                                        widget.company.jobOffers[index].jobDescription,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 13,
+                                        ),
+                                    ),
+                                    trailing: SizedBox(
+                                      height: double.infinity,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          _appliedJobOffers.contains(widget.company.jobOffers[index].id)
+                                              ? Icons.check_circle
+                                              : Icons.add_circle_outline,
+                                          color: Colors.white,
+                                        ),
+                                        onPressed: () {
+                                          showDialog<String>(
+                                              context: context,
+                                              builder: (BuildContext context) => AlertDialog(
+                                            title: Center(child: Text(AppLocalizations.of(context)?.companyDetails_beforeApplying ?? "Before applying")),
+                                            content: Text(
+                                              AppLocalizations.of(context)?.companyDetails_areYouSure(widget.company.jobOffers[index].jobTitle, DateFormat.Hm().format(widget.company.jobOffers[index].startingDate)) ??
+                                                  "Are you sure you want to apply ?",
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            actionsAlignment: MainAxisAlignment.spaceEvenly,
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(context, AppLocalizations.of(context)?.companyDetails_cancel ?? "Cancel"),
+                                                child: Text(AppLocalizations.of(context)?.companyDetails_cancel ?? "Cancel", style: const TextStyle(color: Colors.red)),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  final id = widget.company.jobOffers[index].id;
+                                                  if (id != null) {
+                                                    _applyToJobOffer(id);
+                                                  }
+                                                  Navigator.pop(context, AppLocalizations.of(context)?.companyDetails_apply ?? "Apply");
+                                                },
+                                                child: Text(
+                                                    AppLocalizations.of(context)?.companyDetails_apply ?? "Apply",
+                                                    style: const TextStyle(color: Color(0xFF00B096))
+                                                ),
+                                              ),
+                                            ],
+                                            elevation: 24.0,
+                                            shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                                          )
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )
                             ),
-                          ),
-                            child: Text(AppLocalizations.of(context)?.companyDetails_apply ?? "Apply"),
-                          ) :
-                              ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF00B096),
-                                  ),
-                                  child: Text(AppLocalizations.of(context)?.companyDetails_applied ?? "Applied"))
+                          ],
                         ),
                       );
                     },

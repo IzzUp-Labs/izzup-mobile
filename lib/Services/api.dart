@@ -148,7 +148,7 @@ class Api {
     }
   }
 
-  static Future<Map<String, dynamic>?> _getPlaceDetails(String placeId) async {
+  static Future<Map<String, dynamic>?> getPlaceDetails(String placeId) async {
     var client = http.Client();
     try {
       var response = await client.get(getUri('google-places/details/$placeId'));
@@ -163,7 +163,7 @@ class Api {
   }
 
   static Future<List<String>?> getPlacePhotoLinks(String placeId) async {
-    final placeDetails = await Api._getPlaceDetails(placeId);
+    final placeDetails = await Api.getPlaceDetails(placeId);
     List<String> placeImagesLinks = List<String>.empty(growable: true);
     if (placeDetails != null) {
       placeDetails['photos']

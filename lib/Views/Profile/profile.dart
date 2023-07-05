@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +10,7 @@ import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Views/Discussions/discussions_page.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+
 import '../../Models/scale.dart';
 import '../../Models/user.dart';
 import '../../Services/api.dart';
@@ -44,20 +44,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       if (context.mounted) Navigator.of(context).pop();
       final image = await ImagePicker().pickImage(source: source);
-      if(image == null) return;
+      if (image == null) return;
       final imageTemp = File(image.path);
       setState(() => this.image = imageTemp);
-      print(await Api.uploadProfilePhoto(imageTemp.path));
+      await Api.uploadProfilePhoto(imageTemp.path);
       await _loadUser();
     } on PlatformException catch(e) {
       if (kDebugMode) print('Failed to pick image: $e');
     }
   }
 
-  Widget _sectionText(String text, String arrowAssetName, VoidCallback onTap, {String? assetName, IconData? icon}) {
+  Widget _sectionText(
+      String text, String arrowAssetName, VoidCallback onTap, IconData icon) {
     return GestureDetector(
       onTap: onTap,
-      child: Column(
+      child: Container(
+        width: 150,
+        height: 150,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.accent, width: 1),
+        ),
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    icon,
+                    color: AppColors.accent,
+                    size: 24,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    text,
+                    style: const TextStyle(
+                      color: AppColors.accent,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Positioned(
+              right: 20,
+              bottom: 20,
+              child: Icon(
+                Icons.arrow_forward_ios,
+                color: AppColors.accent,
+                size: 24,
+              ),
+            ),
+          ],
+        ),
+      )
+      /*Column(
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 60, right: 60, top: 20),
@@ -104,7 +149,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           )
         ],
-      ),
+      )*/
+      ,
     );
   }
 
@@ -258,48 +304,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SafeArea(
                   child: Column(
                     children: [
-                      _sectionText(
-                          "Discussions",
-                          "assets/arrow_right.png",
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _sectionText("Discussions", "assets/arrow_right.png",
                               () {
                             context.push(const DiscussionPage());
-                          },
-                          icon: Icons.chat_rounded
+                          }, Icons.chat_rounded),
+                          const SizedBox(width: 20),
+                          if (user?.role.value == "EXTRA")
+                            _sectionText("Tags", "assets/arrow_right.png", () {
+                              context.push(const TagsScreen());
+                            }, Icons.tag),
+                          if (user?.role.value == "EMPLOYER")
+                            _sectionText(
+                                AppLocalizations.of(context)
+                                        ?.homeProfile_myContracts ??
+                                    "My contracts",
+                                "assets/arrow_right.png", () {
+                              context.push(const LastJobOfferListPage());
+                            }, Icons.handyman_rounded),
+                        ],
                       ),
-                      user?.role.value == "EXTRA" ?
-                      _sectionText(
-                          "Tags",
-                          "assets/arrow_right.png",
-                              () {
-                            context.push(const TagsScreen());
-                          },
-                          assetName: "assets/badge.png"
-                      )
-                      : const SizedBox()
-                      ,
-                      user?.role.value == "EMPLOYER" ?
-                      _sectionText(
-                          AppLocalizations.of(context)
-                              ?.homeProfile_myContracts ??
-                              "My contracts",
-                          "assets/arrow_right.png",
-                              () {
-                            context.push(const LastJobOfferListPage());
-                              },
-                          icon: Icons.handyman_rounded
-                      ): const SizedBox(),
-                      user?.role.value == "EXTRA" ?
-                      _sectionText(
-                          AppLocalizations.of(context)
-                              ?.homeProfile_myLastJobs ??
-                              "My last jobs",
-                          "assets/arrow_right.png",
-                              () {},
-                          icon: Icons.work
-                      ): const SizedBox(),
-                      const SizedBox(
-                        height: 50,
-                      )
+                      if (user?.role.value == "EXTRA")
+                        const SizedBox(height: 20),
+                      if (user?.role.value == "EXTRA")
+                        _sectionText(
+                            AppLocalizations.of(context)
+                                    ?.homeProfile_myLastJobs ??
+                                "My last jobs",
+                            "assets/arrow_right.png",
+                            () {},
+                            Icons.work)
                     ],
                   ),
                 )

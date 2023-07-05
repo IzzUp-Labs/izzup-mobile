@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,15 +11,13 @@ import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/location.dart';
 import 'package:izzup/Views/Map/map.dart';
 import 'package:izzup/Views/Profile/profile.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:izzup/Views/RequestList/request_list_extra.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:socket_io_client/socket_io_client.dart';
 
 import '../../Services/api.dart';
-import '../../Services/prefs.dart';
 import '../HomeScreen/home_screen.dart';
 import '../JobOfferList/job_offer_list.dart';
-import '../RequestList/request_list.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -70,7 +67,9 @@ enum _CurrentPage {
       case _CurrentPage.map:
         return const MapScreen();
       case _CurrentPage.posts:
-        return const JobOfferListPage();
+        return Globals.profile?.role == UserRole.employer
+            ? const JobOfferListPage()
+            : const RequestListExtra();
       case _CurrentPage.profile:
         return const ProfileScreen();
       default:
@@ -108,7 +107,7 @@ class _HomeState extends State<Home> {
   late io.Socket socket;
 
   void checkPerm() async {
-    print(await LocationService.isPermissionGranted());
+    if (kDebugMode) print(await LocationService.isPermissionGranted());
   }
 
   @override
@@ -116,27 +115,27 @@ class _HomeState extends State<Home> {
     super.initState();
     checkPerm();
     listScreens = Globals.profile?.role == UserRole.extra ? [
-      const HomeScreen(),
-      const MapScreen(),
-      const JobOfferListPage(),
-      const ProfileScreen()
-    ] : [
+            const HomeScreen(),
+            const MapScreen(),
+            const RequestListExtra(),
+            const ProfileScreen()
+          ]
+        : [
       const HomeScreen(),
       const JobOfferListPage(),
       const ProfileScreen()
     ];
     _createSocket();
-    Timer(const Duration(seconds: 1), () {
-      showJobRequestSuccessModal(context, JobOfferRequest("Titre du job", "Description", DateTime.now(), 1, 1, true, 1, 0, []));
-    });
-    _checkForAwaitingRequests();
+    //_checkForAwaitingRequests();
   }
 
   _checkForAwaitingRequests() {
     Api.getExtraRequests().then((value) {
       if (value == null) return;
-      var requests = value.requests.where((element) => element.status == JobRequestStatus.waitingForVerification);
-      showJobEndModalExtra(context, requests.first);
+      var requests = value.requests.where((element) =>
+          element.status == JobRequestStatus.waitingForVerification);
+      if (requests.first.verificationCode == null) return;
+      showJobEndModalExtra(context, requests.first.verificationCode!);
     });
   }
 
@@ -158,7 +157,6 @@ class _HomeState extends State<Home> {
     socket.onConnectError((data) => print(data));
 
     socket.on('job-request-accepted', (data) { // modal extra job accepted
-      print('accepted');
       JobOfferRequest jobOffer = JobOfferRequest.fromJson(data["jobOffer"]);
       JobRequests request = JobRequests.fromJson(data["request"]);
       showJobRequestSuccessModal(context, jobOffer);
@@ -169,19 +167,13 @@ class _HomeState extends State<Home> {
       JobOfferRequest jobOffer = JobOfferRequest.fromJson(data["jobOffer"]);
       JobRequests request = JobRequests.fromJson(data["request"]);
       if (Globals.profile?.role == UserRole.extra) {
-        print("extra");
-        //showJobEndModalExtra(context, request);
+        showJobEndModalExtra(context, "");
       } else {
-        print("employer");
         //showJobEndModalEmployer(context, request);
       }
-      print('confirmed');
-      print(data);
     });
 
     socket.on('job-request-finished', (data) { // pop modal extra code
-      print('finished');
-      print(data);
     });
   }
 
@@ -203,7 +195,6 @@ class _HomeState extends State<Home> {
                   setState(() {
                     tabIndex = index;
                     _currentPage = _CurrentPage.forIndex(index);
-
                   });
                 },
                 items: [
@@ -309,18 +300,19 @@ Future<T> showJobRequestSuccessModal<T>(BuildContext context, JobOfferRequest jo
   ), isDismissible: false);
 }
 
-Future<T> showJobEndModalExtra<T>(BuildContext context, JobRequestWithVerificationCode request) async {
+Future<T> showJobEndModalExtra<T>(BuildContext context, String code) async {
   return await showModal(
-      context, (context) => Scaffold(
-      body: Stack(
-        children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: MediaQuery.of(context).size.height / 3.3),
-                const Text(
+      context,
+      (context) => Scaffold(
+              body: Stack(
+            children: [
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height / 3.3),
+                    const Text(
                   "It's time to leave !",
                   style: TextStyle(
                       color: Colors.black,
@@ -329,25 +321,23 @@ Future<T> showJobEndModalExtra<T>(BuildContext context, JobRequestWithVerificati
                   ),
                 ),
                 const SizedBox(height: 5),
-                const Text(
-                  "Give this code to your employer",
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic
-                  ),
-                ),
-                const SizedBox(height: 75),
-                const Text(
-                  "1234",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 75,
-                      fontWeight: FontWeight.bold
-                  ),
-                )
-              ],
+                    const Text(
+                      "Give this code to your employer",
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic),
+                    ),
+                    const SizedBox(height: 75),
+                    Text(
+                      code,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 75,
+                          fontWeight: FontWeight.bold),
+                    )
+                  ],
             ),
           )
         ],

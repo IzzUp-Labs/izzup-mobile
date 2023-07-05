@@ -1,3 +1,6 @@
+import 'company.dart';
+import 'job_offer.dart';
+
 class JobOfferRequest {
   int? id;
   String jobTitle;
@@ -56,15 +59,20 @@ enum JobRequestStatus {
 class JobRequestWithVerificationCode {
   int? id;
   JobRequestStatus status;
-  int? verificationCode;
+  String? verificationCode;
+  JobOffer jobOffer;
+  Company company;
 
-  JobRequestWithVerificationCode(this.id, this.status, this.verificationCode);
+  JobRequestWithVerificationCode(
+      this.id, this.status, this.verificationCode, this.jobOffer, this.company);
 
   factory JobRequestWithVerificationCode.fromJson(Map<String, dynamic> json) {
     return JobRequestWithVerificationCode(
       json['id'],
       JobRequestStatus.fromString(json['status']),
       json['verification_code'],
+      JobOffer.fromJson(json['jobOffer']),
+      Company.fromJson(json['jobOffer']['company']),
     );
   }
 }

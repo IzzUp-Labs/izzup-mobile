@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:izzup/Models/classy_loader.dart';
+import 'package:izzup/Models/scale.dart';
 import 'package:izzup/Services/location.dart';
 import 'package:izzup/Services/navigation.dart';
 
@@ -269,22 +270,23 @@ class _MapScreenState extends State<MapScreen> {
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: AppColors.accent,
-                    fixedSize: const Size(75, 40),
+                    fixedSize: Size(MediaQuery.of(context).size.width / 4, 40),
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                      BorderRadius.circular(20), // <-- Radius
+                      borderRadius: BorderRadius.circular(20), // <-- Radius
                     ),
                   ),
                   child: _reloadLoading
                       ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: ClassyLoader(
-                          loaderColor: AppColors.accent,
-                          loaderSize: 5,
-                          loaderBackground: Colors.transparent
-                      ))
-                      : const Text("Reload"),
+                          height: 20,
+                          width: 20,
+                          child: ClassyLoader(
+                              loaderColor: AppColors.accent,
+                              loaderSize: 5,
+                              loaderBackground: Colors.transparent))
+                      : Text(
+                          "Reload",
+                          textScaleFactor: ScaleSize.textScaleFactor(context),
+                        ),
                 ),
                 const Spacer(),
               ],

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:izzup/Models/globals.dart';
@@ -21,7 +20,6 @@ class _RegisterSuccessState extends State<RegisterSuccess> {
   void _loadProfileAndNavigate() async {
     await Globals.loadProfile();
     Timer(const Duration(milliseconds: 750), () {
-      if (kDebugMode) print("timer end");
       context.navigateWithoutBack(const Home());
     });
   }

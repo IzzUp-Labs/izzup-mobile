@@ -76,15 +76,11 @@ class Api {
 
   static Future<bool> registerAndLoginExtra() async {
     int registerStatusCode = await _registerExtra(Globals.tempExtra);
-    if (kDebugMode) {
-      print(registerStatusCode);
-    }
     return await login(Globals.tempExtra);
   }
 
   static Future<bool> registerAndLoginEmployer() async {
     int registerStatusCode = await _registerEmployer(Globals.tempEmployer);
-    if (kDebugMode) print(registerStatusCode);
     return await login(Extra(Globals.tempEmployer.email,
         Globals.tempEmployer.password, DateTime.now()));
   }
@@ -155,8 +151,7 @@ class Api {
   static Future<Map<String, dynamic>?> _getPlaceDetails(String placeId) async {
     var client = http.Client();
     try {
-      var response =
-          await client.get(getUri('google-places/details/$placeId'));
+      var response = await client.get(getUri('google-places/details/$placeId'));
       final jsonBody = jsonDecode(response.body);
       if (jsonBody['result'] == null) {
         return null;
@@ -189,8 +184,7 @@ class Api {
   }
 
   static Future<bool> uploadProfilePhoto(String imagePath) async {
-    var request =
-        http.MultipartRequest("POST", getUri('user/upload/photo'));
+    var request = http.MultipartRequest("POST", getUri('user/upload/photo'));
     final token = await Prefs.getString('authToken');
     request.files.add(
       await http.MultipartFile.fromPath(
@@ -205,8 +199,7 @@ class Api {
   }
 
   static Future<bool> uploadIdPhoto(String imagePath) async {
-    var request =
-        http.MultipartRequest("POST", getUri('user/upload/id_photo'));
+    var request = http.MultipartRequest("POST", getUri('user/upload/id_photo'));
     final token = await Prefs.getString('authToken');
     request.files.add(
       await http.MultipartFile.fromPath(
@@ -225,15 +218,17 @@ class Api {
     if (authToken == null) return null;
     var client = http.Client();
     try {
-      var response = await client.post(getUri('location/job-offers-in-range'),
-          headers: {
-            "Content-Type": "application/json",
-            'Authorization': 'Bearer $authToken',
-          },
-          body: json.encode({
-            "longitude": Globals.locationData?.longitude,
-            "latitude": Globals.locationData?.latitude,
-          }));
+      var response = await client.post(
+        getUri('location/job-offers-in-range'),
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer $authToken',
+        },
+        body: json.encode({
+          "longitude": Globals.locationData?.longitude,
+          "latitude": Globals.locationData?.latitude,
+        }),
+      );
       List<MapLocation> locations = [];
       var jsonLocations = jsonDecode(response.body);
       for (var location in jsonLocations) {
@@ -363,7 +358,6 @@ class Api {
           'Authorization': 'Bearer $authToken',
         },
       );
-      print(response.body);
       if (response.statusCode != 201) return false;
       return true;
     } catch (e) {
@@ -444,7 +438,6 @@ class Api {
       var response = await client.get(getUri("employer/statistics"),
         headers: { 'Authorization': 'Bearer $authToken'},
       );
-      print(response.body);
       var stats = EmployerStats.fromJson(jsonDecode(response.body));
       return stats;
     } catch (e) {
@@ -463,9 +456,7 @@ class Api {
       var response = await client.get(getUri("extra/with/request"),
         headers: { 'Authorization': 'Bearer $authToken'},
       );
-      print(response.body);
       var requests = UserWithRequests.fromJson(jsonDecode(response.body));
-      print(requests);
       return requests;
     } catch (e) {
       if (kDebugMode) print(e);

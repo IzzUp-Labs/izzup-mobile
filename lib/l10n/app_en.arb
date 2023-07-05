@@ -104,15 +104,15 @@
 
   "chat_typing": "Typing...",
   "chat_typeAMessage": "Type a message",
-
   "companyDetails_about": "About",
   "companyDetails_jobs": "Jobs",
   "companyDetails_apply": "Apply",
-  "companyDetails_beforeApplying":  "Before applying",
+  "companyDetails_beforeApplying": "Before applying",
   "companyDetails_areYouSure": "Are you sure you want to apply for the job offer \"{jobTitle}\" - {startingDate}?",
   "companyDetails_cancel": "Cancel",
   "companyDetails_applied": "Applied",
-
   "jobOffersList_jobOffers": "Job offers",
-  "jobOffersList_noJobsOffersYet": "No job offers yet 😢"
+  "jobOffersList_noJobsOffersYet": "No job offers yet 😢",
+  "requestListExtra_requestSent": "Requests sent",
+  "requestListExtra_noRequestsYet": "No request sent yet 😢"
 }

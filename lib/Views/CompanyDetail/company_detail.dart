@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:izzup/Services/api.dart';
+
 import '../../Models/company.dart';
 
 class CompanyPage extends StatefulWidget {
@@ -37,7 +37,6 @@ class _CompanyPageState extends State<CompanyPage>
       setState(() {
         _currentTab = _tabController.index;
       });
-      if (kDebugMode) print(_appliedJobOffers.contains(widget.company.jobOffers[0].id));
     });
     super.initState();
   }

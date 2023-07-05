@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:izzup/Models/extra.dart';
 import 'package:izzup/Models/globals.dart';
@@ -71,18 +72,20 @@ class _IzzUpState extends State<IzzUp> with WidgetsBindingObserver {
     return GestureDetector(
         onTap: () => context.dropFocus(),
         child: MaterialApp(
-          title: AppLocalizations.of(context)?.appName ?? 'IzzUp',
-          theme: ThemeData(
-            fontFamily: 'Cera Pro SV',
-            primarySwatch: AppColors.accentMaterialColor,
-          ),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: widget.hasSeenIntro != true
-              ? const Welcoming(pageType: WelcomingPageType.landing)
-              : widget.isLoggedIn
-                  ? const Home()
-                  : const SignIn(),
-        ));
+            title: AppLocalizations.of(context)?.appName ?? 'IzzUp',
+            theme: ThemeData(
+              fontFamily: 'Cera Pro SV',
+              primarySwatch: AppColors.accentMaterialColor,
+            ),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: AnnotatedRegion<SystemUiOverlayStyle>(
+              value: SystemUiOverlayStyle.dark,
+              child: widget.hasSeenIntro != true
+                  ? const Welcoming(pageType: WelcomingPageType.landing)
+                  : widget.isLoggedIn
+                      ? const Home()
+                      : const SignIn(),
+            )));
   }
 }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/navigation.dart';
 
 import '../../Models/job_offer_requests.dart';
 import '../../Services/api.dart';
 import '../RequestList/request_list.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class JobOfferListPage extends StatefulWidget {
   const JobOfferListPage({super.key});
@@ -21,6 +21,7 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
   _getMyJobOffers() async {
     jobOfferRequests = (await Api.getMyJobOffers())!;
     setState(() {
+      jobOfferRequests.sort((a, b) => a.startingDate.compareTo(b.startingDate));
       jobOfferRequests = jobOfferRequests;
     });
   }
@@ -30,8 +31,6 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
     _getMyJobOffers();
     super.initState();
   }
-
-
 
   @override
   Widget build(BuildContext context) {

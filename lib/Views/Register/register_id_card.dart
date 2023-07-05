@@ -54,7 +54,6 @@ class _RegisterIdCardState extends State<RegisterIdCard> {
     if (imagePath == null) return false;
 
     if (await Api.uploadIdPhoto(imagePath!)) {
-      print("uploaded id photo");
       if (context.mounted) context.navigateWithoutBack(const RegisterSuccess());
     } else {
       setState(() => imagePath = null);
@@ -143,9 +142,7 @@ class _RegisterIdCardState extends State<RegisterIdCard> {
                                             imagePath = image.path;
                                           });
                                         } catch (e) {
-                                          if (kDebugMode) {
-                                            print(e);
-                                          }
+                                          if (kDebugMode) print(e);
                                         }
                                       },
                                       child: const Icon(Icons.camera_alt),

@@ -12,14 +12,16 @@ import 'package:socket_io_client/socket_io_client.dart' as io;
 import '../../Models/messaging_room.dart';
 import '../../Models/user.dart';
 import '../../Services/api.dart';
+import '../../Services/colors.dart';
 import '../../Services/prefs.dart';
 import '../Chat/chat.dart';
 
 class RequestListPage extends StatefulWidget {
-  const RequestListPage({super.key, required this.extraRequest, required this.indexOfJobOffer});
+  const RequestListPage({super.key, required this.extraRequest, required this.indexOfJobOffer, required this.jobOffer});
 
   final List<JobRequests> extraRequest;
   final int indexOfJobOffer;
+  final JobOfferRequest jobOffer;
 
   @override
   State<RequestListPage> createState() => _RequestListPageState();
@@ -168,147 +170,200 @@ class _RequestListPageState extends State<RequestListPage> {
             )
                 : RefreshIndicator(
               onRefresh: () async {
-                if (Globals.profile?.role == UserRole.extra) {
-                  final requests = await Api.getMyJobOffers();
-                } else {
-                  final jobOffers = await Api.getMyJobOffers();
-                  if (jobOffers != null) {
-                    setState(() {
-                      requests = jobOffers[widget.indexOfJobOffer].requests;
-                    });
-                  }
+                final jobOffers = await Api.getMyJobOffers();
+                if (jobOffers != null) {
+                  setState(() {
+                    requests = jobOffers[widget.indexOfJobOffer].requests;
+                  });
                 }
               },
               child: ListView.builder(
                 itemCount: requests.length,
                 itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      if (requests[index].status == "ACCEPTED") {
-                        lastUserClicked = requests[index].extra.user;
-                        if (lastUserClicked?.id != null) {
-                          MessagingRoom? room = _checkIfRoomAllreadyCreated(lastUserClicked!.id!);
-                          if (room != null) {
-                            context.push(ChatPage(
-                              room : room,
-                              authToken: authToken!,
-                              socket: socket,
-                              name: requests[index].extra.user.firstName,
-                              photoUrl: requests[index].extra.user.photo,
-                            ));
-                          } else {
-                            setState(() => _isLoading = true);
-                            _createChat(lastUserClicked!.id!);
-                          }
-                        }
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(15),
-                      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF00B096),
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: <Color>[
-                            Color(0xFF00B096),
-                            Color(0xFF008073),
-                          ],
-                        ),
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          ListTile(
-                            leading: requests[index].extra.user.photo != null
-                                ? CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  requests[index].extra.user.photo!
-                              ),
-                            )
-                                : const CircleAvatar(backgroundImage: AssetImage("assets/blank_profile_picture.png")),
-                            title: Text(
-                                '${requests[index].extra.user.firstName} ${requests[index].extra.user.lastName}',
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20
-                                )
-                            ),
-                            subtitle: Text(
-                              requests[index].extra.address,
-                              style: const TextStyle(
-                                  color: Colors.white54
-                              ),
-                            ),
-                            trailing: requests[index].status == "PENDING"
-                                ? const Icon(
-                              Icons.timer_outlined,
-                              color: Colors.white,
-                            )
-                                : requests[index].status == "ACCEPTED"
-                                ? const Icon(
-                              Icons.keyboard_arrow_right_outlined,
-                              color: Colors.white,
-                            )
-                                : const Icon(
-                              Icons.cancel_outlined,
-                              color: Colors.white,
-                            ),
+                  return Container(
+                    margin: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: requests[index].status == "ACCEPTED" ? Colors.blueGrey : Colors.transparent,
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                           ),
-                          if (requests[index].status == "PENDING")
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              IconButton(
-                                icon: const Icon(Icons.message, color: Colors.white),
-                                onPressed: () {
-                                  lastUserClicked = requests[index].extra.user;
-                                  if (lastUserClicked?.id != null) {
-                                    MessagingRoom? room = _checkIfRoomAllreadyCreated(lastUserClicked!.id!);
-                                    if (room != null) {
-                                      context.push(ChatPage(
-                                        room : room,
-                                        authToken: authToken!,
-                                        socket: socket,
-                                        name: requests[index].extra.user.firstName,
-                                        photoUrl: requests[index].extra.user.photo,
-                                      ));
-                                    } else {
-                                      setState(() => _isLoading = true);
-                                      _createChat(lastUserClicked!.id!);
-                                    }
+                          child: GestureDetector(
+                            onTap: () {
+                              if (requests[index].status == "ACCEPTED") {
+                                lastUserClicked = requests[index].extra.user;
+                                if (lastUserClicked?.id != null) {
+                                  MessagingRoom? room = _checkIfRoomAllreadyCreated(lastUserClicked!.id!);
+                                  if (room != null) {
+                                    context.push(ChatPage(
+                                      room : room,
+                                      authToken: authToken!,
+                                      socket: socket,
+                                      name: requests[index].extra.user.firstName,
+                                      photoUrl: requests[index].extra.user.photo,
+                                    ));
+                                  } else {
+                                    setState(() => _isLoading = true);
+                                    _createChat(lastUserClicked!.id!);
                                   }
-                                },
-                              ),
-                              const Spacer(),
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.red,
-                                  ),
-                                  onPressed: () {
-                                    /* ... */
-                                  },
-                                  child: const Text('Decline'),
+                                }
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(15),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF00B096),
+                                borderRadius: BorderRadius.all(Radius.circular(20)),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: <Color>[
+                                    Color(0xFF00B096),
+                                    Color(0xFF008073),
+                                  ],
                                 ),
-                                const SizedBox(width: 8),
-                                TextButton(
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: const Color(0xFF00B096),
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: requests[index].extra.user.photo != null
+                                        ? CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          requests[index].extra.user.photo!
+                                      ),
+                                    )
+                                        : const CircleAvatar(backgroundImage: AssetImage("assets/blank_profile_picture.png")),
+                                    title: Text(
+                                        '${requests[index].extra.user.firstName} ${requests[index].extra.user.lastName}',
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20
+                                        )
+                                    ),
+                                    subtitle: Text(
+                                      requests[index].extra.address,
+                                      style: const TextStyle(
+                                          color: Colors.white60
+                                      ),
+                                    ),
+                                    trailing: requests[index].status == "PENDING"
+                                        ? const Icon(
+                                      Icons.timer_outlined,
+                                      color: Colors.white,
+                                    )
+                                        : requests[index].status == "ACCEPTED"
+                                        ? const Icon(
+                                      Icons.keyboard_arrow_right_outlined,
+                                      color: Colors.white,
+                                    )
+                                        : const Icon(
+                                      Icons.cancel_outlined,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                  onPressed: () {
-                                    final requestId = requests[index].id;
-                                    if(requestId != null) {
-                                      _acceptRequest(requestId);
-                                    }
-                                  },
-                                  child: const Text('Accept'),
-                                )
-                            ],
+                                  if (requests[index].status == "PENDING")
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: <Widget>[
+                                        IconButton(
+                                          icon: const Icon(Icons.message, color: Colors.white),
+                                          onPressed: () {
+                                            lastUserClicked = requests[index].extra.user;
+                                            if (lastUserClicked?.id != null) {
+                                              MessagingRoom? room = _checkIfRoomAllreadyCreated(lastUserClicked!.id!);
+                                              if (room != null) {
+                                                context.push(ChatPage(
+                                                  room : room,
+                                                  authToken: authToken!,
+                                                  socket: socket,
+                                                  name: requests[index].extra.user.firstName,
+                                                  photoUrl: requests[index].extra.user.photo,
+                                                ));
+                                              } else {
+                                                setState(() => _isLoading = true);
+                                                _createChat(lastUserClicked!.id!);
+                                              }
+                                            }
+                                          },
+                                        ),
+                                        const Spacer(),
+                                        TextButton(
+                                          onPressed: () {},
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(20),
+                                              color: Colors.white,
+                                            ),
+                                            child: const Row(
+                                              children: [
+                                                Icon(Icons.cancel_sharp, color: Colors.red,),
+                                                SizedBox(width: 8),
+                                                Text('Decline', style: TextStyle(color: Colors.red)),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        TextButton(
+                                          onPressed: () {
+                                            final requestId = requests[index].id;
+                                            if(requestId != null) {
+                                              _acceptRequest(requestId);
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(20),
+                                              color: Colors.white,
+                                            ),
+                                            child: const Row(
+                                              children: [
+                                                Icon(Icons.check, color: AppColors.accent,),
+                                                SizedBox(width: 8),
+                                                Text('Accept', style: TextStyle(color: AppColors.accent)),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                        if (requests[index].status == "ACCEPTED")
+                          GestureDetector(
+                              onTap: () {
+                                if (requests[index].id != null) Api.confirmWork(requests[index].id!);
+                              },
+                              child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.blueGrey,
+                                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+                                  ),
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Text(
+                                            "End job",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14
+                                            )
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                              )
+                          ),
+                      ],
                     ),
                   );
                 },

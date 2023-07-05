@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/navigation.dart';
 
@@ -23,7 +24,14 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
     setState(() {
       jobOfferRequests.sort((a, b) => a.startingDate.compareTo(b.startingDate));
       jobOfferRequests = jobOfferRequests;
-    });
+      for (var element in jobOfferRequests) {
+        print("Job offer: ${element.startingDate} ${element.startingDate.add(Duration(hours: element.workingHours))}");
+      }});
+  }
+
+  bool _jobRequestOngoing(JobOfferRequest jobOffer) {
+    var now = DateTime.parse(DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(DateTime.now()));
+    return jobOffer.startingDate.isBefore(now) && jobOffer.startingDate.add(Duration(hours: jobOffer.workingHours)).isAfter(now);
   }
 
   @override
@@ -72,13 +80,13 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RequestListPage(extraRequest: jobOfferRequests[index - 1].requests, indexOfJobOffer: index - 1,),
+                          builder: (context) => RequestListPage(extraRequest: jobOfferRequests[index - 1].requests, indexOfJobOffer: index - 1, jobOffer: jobOfferRequests[index - 1]),
                         ),
                       );
                     },
                     child: Container(
                         height: 100,
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                         decoration: const BoxDecoration(
                           color: AppColors.accent,
@@ -92,40 +100,57 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
                             ],
                           ),
                         ),
-                        child: Row(
+                        child: Stack(
                           children: [
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    jobOfferRequests[index - 1].jobTitle,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        jobOfferRequests[index - 1].jobTitle,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        jobOfferRequests[index - 1].jobDescription,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    jobOfferRequests[index - 1].jobDescription,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                    ),
-                                  ),
-                                ],
+                                ),
+                                const SizedBox(width: 20),
+                                IconButton(
+                                  onPressed: () {
+                                    context.push(RequestListPage(extraRequest: jobOfferRequests[index - 1].requests, indexOfJobOffer: index - 1, jobOffer: jobOfferRequests[index - 1]));
+                                  },
+                                  icon: const Icon(Icons.keyboard_arrow_right, color: Colors.white),
+                                ),
+                              ],
+                            ),
+                            if (_jobRequestOngoing(jobOfferRequests[index - 1]))
+                            const Positioned(
+                              bottom: 5,
+                              right: 0,
+                              child: Text(
+                                  "En cours",
+                                  style: TextStyle(
+                                    color: Colors.yellowAccent,
+                                    fontSize: 10,
+                                    fontStyle: FontStyle.italic,
+                                  )
                               ),
-                            ),
-                            const SizedBox(width: 20),
-                            IconButton(
-                              onPressed: () {
-                                context.push(RequestListPage(extraRequest: jobOfferRequests[index - 1].requests, indexOfJobOffer: index - 1,));
-                              },
-                              icon: const Icon(Icons.keyboard_arrow_right, color: Colors.white),
-                            ),
+                            )
                           ],
                         )
                     ),

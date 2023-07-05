@@ -465,4 +465,24 @@ class Api {
       client.close();
     }
   }
+
+  static Future<void> confirmWork(int requestId) async {
+    final authToken = await Globals.authToken();
+    if (authToken == null) return;
+    var client = http.Client();
+    try {
+      var response = await client.patch(getUri("employer/comfirm-work/$requestId"),
+        headers: { 'Authorization': 'Bearer $authToken'},
+      );
+      print(response.body);
+      print(response.statusCode);
+      //var requests = UserWithRequests.fromJson(jsonDecode(response.body));
+      return;
+    } catch (e) {
+      if (kDebugMode) print(e);
+      return;
+    } finally {
+      client.close();
+    }
+  }
 }

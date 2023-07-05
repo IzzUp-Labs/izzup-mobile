@@ -14,4 +14,16 @@ class MapLocation {
   }
 
   static MapLocation basic = MapLocation(0, 0, 0, Company.basic);
+
+  isEquals(MapLocation mapLocation) {
+    return id == mapLocation.id &&
+        longitude == mapLocation.longitude &&
+        latitude == mapLocation.latitude &&
+        company.isEquals(mapLocation.company);
+  }
+
+  @override
+  toString() {
+    return 'MapLocation{id: $id, longitude: $longitude, latitude: $latitude, company: ${company.toString()}}';
+  }
 }

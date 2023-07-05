@@ -24,6 +24,15 @@ class Company {
 
   static Company basic = Company(0, '', '', '', [JobOffer.basic]);
 
+  isEquals(Company company) {
+    return id == company.id &&
+        name == company.name &&
+        placeId == company.placeId &&
+        address == company.address &&
+        jobOffers.length == company.jobOffers.length &&
+        jobOffers.every((jobOffer) => company.jobOffers.contains(jobOffer));
+  }
+
   toJson() {
     return {
       'name': name,
@@ -31,5 +40,10 @@ class Company {
       'place_id': placeId,
       'jobOffers': jobOffers.map((jobOffer) => jobOffer.toJson()).toList()
     };
+  }
+
+  @override
+  toString() {
+    return 'Company{id: $id, name: $name, placeId: $placeId, address: $address, jobOffers: ${ jobOffers.map((jobOffer) => jobOffer.toString()).toList()}}';
   }
 }

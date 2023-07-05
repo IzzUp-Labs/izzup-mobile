@@ -48,4 +48,9 @@ class JobOffer {
       'acceptedSpots': acceptedSpots
     };
   }
+
+  @override
+  String toString() {
+    return 'JobOffer{id: $id, jobTitle: $jobTitle, jobDescription: $jobDescription, startingDate: $startingDate, workingHours: $workingHours, price: $price, isAvailable: $isAvailable, spots: $spots, acceptedSpots: $acceptedSpots}';
+  }
 }

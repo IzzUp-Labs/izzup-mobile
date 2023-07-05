@@ -31,8 +31,6 @@ class _MapScreenState extends State<MapScreen> {
 
   String mapTheme = '';
 
-  int currentCard = 0;
-
   MapLocation selectedLocation = MapLocation.basic;
 
   static const CameraPosition _kGooglePlex = CameraPosition(
@@ -108,19 +106,19 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void _getLocations() async {
-    _locations = (await Api.jobOffersInRange())!;
+    var fetchedLocations = (await Api.jobOffersInRange())!;
+    setState(() => _locations = fetchedLocations);
     getMarkers();
   }
 
   void messageTransition(MapLocation currentShownCard) {
-    if (currentCard == currentShownCard.company.id) {
+    if (selectedLocation.isEquals(currentShownCard)) {
       setState(() {
         showMessages = !showMessages;
       });
     } else {
       setState(() {
         selectedLocation = currentShownCard;
-        currentCard = currentShownCard.company.id;
         showMessages = true;
       });
     }

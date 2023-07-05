@@ -15,6 +15,7 @@ import '../../Models/scale.dart';
 import '../../Models/user.dart';
 import '../../Services/api.dart';
 import '../LastJobOffers/last_job_offers.dart';
+import '../LastJobRequests/last_job_requests.dart';
 import '../Tag/tagpage.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -334,7 +335,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ?.homeProfile_myLastJobs ??
                                 "My last jobs",
                             "assets/arrow_right.png",
-                            () {},
+                            () {
+                              context.push(const LastJobRequestListPage());
+                            },
                             Icons.work)
                     ],
                   ),

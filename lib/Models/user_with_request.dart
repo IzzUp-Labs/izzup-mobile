@@ -20,4 +20,6 @@ class UserWithRequests {
       User.fromJson(json['user']),
     );
   }
+
+  static UserWithRequests basic = UserWithRequests(0, '', [], [], User.basic);
 }

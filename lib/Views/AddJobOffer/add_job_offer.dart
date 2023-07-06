@@ -427,9 +427,19 @@ class _AddJobOfferState extends State<AddJobOffer> {
                                   Navigator.pop(context);
                                 });
                               } else {
+                                final snackBar = SnackBar(
+                                  content: Text(
+                                    AppLocalizations.of(context)
+                                        ?.createJobOffer_error ??
+                                        'The date can not be in the past',
+                                    style: const TextStyle(fontSize: 20),
+                                  ),
+                                  backgroundColor: AppColors.accent,
+                                );
                                 setState(() {
                                   _success = false;
                                 });
+                                if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(snackBar);
                               }
                               setState(() {
                                 _isLoading = false;

@@ -141,5 +141,7 @@
   "tagPage_skip": "Passer",
   "tagPage_addTags": "Ajouter des tags",
   "tagPage_completeProfile": "Compléter votre profil avec des tags qui vous décrivent",
-  "tagPage_save": "Sauvegarder"
+  "tagPage_save": "Sauvegarder",
+  "companyDetails_alreadyApplied": "Vous avez déjà postulé à cette offre d'emploi",
+  "createJobOffer_error": "La date ne peut pas être au passé."
 }

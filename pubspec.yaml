@@ -69,6 +69,7 @@ dependencies:
   modal_bottom_sheet: ^3.0.0-pre
   provider: ^6.0.5
   firebase_core: ^2.14.0
+  firebase_messaging: ^14.6.4
 
 dev_dependencies:
   flutter_test:

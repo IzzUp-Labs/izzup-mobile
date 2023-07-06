@@ -7,7 +7,9 @@ import 'package:izzup/Services/api.dart';
 import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Services/prefs.dart';
+import 'package:provider/provider.dart';
 
+import 'Models/photo.dart';
 import 'Views/Home/home.dart';
 import 'Views/SignIn/signin_landing.dart';
 import 'Views/Welcoming/welcoming.dart';
@@ -79,13 +81,16 @@ class _IzzUpState extends State<IzzUp> with WidgetsBindingObserver {
             ),
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
-            home: AnnotatedRegion<SystemUiOverlayStyle>(
-              value: SystemUiOverlayStyle.dark,
-              child: widget.hasSeenIntro != true
-                  ? const Welcoming(pageType: WelcomingPageType.landing)
-                  : widget.isLoggedIn
-                      ? const Home()
-                      : const SignIn(),
+            home: ChangeNotifierProvider(
+              create: (context) => Photo(),
+              child: AnnotatedRegion<SystemUiOverlayStyle>(
+                value: SystemUiOverlayStyle.dark,
+                child: widget.hasSeenIntro != true
+                    ? const Welcoming(pageType: WelcomingPageType.landing)
+                    : widget.isLoggedIn
+                        ? const Home()
+                        : const SignIn(),
+              ),
             )));
   }
 }

@@ -5,10 +5,12 @@ import 'package:izzup/Models/user.dart';
 import 'package:izzup/Services/api.dart';
 import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/navigation.dart';
+import 'package:provider/provider.dart';
 
 import '../../Models/company.dart';
 import '../../Models/globals.dart';
 import '../../Models/homepage_card_data.dart';
+import '../../Models/photo.dart';
 import '../../Models/scale.dart';
 import '../AddJobOffer/add_job_offer.dart';
 
@@ -137,47 +139,47 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (employerStats == null || employerStats?.totalFinishedJobRequests == 0)
-                Text(
-                  AppLocalizations.of(context)?.homeScreen_noOffersYet ??
-                      "No offers yet",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      fontStyle: FontStyle.italic,
-                      color: Colors.grey),
-                ),
-                if (employerStats != null && employerStats?.totalFinishedJobRequests != 0)
-                Text(
-                  AppLocalizations.of(context)?.homeScreen_extras(int.parse(employerStats!.totalFinishedJobRequests.toString())) ??
-                      "Extras",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 32
+                  Text(
+                    AppLocalizations.of(context)?.homeScreen_noOffersYet ??
+                        "No offers yet",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.grey),
                   ),
-                ),
                 if (employerStats != null && employerStats?.totalFinishedJobRequests != 0)
-                Padding(
-                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.width / 6),
-                  child: RichText(
-                    text: TextSpan(
-                      text: AppLocalizations.of(context)?.homeScreen_with ??
-                          'with ',
-                      style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800),
-                      children: <TextSpan>[
-                        TextSpan(
-                            text: employerStats!.totalJobOffers.toString().split('.')[0],
-                            style: const TextStyle(color: AppColors.accent)),
-                        TextSpan(
-                            text: AppLocalizations.of(context)
-                                ?.homeScreen_jobOffers ??
-                                ' job offers'),
-                      ],
+                  Text(
+                    AppLocalizations.of(context)?.homeScreen_extras(int.parse(employerStats!.totalFinishedJobRequests.toString())) ??
+                        "Extras",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 32
                     ),
                   ),
-                ),
+                if (employerStats != null && employerStats?.totalFinishedJobRequests != 0)
+                  Padding(
+                    padding: EdgeInsets.only(left: MediaQuery.of(context).size.width / 6),
+                    child: RichText(
+                      text: TextSpan(
+                        text: AppLocalizations.of(context)?.homeScreen_with ??
+                            'with ',
+                        style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800),
+                        children: <TextSpan>[
+                          TextSpan(
+                              text: employerStats!.totalJobOffers.toString().split('.')[0],
+                              style: const TextStyle(color: AppColors.accent)),
+                          TextSpan(
+                              text: AppLocalizations.of(context)
+                                  ?.homeScreen_jobOffers ??
+                                  ' job offers'),
+                        ],
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 10),
                 if (_company != null)
                   ElevatedButton(
@@ -386,20 +388,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                         decoration: const BoxDecoration(
                                             color: Colors.white38,
                                             shape: BoxShape.circle),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                      7)),
-                                          child: !_profileLoaded
-                                              ? null
-                                              : Globals.profile?.photo == null
-                                              ? const Image(image: AssetImage("assets/blank_profile_picture.png"))
-                                              : Image.network(
-                                              Globals.profile?.photo ?? "",
-                                              fit: BoxFit.fitWidth),
+                                        child: Consumer<Photo>(
+                                            builder: (context, photo, child) {
+                                              return photo.photo != null
+                                                  ? ClipRRect(
+                                                borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(100)),
+                                                child: Image.file(
+                                                  photo.photo!,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              )
+                                                  : Globals.profile?.photo != null
+                                                  ? ClipRRect(
+                                                borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(100)),
+                                                child: Image.network(
+                                                    Globals.profile?.photo ?? "",
+                                                    fit: BoxFit.cover),
+                                              ) :
+                                              const Icon(
+                                                Icons.person,
+                                                color: Colors.white,
+                                              );
+                                            }
                                         ),
                                       ),
                                     ),

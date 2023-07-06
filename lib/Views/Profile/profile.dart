@@ -10,7 +10,9 @@ import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Views/Discussions/discussions_page.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
 
+import '../../Models/photo.dart';
 import '../../Models/scale.dart';
 import '../../Models/user.dart';
 import '../../Services/api.dart';
@@ -48,6 +50,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (image == null) return;
       final imageTemp = File(image.path);
       setState(() => this.image = imageTemp);
+      if (context.mounted) {
+        var photo = context.read<Photo>();
+        photo.modifyPhoto(imageTemp);
+      }
       await Api.uploadProfilePhoto(imageTemp.path);
       await _loadUser();
     } on PlatformException catch(e) {
@@ -87,6 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
@@ -284,11 +291,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     3)),
                                         child: _isLoading
                                             ? null
+                                            : image != null
+                                            ? Image.file(image!, fit: BoxFit.cover)
                                             : user?.photo == null
                                             ? const Image(image: AssetImage("assets/blank_profile_picture.png"))
                                             : Image.network(
                                             user?.photo ?? "",
-                                            fit: BoxFit.fitWidth
+                                            fit: BoxFit.cover
                                         ),
                                       ),
                                     ),
@@ -309,9 +318,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _sectionText("Discussions", "assets/arrow_right.png",
-                              () {
-                            context.push(const DiscussionPage());
-                          }, Icons.chat_rounded),
+                                  () {
+                                context.push(const DiscussionPage());
+                              }, Icons.chat_rounded),
                           const SizedBox(width: 20),
                           if (user?.role.value == "EXTRA")
                             _sectionText("Tags", "assets/arrow_right.png", () {
@@ -320,7 +329,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           if (user?.role.value == "EMPLOYER")
                             _sectionText(
                                 AppLocalizations.of(context)
-                                        ?.homeProfile_myContracts ??
+                                    ?.homeProfile_myContracts ??
                                     "My contracts",
                                 "assets/arrow_right.png", () {
                               context.push(const LastJobOfferListPage());
@@ -332,10 +341,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       if (user?.role.value == "EXTRA")
                         _sectionText(
                             AppLocalizations.of(context)
-                                    ?.homeProfile_myLastJobs ??
+                                ?.homeProfile_myLastJobs ??
                                 "My last jobs",
                             "assets/arrow_right.png",
-                            () {
+                                () {
                               context.push(const LastJobRequestListPage());
                             },
                             Icons.work)

@@ -1,10 +1,16 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
+import 'package:izzup/Views/HomeScreen/home_screen.dart';
+import 'package:izzup/main.dart';
 
 Future<void> handleBackgroundMessage(RemoteMessage message) async {
-  print('Handling a background message ${message.messageId}');
-  print(message.notification?.title);
-  print(message.notification?.body);
-  print(message.data);
+  if (kDebugMode) {
+    print('Handling a background message ${message.messageId}');
+    print(message.notification?.title);
+    print(message.notification?.body);
+    print(message.data);
+  }
+
 }
 
 class FirebaseApi {
@@ -13,7 +19,9 @@ class FirebaseApi {
   Future<void> initNotifications() async {
     _firebaseMessaging.requestPermission();
     final fcmToken = await _firebaseMessaging.getToken();
-    print('Token: $fcmToken');
+    if (kDebugMode) {
+      print('Token: $fcmToken');
+    }
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
   }
 }

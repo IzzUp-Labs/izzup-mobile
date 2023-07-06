@@ -185,6 +185,7 @@ class _RequestListPageState extends State<RequestListPage> {
                     child: Text(
                     AppLocalizations.of(context)?.requestList_noRequests ??
                         "No requests yet 😢",
+                    textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 20,
                       color: Colors.grey,

@@ -63,6 +63,7 @@ class _LastJobOfferListPageState extends State<LastJobOfferListPage> {
                     child: Center(
                       child: Text(
                         AppLocalizations.of(context)?.jobOffersList_noJobsOffersYet ?? "No job offers yet 😢",
+                        textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 20,
                           color: Colors.grey,

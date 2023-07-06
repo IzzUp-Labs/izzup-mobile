@@ -142,5 +142,6 @@
   "tagPage_save": "Save",
   "companyDetails_alreadyApplied": "Already applied",
   "createJobOffer_error": "The date can not be in the past.",
-  "idConfirm_needsVerification": "We need to verify your identity"
+  "idConfirm_needsVerification": "We need to verify your identity",
+  "idConfirm_lessThanHours": "This typically takes less than 24 hours"
 }

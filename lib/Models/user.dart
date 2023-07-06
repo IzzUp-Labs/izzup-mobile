@@ -84,5 +84,5 @@ class User {
       };
 
   static User basic =
-      User(0, '', '', '', '', DateTime.now(), '', UserRole.extra, '');
+      User(0, '', '', '', '', DateTime.now(), '', UserRole.extra, '', UserVerificationStatus.unverified);
 }

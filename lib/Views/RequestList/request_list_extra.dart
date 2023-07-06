@@ -74,6 +74,7 @@ class _RequestListExtraState extends State<RequestListExtra> {
                         AppLocalizations.of(context)
                                 ?.requestListExtra_noRequestsYet ??
                             "No requests sent yet 😢",
+                        textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 20,
                           color: Colors.grey,
@@ -136,7 +137,8 @@ class _RequestListExtraState extends State<RequestListExtra> {
                             color: Colors.white,
                           ),
                         ],
-                      ));
+                      )
+                  );
                 }
               }
             },

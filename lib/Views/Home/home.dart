@@ -128,9 +128,12 @@ class _HomeState extends State<Home> {
       const ProfileScreen()
     ];
     _createSocket();
-    _checkForAwaitingRequests();
-    if (Globals.profile?.status == UserVerificationStatus.unverified) {
-      showModalNeedsVerification(context)
+    if (Globals.profile?.status == UserVerificationStatus.verified) {
+      _checkForAwaitingRequests();
+    } else {
+      Timer(const Duration(seconds: 1), () {
+        showModalNeedsVerification(context);
+      });
     }
   }
 
@@ -521,7 +524,20 @@ Future<T> showModalNeedsVerification<T>(BuildContext context) async {
                   ),
                 ),
                 const SizedBox(height: 50),
-                Image.asset("assets/images/verification.png", height: 200),
+                Image.asset("assets/verification.png", height: 200),
+                const SizedBox(height: 50),
+                Text(
+                  AppLocalizations.of(context)?.idConfirm_lessThanHours ??
+                      "This typically takes less than 24 hours",
+                  maxLines: null,
+                  textAlign: TextAlign.center,
+                  textScaleFactor: ScaleSize.textScaleFactor(context),
+                  style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 24,
+                    fontStyle: FontStyle.italic
+                  ),
+                ),
               ],
             ),
           ),

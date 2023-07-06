@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../Models/user.dart';
 import '../../Models/user_with_request.dart';
 import '../../Services/api.dart';
 
@@ -43,23 +43,29 @@ class _LastJobRequestListPageState extends State<LastJobRequestListPage> {
                 (userWithRequests.requests.isEmpty ? 1 : 0),
             itemBuilder: (context, index) {
               if (index == 0) {
-                return const Padding(
-                  padding:
-                      EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 10),
-                  child: Text("Job Requests",
-                      style:
-                          TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
+                return Padding(
+                  padding: const EdgeInsets.only(
+                      left: 20, right: 20, top: 20, bottom: 10),
+                  child: Text(
+                      AppLocalizations.of(context)
+                              ?.lastJobRequests_jobRequests ??
+                          "Job Requests",
+                      style: const TextStyle(
+                          fontSize: 32, fontWeight: FontWeight.bold)),
                 );
               } else {
                 if (userWithRequests.requests.isEmpty) {
                   return Padding(
-                    padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height / 3),
-                    child: const Text("No job requests yet 😢",
-                        style: TextStyle(
+                    padding: EdgeInsets.symmetric(
+                        vertical: MediaQuery.of(context).size.height / 3),
+                    child: Text(
+                        AppLocalizations.of(context)
+                                ?.lastJobRequests_noJobRequests ??
+                            "No job requests yet 😢",
+                        style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.grey
-                        )),
+                            color: Colors.grey)),
                   );
                 }
                 return Padding(

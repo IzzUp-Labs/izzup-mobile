@@ -150,7 +150,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 if (employerStats != null && employerStats?.totalFinishedJobRequests != 0)
                   Text(
-                    AppLocalizations.of(context)?.homeScreen_extras(int.parse(employerStats!.totalFinishedJobRequests.toString())) ??
+                    AppLocalizations.of(context)?.homeScreen_extras(
+                            employerStats!.totalFinishedJobRequests.toInt()) ??
                         "Extras",
                     style: const TextStyle(
                         fontWeight: FontWeight.w700,
@@ -196,10 +197,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: const Text(
-                      "Ajouter une offre",
-                      style:
-                      TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                    child: Text(
+                      AppLocalizations.of(context)?.homeScreen_addOffer ??
+                          "Add an offer",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w700, fontSize: 14),
                     ),
                   ),
               ],

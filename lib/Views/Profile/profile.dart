@@ -109,56 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
-      )
-      /*Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 60, right: 60, top: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                if (assetName != null)
-                  Image(
-                    image: AssetImage(assetName),
-                    height: 30,
-                  ),
-                if (icon != null)
-                  Icon(
-                    icon,
-                    size: 30,
-                    color: AppColors.accent,
-                  ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: Center(
-                    child: Text(
-                      text,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                      textScaleFactor: ScaleSize.textScaleFactor(context),
-                    ),
-                  ),
-                ),
-                Image(
-                  image: AssetImage(arrowAssetName),
-                  height: 20,
-                  color: AppColors.accent,
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10, left: 60, right: 60),
-            child: Container(
-              height: 1,
-              color: Colors.grey.withOpacity(0.5),
-            ),
-          )
-        ],
-      )*/
-      ,
+      ),
     );
   }
 
@@ -294,11 +245,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             : image != null
                                             ? Image.file(image!, fit: BoxFit.cover)
                                             : user?.photo == null
-                                            ? const Image(image: AssetImage("assets/blank_profile_picture.png"))
-                                            : Image.network(
-                                            user?.photo ?? "",
-                                            fit: BoxFit.cover
-                                        ),
+                                                    ? const Icon(
+                                                        Icons.person,
+                                                        color: Colors.white,
+                                                      )
+                                                    : Image.network(
+                                                        user?.photo ?? "",
+                                                        fit: BoxFit.cover),
                                       ),
                                     ),
                                   ),
@@ -317,13 +270,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _sectionText("Discussions", "assets/arrow_right.png",
-                                  () {
-                                context.push(const DiscussionPage());
-                              }, Icons.chat_rounded),
+                          _sectionText(
+                              AppLocalizations.of(context)?.profile_chats ??
+                                  "Chats",
+                              "assets/arrow_right.png", () {
+                            context.push(const DiscussionPage());
+                          }, Icons.chat_rounded),
                           const SizedBox(width: 20),
                           if (user?.role.value == "EXTRA")
-                            _sectionText("Tags", "assets/arrow_right.png", () {
+                            _sectionText(
+                                AppLocalizations.of(context)?.profile_tags ??
+                                    "Tags",
+                                "assets/arrow_right.png", () {
                               context.push(const TagsScreen());
                             }, Icons.tag),
                           if (user?.role.value == "EMPLOYER")

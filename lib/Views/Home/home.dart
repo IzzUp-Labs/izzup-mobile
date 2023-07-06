@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
-import 'package:izzup/Models/classy_loader.dart';
 import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Models/job_offer_requests.dart';
 import 'package:izzup/Models/scale.dart';
@@ -138,20 +138,23 @@ class _HomeState extends State<Home> {
         if (value == null) return;
         var requests = value.requests.where((element) =>
         element.status == JobRequestStatus.waitingForVerification);
-        if (requests.first.verificationCode == null) return;
+        if (requests.isNotEmpty && requests.first.verificationCode == null)
+          return;
         showJobEndModalExtra(context, requests.first.verificationCode!);
       });
     } else {
       Api.getMyJobOffers().then((value) {
         if (value == null) return;
-        var requestsFromJobOffers = value
-            .map((e) => e.requests)
-            .expand((element) => element)
-            .toList();
-        var requests = requestsFromJobOffers.where((element) => JobRequestStatus.fromString(element.status) == JobRequestStatus.waitingForVerification);
-        for (var element in requests) {
-          if (element.id == null) continue;
-          showJobEndModalEmployer(context, element.id!);
+        var requestsFromJobOffers =
+            value.map((e) => e.requests).expand((element) => element).toList();
+        var requests = requestsFromJobOffers.where((element) =>
+            JobRequestStatus.fromString(element.status) ==
+            JobRequestStatus.waitingForVerification);
+        if (requests.isNotEmpty) {
+          for (var element in requests) {
+            if (element.id == null) continue;
+            showJobEndModalEmployer(context, element.id!);
+          }
         }
       });
     }
@@ -171,24 +174,28 @@ class _HomeState extends State<Home> {
 
   _connectToWebsocket() async {
     socket.connect();
-    socket.onConnect((data) => print(data));
-    socket.onConnectError((data) => print(data));
+    socket.onConnect((data) {
+      if (kDebugMode) print(data);
+    });
+    socket.onConnectError((data) {
+      if (kDebugMode) print(data);
+    });
 
-    socket.on('job-request-accepted', (data) { // modal extra job accepted
+    socket.on('job-request-accepted', (data) {
       JobOfferRequest jobOffer = JobOfferRequest.fromJson(data["jobOffer"]);
       showJobRequestSuccessModal(context, jobOffer);
     });
 
-
-    socket.on('job-request-confirmed', (data) { // modal extra code - modal employer entry
+    socket.on('job-request-confirmed', (data) {
       if (Globals.profile?.role == UserRole.extra) {
-        showJobEndModalExtra(context, data["request"]["verification_code"]);
+        showJobEndModalExtra(
+            context, data["request"]["verification_code"].toString());
       } else {
         showJobEndModalEmployer(context, data["request"]["id"]);
       }
     });
 
-    socket.on('job-request-finished', (data) { // pop modal extra code
+    socket.on('job-request-finished', (data) {
       if (Globals.profile?.role == UserRole.extra) {
         Navigator.of(context).pop();
       }
@@ -256,26 +263,26 @@ Future<T> showJobRequestSuccessModal<T>(BuildContext context, JobOfferRequest jo
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 50,
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  "A job offer has been accepted !",
-                  style: TextStyle(
+                    const Icon(
+                      Icons.check,
                       color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold
-                  ),
-                ),
-                const SizedBox(height: 100),
-                Text(
-                  jobOffer.jobTitle,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
+                      size: 50,
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      AppLocalizations.of(context)?.jobSuccess_offerAccepted ??
+                          "A job offer has been accepted !",
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 100),
+                    Text(
+                      jobOffer.jobTitle,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
                       fontWeight: FontWeight.bold
                   ),
                 ),
@@ -292,24 +299,24 @@ Future<T> showJobRequestSuccessModal<T>(BuildContext context, JobOfferRequest jo
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: AppColors.accent,
-                      fixedSize: const Size(150, 60),
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                        BorderRadius.circular(30), // <-- Radius
-                      )
-                  ),
-                  child: const Text(
-                    "Super !",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.accent,
+                          fixedSize: const Size(150, 60),
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(30), // <-- Radius
+                          )),
+                      child: Text(
+                        AppLocalizations.of(context)?.jobSuccess_super ??
+                            "Great !",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
               ],
             ),
           )
@@ -330,18 +337,19 @@ Future<T> showJobEndModalExtra<T>(BuildContext context, String code) async {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(height: MediaQuery.of(context).size.height / 3.3),
-                    const Text(
-                      "It's time to leave !",
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)?.jobConfirm_timeToLeave ??
+                          "It's time to leave !",
+                      style: const TextStyle(
                           color: Colors.black,
                           fontSize: 30,
-                          fontWeight: FontWeight.bold
-                      ),
+                          fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
-                    const Text(
-                      "Give this code to your employer",
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)?.jobConfirm_giveCode ??
+                          "Give this code to your employer",
+                      style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -365,110 +373,120 @@ Future<T> showJobEndModalExtra<T>(BuildContext context, String code) async {
 
 Future<T> showJobEndModalEmployer<T>(BuildContext context, int requestId) async {
   var codeController = TextEditingController();
-  var isLoading = false;
   return await showModal(
-      context, (context) => StatefulBuilder(builder: (BuildContext context, StateSetter setModalState){
-    return Scaffold(
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          child: Stack(
-            children: [
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: MediaQuery.of(context).size.height / 3.3),
-                    Text(
-                      "It's time to say goodbye...",
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold
-                      ),
-                      textScaleFactor: ScaleSize.textScaleFactor(context),
+      context,
+      (context) => Scaffold(
+              body: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 20,
+                  right: 20,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.warning_rounded,
+                      color: Colors.red,
                     ),
-                    const SizedBox(height: 5),
-                    Text(
-                      "Enter the code provided by your employee",
-                      style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.italic
-                      ),
-                      textScaleFactor: ScaleSize.textScaleFactor(context),
-                    ),
-                    const SizedBox(height: 75),
-                    IntrinsicWidth(
-                      stepWidth: MediaQuery.of(context).size.width / 10,
-                      child: TextField(
-                          controller: codeController,
-                          textInputAction: TextInputAction.done,
-                          keyboardType: const TextInputType.numberWithOptions(signed: true),
-                          textAlign: TextAlign.center,
-                          decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              focusedBorder:OutlineInputBorder(),
-                              hintText: "1234",
-                              hintStyle: TextStyle(
-                                  color: Colors.grey,
-                                  fontStyle: FontStyle.italic
-                              )
-                          ),
-                          cursorColor: Colors.black,
-                          style: const TextStyle(
-                              fontSize: 75,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold
-                          ),
-                          inputFormatters: [
-                            LengthLimitingTextInputFormatter(4),
-                            FilteringTextInputFormatter.digitsOnly,
-                          ]
-                      ),
-                    ),
-                    const SizedBox(height: 75),
-                    if (!isLoading)
-                    ElevatedButton(
-                      onPressed: () async {
-                        setModalState(() {
-                          isLoading = true;
-                        });
-                        if (await Api.finishWork(requestId, codeController.text)) {
-                          if (context.mounted) Navigator.of(context).pop();
-                        } else {
-                          if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Wrong code")));
-                        }
-                        setModalState(() {
-                          isLoading = false;
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0), // Adjust the value to change the corner radius
-                        ),
-                      ),
-                      child: const Text(
-                        'Send code',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    if (isLoading)
-                      const ClassyLoader(loaderColor: Colors.black, loaderBackground: Colors.transparent),
-                  ],
+                    onPressed: () {
+                      Api.sendProblem(requestId);
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ),
-              )
-            ],
-          ),
-        )
-    );
-  }), isDismissible: false);
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height / 3.3),
+                      Text(
+                        AppLocalizations.of(context)?.jobConfirm_goodbye ??
+                            "It's time to say goodbye...",
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold),
+                        textScaleFactor: ScaleSize.textScaleFactor(context),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        AppLocalizations.of(context)
+                                ?.jobConfirm_giveCodeFromEmployee ??
+                            "Enter the code provided by your employee",
+                        style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic),
+                        textScaleFactor: ScaleSize.textScaleFactor(context),
+                      ),
+                      const SizedBox(height: 75),
+                      IntrinsicWidth(
+                        stepWidth: MediaQuery.of(context).size.width / 10,
+                        child: TextField(
+                            controller: codeController,
+                            textInputAction: TextInputAction.done,
+                            keyboardType: const TextInputType.numberWithOptions(
+                                signed: true),
+                            textAlign: TextAlign.center,
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(),
+                                hintText: "1234",
+                                hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                    fontStyle: FontStyle.italic)),
+                            cursorColor: Colors.black,
+                            style: const TextStyle(
+                                fontSize: 75,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(4),
+                              FilteringTextInputFormatter.digitsOnly,
+                            ]),
+                      ),
+                      const SizedBox(height: 75),
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (await Api.finishWork(
+                              requestId, codeController.text)) {
+                            if (context.mounted) Navigator.of(context).pop();
+                          } else {
+                            if (context.mounted)
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(AppLocalizations.of(context)
+                                              ?.jobConfirm_wrongCode ??
+                                          "Wrong code")));
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                10.0), // Adjust the value to change the corner radius
+                          ),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)?.home_verifyCode ??
+                              'Verify code',
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          )),
+      isDismissible: false);
 }
 
 Future<T> showModal<T>(BuildContext context, WidgetBuilder builder, {isDismissible = true}) async {

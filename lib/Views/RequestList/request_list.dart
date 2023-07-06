@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:izzup/Models/classy_loader.dart';
 import 'package:izzup/Models/globals.dart';
@@ -7,15 +8,12 @@ import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Views/Home/home.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:socket_io_client/socket_io_client.dart';
-
-import '../../Models/job_offer_requests.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
+import '../../Models/job_offer_requests.dart';
 import '../../Models/messaging_room.dart';
-import '../../Models/user.dart';
 import '../../Services/api.dart';
 import '../../Services/colors.dart';
-import '../../Services/prefs.dart';
 import '../Chat/chat.dart';
 
 class RequestListPage extends StatefulWidget {
@@ -174,7 +172,8 @@ class _RequestListPageState extends State<RequestListPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF00B096),
-        title: const Text('Request List'),
+        title:
+            Text(AppLocalizations.of(context)?.requestList_title ?? 'Requests'),
       ),
       body: Stack(
         children: [
@@ -182,16 +181,16 @@ class _RequestListPageState extends State<RequestListPage> {
             color: Colors.grey[200], // Background color for the card
             child: requests.isEmpty
                 ?
-            const Center(
-                child: Text(
-                  "No requests yet 😢",
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-            )
+            Center(
+                    child: Text(
+                    AppLocalizations.of(context)?.requestList_noRequests ??
+                        "No requests yet 😢",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ))
                 : RefreshIndicator(
               onRefresh: () async {
                 final jobOffers = await Api.getMyJobOffers();
@@ -311,13 +310,24 @@ class _RequestListPageState extends State<RequestListPage> {
                                               borderRadius: BorderRadius.circular(20),
                                               color: Colors.white,
                                             ),
-                                            child: const Row(
-                                              children: [
-                                                Icon(Icons.cancel_sharp, color: Colors.red,),
-                                                SizedBox(width: 8),
-                                                Text('Decline', style: TextStyle(color: Colors.red)),
-                                              ],
-                                            ),
+                                            child: Row(
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.cancel_sharp,
+                                                        color: Colors.red,
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Text(
+                                                          AppLocalizations.of(
+                                                                      context)
+                                                                  ?.requestList_decline ??
+                                                              'Decline',
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .red)),
+                                                    ],
+                                                  ),
                                           ),
                                         ),
                                         const SizedBox(width: 8),
@@ -334,13 +344,23 @@ class _RequestListPageState extends State<RequestListPage> {
                                               borderRadius: BorderRadius.circular(20),
                                               color: Colors.white,
                                             ),
-                                            child: const Row(
-                                              children: [
-                                                Icon(Icons.check, color: AppColors.accent,),
-                                                SizedBox(width: 8),
-                                                Text('Accept', style: TextStyle(color: AppColors.accent)),
-                                              ],
-                                            ),
+                                            child: Row(
+                                                    children: [
+                                                      const Icon(
+                                                        Icons.check,
+                                                        color: AppColors.accent,
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Text(
+                                                          AppLocalizations.of(
+                                                                      context)
+                                                                  ?.requestList_accept ??
+                                                              'Accept',
+                                                          style: const TextStyle(
+                                                              color: AppColors
+                                                                  .accent)),
+                                                    ],
+                                                  ),
                                           ),
                                         )
                                       ],
@@ -363,19 +383,21 @@ class _RequestListPageState extends State<RequestListPage> {
                                     color: Colors.blueGrey,
                                     borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
                                   ),
-                                  child: const Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Text(
-                                            "End job",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 14
-                                            )
-                                        ),
-                                      ),
+                                  child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                  AppLocalizations.of(context)
+                                                          ?.requestList_endJob ??
+                                                      "End job",
+                                                  style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 14)),
+                                            ),
                                     ],
                                   )
                               )

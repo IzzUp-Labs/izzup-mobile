@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../Models/tag.dart';
 import '../../Models/wave.dart';
@@ -68,23 +69,26 @@ class _TagsScreenState extends State<TagsScreen> {
                                 onTap: () {
                                   Navigator.pop(context);
                                 },
-                                child: const Row(
+                                child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Padding(
-                                      padding: EdgeInsets.only(right: 5),
+                                      padding: const EdgeInsets.only(right: 5),
                                       child: Text(
-                                        'Skip',
-                                        style: TextStyle(
+                                        AppLocalizations.of(context)
+                                                ?.tagPage_skip ??
+                                            'Skip',
+                                        style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18,
                                           color: Color(0xFFA5A5A5),
                                         ),
                                       ),
                                     ),
-                                    Image(
-                                      image: AssetImage("assets/arrow_right.png"),
+                                    const Image(
+                                      image:
+                                          AssetImage("assets/arrow_right.png"),
                                       height: 15,
                                     ),
                                   ],
@@ -96,18 +100,20 @@ class _TagsScreenState extends State<TagsScreen> {
                       ),
                     ),
                     Text(
-                      "Add Tags",
+                      AppLocalizations.of(context)?.tagPage_addTags ??
+                          "Add Tags",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                           fontSize: MediaQuery.of(context).size.height / 30),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 40, right: 40),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 40, right: 40),
                       child: Text(
-                        "Complete your profile with tags that reflect your skills",
+                        AppLocalizations.of(context)?.tagPage_completeProfile ??
+                            "Complete your profile with tags that reflect your skills",
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                             color: Color(0xFFA5A5A5)),
@@ -162,9 +168,10 @@ class _TagsScreenState extends State<TagsScreen> {
                               Colors.black.withOpacity(0.9),
                             ),
                           ),
-                          child: const Text(
-                            "Save",
-                            style: TextStyle(
+                          child: Text(
+                            AppLocalizations.of(context)?.tagPage_save ??
+                                "Save",
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
                             ),

@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:izzup/Models/classy_loader.dart';
 import 'package:izzup/Models/scale.dart';
@@ -235,18 +236,21 @@ class _MapScreenState extends State<MapScreen> {
                           ),
                           TextButton(
                               onPressed: () {
-                                context.push(CompanyPage(company: selectedLocation.company));
+                                context.push(CompanyPage(
+                                    company: selectedLocation.company));
                               },
                               style: ButtonStyle(
                                 backgroundColor: MaterialStateProperty.all(
                                     const Color(0xFF00B096)),
                                 shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10))),
+                                        borderRadius:
+                                            BorderRadius.circular(10))),
                               ),
-                              child: const Text(
-                                "Apply",
-                                style: TextStyle(
+                              child: Text(
+                                AppLocalizations.of(context)?.map_apply ??
+                                    "Apply",
+                                style: const TextStyle(
                                     fontSize: 20,
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold),
@@ -282,7 +286,7 @@ class _MapScreenState extends State<MapScreen> {
                               loaderSize: 5,
                               loaderBackground: Colors.transparent))
                       : Text(
-                          "Reload",
+                    AppLocalizations.of(context)?.map_reload ?? "Reload",
                           textScaleFactor: ScaleSize.textScaleFactor(context),
                         ),
                 ),

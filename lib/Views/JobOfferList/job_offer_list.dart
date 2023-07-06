@@ -24,17 +24,10 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
     setState(() {
       jobOfferRequests.sort((a, b) => a.startingDate.compareTo(b.startingDate));
       jobOfferRequests = jobOfferRequests;
-      for (var element in jobOfferRequests) {
-        print("Job offer: ${element.startingDate} ${element.startingDate.add(Duration(hours: element.workingHours))}");
-      }});
+    });
   }
 
   bool _jobRequestOngoing(JobOfferRequest jobOffer) {
-    print("Checking if job offer is ongoing");
-    print("Name: ${jobOffer.jobTitle}");
-    print("Now: ${DateTime.parse(DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(DateTime.now()))}");
-    print("Starting date: ${jobOffer.startingDate}");
-    print("Ending date: ${jobOffer.startingDate.add(Duration(hours: jobOffer.workingHours))}");
     var now = DateTime.parse(DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(DateTime.now()));
     return jobOffer.startingDate.isBefore(now) && jobOffer.startingDate.add(Duration(hours: jobOffer.workingHours)).isAfter(now);
   }
@@ -144,18 +137,19 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
                               ],
                             ),
                             if (_jobRequestOngoing(jobOfferRequests[index - 1]))
-                            const Positioned(
-                              bottom: 5,
-                              right: 0,
-                              child: Text(
-                                  "En cours",
-                                  style: TextStyle(
-                                    color: Colors.yellowAccent,
-                                    fontSize: 10,
-                                    fontStyle: FontStyle.italic,
-                                  )
-                              ),
-                            )
+                              Positioned(
+                                bottom: 5,
+                                right: 0,
+                                child: Text(
+                                    AppLocalizations.of(context)
+                                            ?.jobOffersList_ongoing ??
+                                        "Ongoing",
+                                    style: const TextStyle(
+                                      color: Colors.yellowAccent,
+                                      fontSize: 10,
+                                      fontStyle: FontStyle.italic,
+                                    )),
+                              )
                           ],
                         )
                     ),

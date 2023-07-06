@@ -24,6 +24,7 @@ class ExtraStats {
 }
 
 class EmployerStats {
+  double totalFinishedJobOffers;
   double totalJobOffers;
   double totaljobRequests;
   double totalAcceptedJobRequests;
@@ -31,8 +32,8 @@ class EmployerStats {
   double totalRejectedJobRequests;
   double totalWaitingJobRequests;
 
-
   EmployerStats(
+      this.totalFinishedJobOffers,
       this.totalJobOffers,
       this.totaljobRequests,
       this.totalAcceptedJobRequests,
@@ -40,16 +41,16 @@ class EmployerStats {
       this.totalRejectedJobRequests,
       this.totalWaitingJobRequests);
 
-  static EmployerStats basic = EmployerStats(0, 0, 0, 0, 0, 0);
+  static EmployerStats basic = EmployerStats(0, 0, 0, 0, 0, 0, 0);
 
   factory EmployerStats.fromJson(Map<String, dynamic> json) {
     return EmployerStats(
+        double.parse(json["total_finished_job_offers"].toString()),
         double.parse(json["total_job_offers"].toString()),
         double.parse(json["total_job_requests"].toString()),
         double.parse(json["total_accepted_job_requests"].toString()),
         double.parse(json["total_finished_job_requests"].toString()),
         double.parse(json["total_rejected_job_requests"].toString()),
-        double.parse(json["total_waiting_job_requests"].toString())
-    );
+        double.parse(json["total_waiting_job_requests"].toString()));
   }
 }

@@ -65,9 +65,10 @@ class _RegisterBusinessState extends State<RegisterBusiness> {
           await Api.getPlace(_nameController.text, _addressController.text);
       if (place != null) {
         final placePhotoLinks = await Api.getPlacePhotoLinks(place.placeId);
-        if (context.mounted)
+        if (context.mounted) {
           Navigator.of(context)
               .push(RegisterSelectPlaceRoute(place, placePhotoLinks));
+        }
       } else {
         setState(() {
           _noPlaceFound = true;

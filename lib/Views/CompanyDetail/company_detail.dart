@@ -25,7 +25,6 @@ class _CompanyPageState extends State<CompanyPage>
     String closingHours = splitted[1].split('–')[1];
     closingHours = DateFormat("HH:mm").parse(closingHours.trim()).toString();
     closingHours = DateFormat("HH:mm").format(DateTime.parse(closingHours));
-    print(closingHours);
     return "${openingHours}h - ${closingHours}h";
   }
 

@@ -3,7 +3,6 @@ import 'package:izzup/Services/api.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:socket_io_client/socket_io_client.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../Models/messaging_room.dart';
 import '../../Services/prefs.dart';
@@ -138,9 +137,9 @@ class _DiscussionPageState extends State<DiscussionPage> {
                               )
                                   : const CircleAvatar(
                                 radius: 20,
-                                backgroundImage: AssetImage(
-                                    'assets/blank_profile_picture.png'),
-                              )
+                                          backgroundImage: AssetImage(
+                                              'assets/blank_profile_picture.png'),
+                                        )
                           :
                           _messageRooms[index].createdBy.photo != null
                               ? CircleAvatar(

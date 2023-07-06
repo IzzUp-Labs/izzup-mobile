@@ -129,6 +129,9 @@ class _HomeState extends State<Home> {
     ];
     _createSocket();
     _checkForAwaitingRequests();
+    if (Globals.profile?.status == UserVerificationStatus.unverified) {
+      showModalNeedsVerification(context)
+    }
   }
 
   _checkForAwaitingRequests() {
@@ -461,12 +464,13 @@ Future<T> showJobEndModalEmployer<T>(BuildContext context, int requestId) async 
                               requestId, codeController.text)) {
                             if (context.mounted) Navigator.of(context).pop();
                           } else {
-                            if (context.mounted)
+                            if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                       content: Text(AppLocalizations.of(context)
                                               ?.jobConfirm_wrongCode ??
                                           "Wrong code")));
+                            }
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -491,6 +495,40 @@ Future<T> showJobEndModalEmployer<T>(BuildContext context, int requestId) async 
             ),
           )),
       isDismissible: false);
+}
+
+Future<T> showModalNeedsVerification<T>(BuildContext context) async {
+  return await showModal(context, (context) => Scaffold(
+    body: Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  AppLocalizations.of(context)?.idConfirm_needsVerification ??
+                      "We need to verify your identity",
+                  maxLines: null,
+                  textAlign: TextAlign.center,
+                  textScaleFactor: ScaleSize.textScaleFactor(context),
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                const SizedBox(height: 50),
+                Image.asset("assets/images/verification.png", height: 200),
+              ],
+            ),
+          ),
+        )
+      ],
+    )
+  ), isDismissible: false);
 }
 
 Future<T> showModal<T>(BuildContext context, WidgetBuilder builder, {isDismissible = true}) async {

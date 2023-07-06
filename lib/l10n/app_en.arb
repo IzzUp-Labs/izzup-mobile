@@ -141,5 +141,6 @@
   "tagPage_completeProfile": "Complete your profile with tags that reflect your skills",
   "tagPage_save": "Save",
   "companyDetails_alreadyApplied": "Already applied",
-  "createJobOffer_error": "The date can not be in the past."
+  "createJobOffer_error": "The date can not be in the past.",
+  "idConfirm_needsVerification": "We need to verify your identity"
 }

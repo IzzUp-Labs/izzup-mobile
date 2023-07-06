@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/navigation.dart';
+import 'package:izzup/Services/prefs.dart';
 import 'package:izzup/Views/Discussions/discussions_page.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ import '../../Models/user.dart';
 import '../../Services/api.dart';
 import '../LastJobOffers/last_job_offers.dart';
 import '../LastJobRequests/last_job_requests.dart';
+import '../SignIn/signin_landing.dart';
 import '../Tag/tagpage.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -245,13 +247,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             : image != null
                                             ? Image.file(image!, fit: BoxFit.cover)
                                             : user?.photo == null
-                                                    ? const Icon(
-                                                        Icons.person,
-                                                        color: Colors.white,
-                                                      )
-                                                    : Image.network(
-                                                        user?.photo ?? "",
-                                                        fit: BoxFit.cover),
+                                            ? const Icon(
+                                          Icons.person,
+                                          color: Colors.white,
+                                        )
+                                            : Image.network(
+                                            user?.photo ?? "",
+                                            fit: BoxFit.cover),
                                       ),
                                     ),
                                   ),
@@ -310,6 +312,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 )
               ],
+            ),
+          ),
+        ),
+        Positioned(
+          top: 20,
+          right: 20,
+          child: SafeArea(
+            child: Container(
+              height: 40,
+              width: 75,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+              ),
+              child: TextButton(
+                onPressed: () {
+                  Prefs.remove("authToken");
+                  Prefs.remove("userEmail");
+                  Prefs.remove("userPwd");
+                  context.navigateWithoutBack(const SignIn());
+                },
+                child: Text(
+                    "Logout",
+                    style: const TextStyle(
+                        color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  textScaleFactor: ScaleSize.textScaleFactor(context),
+                ),
+              ),
             ),
           ),
         )

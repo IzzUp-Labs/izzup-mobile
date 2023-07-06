@@ -62,6 +62,7 @@ class _LastJobRequestListPageState extends State<LastJobRequestListPage> {
                         AppLocalizations.of(context)
                                 ?.lastJobRequests_noJobRequests ??
                             "No job requests yet 😢",
+                        textAlign: TextAlign.center,
                         style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,

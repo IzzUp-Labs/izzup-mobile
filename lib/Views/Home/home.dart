@@ -128,7 +128,13 @@ class _HomeState extends State<Home> {
       const ProfileScreen()
     ];
     _createSocket();
-    _checkForAwaitingRequests();
+    if (Globals.profile?.status == UserVerificationStatus.verified) {
+      _checkForAwaitingRequests();
+    } else {
+      Timer(const Duration(seconds: 1), () {
+        showModalNeedsVerification(context);
+      });
+    }
   }
 
   _checkForAwaitingRequests() {
@@ -138,9 +144,9 @@ class _HomeState extends State<Home> {
         if (value == null) return;
         var requests = value.requests.where((element) =>
         element.status == JobRequestStatus.waitingForVerification);
-        if (requests.isNotEmpty && requests.first.verificationCode == null)
-          return;
-        showJobEndModalExtra(context, requests.first.verificationCode!);
+        if (requests.isNotEmpty && requests.first.verificationCode != null) {
+          showJobEndModalExtra(context, requests.first.verificationCode!, requests.first.id!);
+        }
       });
     } else {
       Api.getMyJobOffers().then((value) {
@@ -181,6 +187,10 @@ class _HomeState extends State<Home> {
       if (kDebugMode) print(data);
     });
 
+    socket.on('account_verified', (data) {
+        Navigator.of(context).pop();
+    });
+
     socket.on('job-request-accepted', (data) {
       JobOfferRequest jobOffer = JobOfferRequest.fromJson(data["jobOffer"]);
       showJobRequestSuccessModal(context, jobOffer);
@@ -189,7 +199,7 @@ class _HomeState extends State<Home> {
     socket.on('job-request-confirmed', (data) {
       if (Globals.profile?.role == UserRole.extra) {
         showJobEndModalExtra(
-            context, data["request"]["verification_code"].toString());
+            context, data["request"]["verification_code"].toString(), data["request"]["id"]);
       } else {
         showJobEndModalEmployer(context, data["request"]["id"]);
       }
@@ -325,12 +335,26 @@ Future<T> showJobRequestSuccessModal<T>(BuildContext context, JobOfferRequest jo
   ), isDismissible: false);
 }
 
-Future<T> showJobEndModalExtra<T>(BuildContext context, String code) async {
+Future<T> showJobEndModalExtra<T>(BuildContext context, String code, int requestId) async {
   return await showModal(
       context,
           (context) => Scaffold(
           body: Stack(
             children: [
+              Positioned(
+                top: 20,
+                right: 20,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.warning_rounded,
+                    color: Colors.red,
+                  ),
+                  onPressed: () {
+                    Api.sendProblem(requestId);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -457,12 +481,13 @@ Future<T> showJobEndModalEmployer<T>(BuildContext context, int requestId) async 
                               requestId, codeController.text)) {
                             if (context.mounted) Navigator.of(context).pop();
                           } else {
-                            if (context.mounted)
+                            if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                       content: Text(AppLocalizations.of(context)
                                               ?.jobConfirm_wrongCode ??
                                           "Wrong code")));
+                            }
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -487,6 +512,53 @@ Future<T> showJobEndModalEmployer<T>(BuildContext context, int requestId) async 
             ),
           )),
       isDismissible: false);
+}
+
+Future<T> showModalNeedsVerification<T>(BuildContext context) async {
+  return await showModal(context, (context) => Scaffold(
+    body: Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  AppLocalizations.of(context)?.idConfirm_needsVerification ??
+                      "We need to verify your identity",
+                  maxLines: null,
+                  textAlign: TextAlign.center,
+                  textScaleFactor: ScaleSize.textScaleFactor(context),
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                const SizedBox(height: 50),
+                Image.asset("assets/verification.png", height: 200),
+                const SizedBox(height: 50),
+                Text(
+                  AppLocalizations.of(context)?.idConfirm_lessThanHours ??
+                      "This typically takes less than 24 hours",
+                  maxLines: null,
+                  textAlign: TextAlign.center,
+                  textScaleFactor: ScaleSize.textScaleFactor(context),
+                  style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 24,
+                    fontStyle: FontStyle.italic
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
+      ],
+    )
+  ), isDismissible: false);
 }
 
 Future<T> showModal<T>(BuildContext context, WidgetBuilder builder, {isDismissible = true}) async {

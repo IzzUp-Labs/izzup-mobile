@@ -139,5 +139,9 @@
   "tagPage_skip": "Skip",
   "tagPage_addTags": "Add tags",
   "tagPage_completeProfile": "Complete your profile with tags that reflect your skills",
-  "tagPage_save": "Save"
+  "tagPage_save": "Save",
+  "companyDetails_alreadyApplied": "Already applied",
+  "createJobOffer_error": "The date can not be in the past.",
+  "idConfirm_needsVerification": "We need to verify your identity",
+  "idConfirm_lessThanHours": "This typically takes less than 24 hours"
 }

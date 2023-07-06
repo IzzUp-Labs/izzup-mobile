@@ -55,7 +55,7 @@ class _SignInState extends State<SignIn> {
         _isLoading = false;
         if (value == true) {
           Globals.tempExtra.email = _emailTextFieldController.text;
-          context.push(const SignInConfirmPassword());
+          context.navigateWithoutBack(const SignInConfirmPassword());
         } else if (value == false) {
           context.push(const SignInStatusChoice());
         }

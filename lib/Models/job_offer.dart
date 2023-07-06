@@ -21,7 +21,7 @@ class JobOffer {
       {this.id});
 
   factory JobOffer.fromJson(Map<String, dynamic> json) {
-    return JobOffer(
+    var jobOffer =  JobOffer(
       json['job_title'],
       json['job_description'],
       DateTime.parse(json['starting_date']),
@@ -32,6 +32,8 @@ class JobOffer {
       json['acceptedSpots'],
       id: json['id'],
     );
+    jobOffer.startingDate = jobOffer.startingDate.add(const Duration(hours: 2));
+    return jobOffer;
   }
 
   static JobOffer basic = JobOffer('', '', DateTime.now(), 0, 0, false, 0, 0);

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:izzup/Models/classy_loader.dart';
 import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Services/navigation.dart';
+import 'package:izzup/Views/Home/home.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -147,13 +148,25 @@ class _RequestListPageState extends State<RequestListPage> {
   }
 
   bool _jobRequestOngoing(int index) {
-    print("Checking if job request is ongoing");
-    print("Name: ${widget.jobOffer.jobTitle}");
-    print("Now: ${DateTime.parse(DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(DateTime.now()))}");
-    print("Starting date: ${widget.jobOffer.startingDate}");
-    print("Ending date: ${widget.jobOffer.startingDate.add(Duration(hours: widget.jobOffer.workingHours))}");
     var now = DateTime.parse(DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(DateTime.now()));
     return requests[index].status == "ACCEPTED" && widget.jobOffer.startingDate.isBefore(now) && widget.jobOffer.startingDate.add(Duration(hours: widget.jobOffer.workingHours)).isAfter(now);
+  }
+
+  IconData getIconFromStatus(JobRequestStatus status) {
+    switch (status) {
+      case JobRequestStatus.pending:
+        return Icons.timer_outlined;
+      case JobRequestStatus.accepted:
+        return Icons.check_circle;
+      case JobRequestStatus.rejected:
+        return Icons.cancel_outlined;
+      case JobRequestStatus.waitingForVerification:
+        return Icons.ac_unit;
+      case JobRequestStatus.finished:
+        return Icons.done_all_outlined;
+      default:
+        return Icons.timer_outlined;
+    }
   }
 
   @override
@@ -259,18 +272,8 @@ class _RequestListPageState extends State<RequestListPage> {
                                           color: Colors.white60
                                       ),
                                     ),
-                                    trailing: requests[index].status == "PENDING"
-                                        ? const Icon(
-                                      Icons.timer_outlined,
-                                      color: Colors.white,
-                                    )
-                                        : requests[index].status == "ACCEPTED"
-                                        ? const Icon(
-                                      Icons.keyboard_arrow_right_outlined,
-                                      color: Colors.white,
-                                    )
-                                        : const Icon(
-                                      Icons.cancel_outlined,
+                                    trailing: Icon(
+                                      getIconFromStatus(JobRequestStatus.fromString(requests[index].status)),
                                       color: Colors.white,
                                     ),
                                   ),
@@ -350,7 +353,10 @@ class _RequestListPageState extends State<RequestListPage> {
                         if (_jobRequestOngoing(index))
                           GestureDetector(
                               onTap: () {
-                                if (requests[index].id != null) Api.confirmWork(requests[index].id!);
+                                if (requests[index].id != null) {
+                                  Api.confirmWork(requests[index].id!);
+                                  showJobEndModalEmployer(context, requests[index].id!);
+                                }
                               },
                               child: Container(
                                   decoration: const BoxDecoration(

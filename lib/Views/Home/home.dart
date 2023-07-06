@@ -4,8 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:izzup/Models/classy_loader.dart';
 import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Models/job_offer_requests.dart';
+import 'package:izzup/Models/scale.dart';
 import 'package:izzup/Models/user.dart';
 import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/location.dart';
@@ -115,28 +117,44 @@ class _HomeState extends State<Home> {
     super.initState();
     checkPerm();
     listScreens = Globals.profile?.role == UserRole.extra ? [
-            const HomeScreen(),
-            const MapScreen(),
-            const RequestListExtra(),
-            const ProfileScreen()
-          ]
+      const HomeScreen(),
+      const MapScreen(),
+      const RequestListExtra(),
+      const ProfileScreen()
+    ]
         : [
       const HomeScreen(),
       const JobOfferListPage(),
       const ProfileScreen()
     ];
     _createSocket();
-    //_checkForAwaitingRequests();
+    _checkForAwaitingRequests();
   }
 
   _checkForAwaitingRequests() {
-    Api.getExtraRequests().then((value) {
-      if (value == null) return;
-      var requests = value.requests.where((element) =>
-          element.status == JobRequestStatus.waitingForVerification);
-      if (requests.first.verificationCode == null) return;
-      showJobEndModalExtra(context, requests.first.verificationCode!);
-    });
+    if (Globals.profile == null) return;
+    if (Globals.profile?.role == UserRole.extra) {
+      Api.getExtraRequests().then((value) {
+        if (value == null) return;
+        var requests = value.requests.where((element) =>
+        element.status == JobRequestStatus.waitingForVerification);
+        if (requests.first.verificationCode == null) return;
+        showJobEndModalExtra(context, requests.first.verificationCode!);
+      });
+    } else {
+      Api.getMyJobOffers().then((value) {
+        if (value == null) return;
+        var requestsFromJobOffers = value
+            .map((e) => e.requests)
+            .expand((element) => element)
+            .toList();
+        var requests = requestsFromJobOffers.where((element) => JobRequestStatus.fromString(element.status) == JobRequestStatus.waitingForVerification);
+        for (var element in requests) {
+          if (element.id == null) continue;
+          showJobEndModalEmployer(context, element.id!);
+        }
+      });
+    }
   }
 
   _createSocket() async {
@@ -158,18 +176,15 @@ class _HomeState extends State<Home> {
 
     socket.on('job-request-accepted', (data) { // modal extra job accepted
       JobOfferRequest jobOffer = JobOfferRequest.fromJson(data["jobOffer"]);
-      JobRequests request = JobRequests.fromJson(data["request"]);
       showJobRequestSuccessModal(context, jobOffer);
     });
 
 
     socket.on('job-request-confirmed', (data) { // modal extra code - modal employer entry
-      JobOfferRequest jobOffer = JobOfferRequest.fromJson(data["jobOffer"]);
-      JobRequests request = JobRequests.fromJson(data["request"]);
       if (Globals.profile?.role == UserRole.extra) {
         showJobEndModalExtra(context, data["request"]["verification_code"]);
       } else {
-        //showJobEndModalEmployer(context, request);
+        showJobEndModalEmployer(context, data["request"]["id"]);
       }
     });
 
@@ -306,8 +321,8 @@ Future<T> showJobRequestSuccessModal<T>(BuildContext context, JobOfferRequest jo
 Future<T> showJobEndModalExtra<T>(BuildContext context, String code) async {
   return await showModal(
       context,
-      (context) => Scaffold(
-              body: Stack(
+          (context) => Scaffold(
+          body: Stack(
             children: [
               Center(
                 child: Column(
@@ -316,14 +331,14 @@ Future<T> showJobEndModalExtra<T>(BuildContext context, String code) async {
                   children: [
                     SizedBox(height: MediaQuery.of(context).size.height / 3.3),
                     const Text(
-                  "It's time to leave !",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold
-                  ),
-                ),
-                const SizedBox(height: 5),
+                      "It's time to leave !",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold
+                      ),
+                    ),
+                    const SizedBox(height: 5),
                     const Text(
                       "Give this code to your employer",
                       style: TextStyle(
@@ -341,81 +356,119 @@ Future<T> showJobEndModalExtra<T>(BuildContext context, String code) async {
                           fontWeight: FontWeight.bold),
                     )
                   ],
-            ),
+                ),
+              )
+            ],
           )
-        ],
-      )
-  ), isDismissible: false);
+      ), isDismissible: false);
 }
 
-Future<T> showJobEndModalEmployer<T>(BuildContext context) async {
+Future<T> showJobEndModalEmployer<T>(BuildContext context, int requestId) async {
+  var codeController = TextEditingController();
+  var isLoading = false;
   return await showModal(
-      context, (context) => Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
-        child: Stack(
-          children: [
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: MediaQuery.of(context).size.height / 3.3),
-                  const Text(
-                    "It's time to say goodbye...",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold
+      context, (context) => StatefulBuilder(builder: (BuildContext context, StateSetter setModalState){
+    return Scaffold(
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
+          child: Stack(
+            children: [
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height / 3.3),
+                    Text(
+                      "It's time to say goodbye...",
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold
+                      ),
+                      textScaleFactor: ScaleSize.textScaleFactor(context),
                     ),
-                  ),
-                  const SizedBox(height: 5),
-                  const Text(
-                    "Enter the code provided by your employee",
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic
+                    const SizedBox(height: 5),
+                    Text(
+                      "Enter the code provided by your employee",
+                      style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic
+                      ),
+                      textScaleFactor: ScaleSize.textScaleFactor(context),
                     ),
-                  ),
-                  const SizedBox(height: 75),
-                  IntrinsicWidth(
-                    stepWidth: MediaQuery.of(context).size.width / 10,
-                    child: TextField(
-                        textInputAction: TextInputAction.done,
-                        keyboardType: const TextInputType.numberWithOptions(signed: true),
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            focusedBorder:OutlineInputBorder(),
-                            hintText: "1234",
-                            hintStyle: TextStyle(
-                                color: Colors.grey,
-                                fontStyle: FontStyle.italic
-                            )
+                    const SizedBox(height: 75),
+                    IntrinsicWidth(
+                      stepWidth: MediaQuery.of(context).size.width / 10,
+                      child: TextField(
+                          controller: codeController,
+                          textInputAction: TextInputAction.done,
+                          keyboardType: const TextInputType.numberWithOptions(signed: true),
+                          textAlign: TextAlign.center,
+                          decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              focusedBorder:OutlineInputBorder(),
+                              hintText: "1234",
+                              hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontStyle: FontStyle.italic
+                              )
+                          ),
+                          cursorColor: Colors.black,
+                          style: const TextStyle(
+                              fontSize: 75,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold
+                          ),
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(4),
+                            FilteringTextInputFormatter.digitsOnly,
+                          ]
+                      ),
+                    ),
+                    const SizedBox(height: 75),
+                    if (!isLoading)
+                    ElevatedButton(
+                      onPressed: () async {
+                        setModalState(() {
+                          isLoading = true;
+                        });
+                        if (await Api.finishWork(requestId, codeController.text)) {
+                          if (context.mounted) Navigator.of(context).pop();
+                        } else {
+                          if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Wrong code")));
+                        }
+                        setModalState(() {
+                          isLoading = false;
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0), // Adjust the value to change the corner radius
                         ),
-                        cursorColor: Colors.black,
-                        style: const TextStyle(
-                            fontSize: 75,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold
+                      ),
+                      child: const Text(
+                        'Send code',
+                        style: TextStyle(
+                          color: Colors.white,
                         ),
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(4),
-                          FilteringTextInputFormatter.digitsOnly,
-                        ]
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      )
-  ), isDismissible: false);
+                    if (isLoading)
+                      const ClassyLoader(loaderColor: Colors.black, loaderBackground: Colors.transparent),
+                  ],
+                ),
+              )
+            ],
+          ),
+        )
+    );
+  }), isDismissible: false);
 }
 
 Future<T> showModal<T>(BuildContext context, WidgetBuilder builder, {isDismissible = true}) async {

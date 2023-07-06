@@ -466,21 +466,37 @@ class Api {
     }
   }
 
-  static Future<void> confirmWork(int requestId) async {
+  static Future<bool> confirmWork(int requestId) async {
     final authToken = await Globals.authToken();
-    if (authToken == null) return;
+    if (authToken == null) return false;
     var client = http.Client();
     try {
       var response = await client.patch(getUri("employer/comfirm-work/$requestId"),
         headers: { 'Authorization': 'Bearer $authToken'},
       );
-      print(response.body);
-      print(response.statusCode);
-      //var requests = UserWithRequests.fromJson(jsonDecode(response.body));
-      return;
+      return response.statusCode == 200;
     } catch (e) {
       if (kDebugMode) print(e);
-      return;
+      return false;
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<bool> finishWork(int requestId, String code) async {
+    final authToken = await Globals.authToken();
+    if (authToken == null) return false;
+    var client = http.Client();
+    try {
+      var response = await client.patch(getUri("employer/finish-work/$requestId/$code"),
+        headers: { 'Authorization': 'Bearer $authToken'},
+      );
+      print(response.statusCode);
+      print(response.body);
+      return response.statusCode == 200;
+    } catch (e) {
+      if (kDebugMode) print(e);
+      return false;
     } finally {
       client.close();
     }

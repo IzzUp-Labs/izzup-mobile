@@ -16,7 +16,7 @@ class JobOfferRequest {
   JobOfferRequest(this.jobTitle, this.jobDescription, this.startingDate, this.workingHours, this.price, this.isAvailable, this.spots, this.acceptedSpots, this.requests, {this.id});
 
   factory JobOfferRequest.fromJson(Map<String, dynamic> json) {
-    return JobOfferRequest(
+    var jobOffer = JobOfferRequest(
       json['job_title'],
       json['job_description'],
       DateTime.parse(json['starting_date']),
@@ -28,6 +28,8 @@ class JobOfferRequest {
       json['requests'].map<JobRequests>((requests) => JobRequests.fromJson(requests)).toList(),
       id: json['id'],
     );
+    jobOffer.startingDate = jobOffer.startingDate.add(const Duration(hours: 2));
+    return jobOffer;
   }
 }
 

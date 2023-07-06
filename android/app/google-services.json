@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "940662180341",
+    "project_id": "izzup-119e8",
+    "storage_bucket": "izzup-119e8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:940662180341:android:60009c4174b740eb7a78bc",
+        "android_client_info": {
+          "package_name": "com.izzup.izzup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "940662180341-qiv3ee1mji92bik4l3ppgdsv5avgpl6v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoGVBl8kaW6wAdJVomhofN6i1av3_1NJg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "940662180341-qiv3ee1mji92bik4l3ppgdsv5avgpl6v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

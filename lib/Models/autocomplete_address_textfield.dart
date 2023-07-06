@@ -27,7 +27,7 @@ class AutocompleteAddressTextfield extends StatelessWidget {
       // if you required coordinates from place detail
       getPlaceDetailWithLatLng: getPlaceDetailCallback,
       // this callback is called when isLatLngRequired is true
-      itmClick: (Prediction prediction) {
+      itemClick: (Prediction prediction) {
         addressController.text = prediction.description ?? "";
         addressController.selection = TextSelection.fromPosition(
             TextPosition(offset: prediction.description?.length ?? 0));

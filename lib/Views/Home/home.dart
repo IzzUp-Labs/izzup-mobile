@@ -181,6 +181,10 @@ class _HomeState extends State<Home> {
       if (kDebugMode) print(data);
     });
 
+    socket.on('account_verified', (data) {
+        Navigator.of(context).pop();
+    });
+
     socket.on('job-request-accepted', (data) {
       JobOfferRequest jobOffer = JobOfferRequest.fromJson(data["jobOffer"]);
       showJobRequestSuccessModal(context, jobOffer);

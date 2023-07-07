@@ -144,9 +144,9 @@ class _HomeState extends State<Home> {
         if (value == null) return;
         var requests = value.requests.where((element) =>
         element.status == JobRequestStatus.waitingForVerification);
-        if (requests.isNotEmpty && requests.first.verificationCode == null)
-          return;
-        showJobEndModalExtra(context, requests.first.verificationCode!);
+        if (requests.isNotEmpty && requests.first.verificationCode != null) {
+          showJobEndModalExtra(context, requests.first.verificationCode!, requests.first.id!);
+        }
       });
     } else {
       Api.getMyJobOffers().then((value) {
@@ -199,7 +199,7 @@ class _HomeState extends State<Home> {
     socket.on('job-request-confirmed', (data) {
       if (Globals.profile?.role == UserRole.extra) {
         showJobEndModalExtra(
-            context, data["request"]["verification_code"].toString());
+            context, data["request"]["verification_code"].toString(), data["request"]["id"]);
       } else {
         showJobEndModalEmployer(context, data["request"]["id"]);
       }
@@ -335,12 +335,26 @@ Future<T> showJobRequestSuccessModal<T>(BuildContext context, JobOfferRequest jo
   ), isDismissible: false);
 }
 
-Future<T> showJobEndModalExtra<T>(BuildContext context, String code) async {
+Future<T> showJobEndModalExtra<T>(BuildContext context, String code, int requestId) async {
   return await showModal(
       context,
           (context) => Scaffold(
           body: Stack(
             children: [
+              Positioned(
+                top: 20,
+                right: 20,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.warning_rounded,
+                    color: Colors.red,
+                  ),
+                  onPressed: () {
+                    Api.sendProblem(requestId);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
               Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,

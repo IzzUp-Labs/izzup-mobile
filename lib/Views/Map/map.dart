@@ -29,6 +29,7 @@ class _MapScreenState extends State<MapScreen> {
   Completer<GoogleMapController>();
   final LocationService locationService = LocationService();
   late GoogleMapController mapController;
+  late String cardPhoto = 'https://googleflutter.com/sample_image.jpg';
 
   String mapTheme = '';
 
@@ -112,13 +113,17 @@ class _MapScreenState extends State<MapScreen> {
     getMarkers();
   }
 
-  void messageTransition(MapLocation currentShownCard) {
+  void messageTransition(MapLocation currentShownCard) async {
+    var googlePhoto = await Api.getPlacePhotoLinks(currentShownCard.company.placeId);
     if (selectedLocation.isEquals(currentShownCard)) {
       setState(() {
         showMessages = !showMessages;
       });
     } else {
       setState(() {
+        if( googlePhoto != null) {
+          cardPhoto = googlePhoto.first;
+        }
         selectedLocation = currentShownCard;
         showMessages = true;
       });
@@ -195,7 +200,7 @@ class _MapScreenState extends State<MapScreen> {
                         children: [
                           CachedNetworkImage(
                             imageUrl:
-                            'https://googleflutter.com/sample_image.jpg',
+                            cardPhoto,
                             placeholder: (context, url) =>
                             const CircularProgressIndicator(),
                             height: 60,

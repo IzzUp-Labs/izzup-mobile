@@ -1,0 +1,4 @@
+enum RegisterAccountType {
+  jobSeeker,
+  company;
+}

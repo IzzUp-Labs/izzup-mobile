@@ -1,5 +1,6 @@
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:izzup/Models/classy_loader.dart';
 import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Views/Welcoming/welcoming_page_type.dart';
 
@@ -20,6 +21,7 @@ class _WelcomingState extends State<Welcoming> {
   }
 
   bool isFirstClick = true;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -78,26 +80,48 @@ class _WelcomingState extends State<Welcoming> {
               const Spacer(),
               Container(
                 padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                child: ElevatedButton(
-                  onPressed: () {
-                    widget.pageType
-                        .onBtnTapped(context, widget, firstClick: isFirstClick);
-                    isFirstClick = false;
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accent,
-                    minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12), // <-- Radius
-                    ),
-                  ),
-                  child: Text(widget.pageType.buttonTitle(context)),
-                ),
+                child: _button(),
               )
             ],
           ),
         ),
       ),
+    );
+  }
+
+  ElevatedButton _button() {
+    return ElevatedButton(
+      onPressed: () {
+        setState(() => _isLoading = true);
+        widget.pageType.onBtnTapped(context, widget, firstClick: isFirstClick);
+        setState(() => isFirstClick = false);
+        setState(() => _isLoading = false);
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.accent,
+        minimumSize: const Size.fromHeight(50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12), // <-- Radius
+        ),
+      ),
+      child: _isLoading ? _loader() : _buttonText(),
+    );
+  }
+
+  Text _buttonText() {
+    return Text(
+        widget.pageType.buttonTitle(context),
+        style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold
+        )
+    );
+  }
+
+  ClassyLoader _loader() {
+    return const ClassyLoader(
+      loaderSize: 10.0,
+      loaderBackground: Colors.transparent,
     );
   }
 }

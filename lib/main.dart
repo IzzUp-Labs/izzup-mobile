@@ -74,26 +74,26 @@ class _IzzUpState extends State<IzzUp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: () => context.dropFocus(),
-        child: MaterialApp(
-            title: AppLocalizations.of(context)?.appName ?? 'IzzUp',
-            theme: ThemeData(
-              fontFamily: 'Cera Pro SV',
-              primarySwatch: AppColors.accentMaterialColor,
-            ),
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            home: ChangeNotifierProvider(
-              create: (context) => Photo(),
-              child: AnnotatedRegion<SystemUiOverlayStyle>(
+    return ChangeNotifierProvider(
+      create: (context) => Photo(),
+      child: GestureDetector(
+          onTap: () => context.dropFocus(),
+          child: MaterialApp(
+              title: AppLocalizations.of(context)?.appName ?? 'IzzUp',
+              theme: ThemeData(
+                fontFamily: 'Cera Pro SV',
+                primarySwatch: AppColors.accentMaterialColor,
+              ),
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: AnnotatedRegion<SystemUiOverlayStyle>(
                 value: SystemUiOverlayStyle.dark,
                 child: widget.hasSeenIntro != true
                     ? const Welcoming(pageType: WelcomingPageType.landing)
                     : widget.isLoggedIn
                         ? const Home()
                         : const SignIn(),
-              ),
-            )));
+              ))),
+    );
   }
 }

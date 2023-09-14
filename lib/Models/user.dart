@@ -25,6 +25,22 @@ enum UserRole {
   }
 }
 
+enum UserVerificationStatus {
+  verified,
+  unverified;
+
+  static fromString(String value) {
+    switch (value) {
+      case 'VERIFIED':
+        return UserVerificationStatus.verified;
+      case 'UNVERIFIED':
+        return UserVerificationStatus.unverified;
+      default:
+        return UserVerificationStatus.unverified;
+    }
+  }
+}
+
 class User {
   int id;
   String email;
@@ -35,9 +51,10 @@ class User {
   String? photo;
   UserRole role;
   String? idPhoto;
+  UserVerificationStatus status;
 
   User(this.id, this.email, this.password, this.lastName, this.firstName,
-      this.dateOfBirth, this.photo, this.role, this.idPhoto);
+      this.dateOfBirth, this.photo, this.role, this.idPhoto, this.status);
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
@@ -49,7 +66,9 @@ class User {
         DateTime.parse(json['date_of_birth']),
         json['photo'],
         UserRole.fromString(json['role']),
-        json['id_photo']);
+        json['id_photo'],
+        UserVerificationStatus.fromString(json['statuses'][0]['name'])
+    );
   }
 
   Map<String, dynamic> toJson() => {
@@ -65,5 +84,5 @@ class User {
       };
 
   static User basic =
-      User(0, '', '', '', '', DateTime.now(), '', UserRole.extra, '');
+      User(0, '', '', '', '', DateTime.now(), '', UserRole.extra, '', UserVerificationStatus.unverified);
 }

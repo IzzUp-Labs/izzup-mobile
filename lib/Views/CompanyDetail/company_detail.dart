@@ -243,8 +243,8 @@ class _CompanyPageState extends State<CompanyPage>
                                           showDialog<String>(
                                               context: context,
                                               builder: (BuildContext context) => AlertDialog(
-                                            title: Center(child: Text(AppLocalizations.of(context)?.companyDetails_beforeApplying ?? "Before applying")),
-                                            content: Text(
+                                              title: Center(child: Text(AppLocalizations.of(context)?.companyDetails_beforeApplying ?? "Before applying")),
+                                              content: Text(
                                               AppLocalizations.of(context)?.companyDetails_areYouSure(widget.company.jobOffers[index].jobTitle, DateFormat.Hm().format(widget.company.jobOffers[index].startingDate)) ??
                                                   "Are you sure you want to apply ?",
                                               textAlign: TextAlign.center,
@@ -257,9 +257,17 @@ class _CompanyPageState extends State<CompanyPage>
                                               ),
                                               TextButton(
                                                 onPressed: () {
+                                                  final alreadyApplied = _appliedJobOffers.contains(widget.company.jobOffers[index].id);
                                                   final id = widget.company.jobOffers[index].id;
-                                                  if (id != null) {
+                                                  if (id != null && !alreadyApplied) {
                                                     _applyToJobOffer(id);
+                                                  }
+                                                  else if (alreadyApplied) {
+                                                    final snackBar = SnackBar(
+                                                      content: Text(AppLocalizations.of(context)?.companyDetails_alreadyApplied ?? "Already applied"),
+                                                      backgroundColor: Colors.red,
+                                                    );
+                                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
                                                   }
                                                   Navigator.pop(context, AppLocalizations.of(context)?.companyDetails_apply ?? "Apply");
                                                 },

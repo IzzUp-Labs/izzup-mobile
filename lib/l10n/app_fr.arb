@@ -148,5 +148,7 @@
   "idConfirm_lessThanHours": "La vérification prends généralement moins de 24 heures",
   "ratingTitle": "Notez l'extra",
   "ratingScore": "Note:",
-  "profileRecapTitle": "Profile"
+  "profileRecapTitle": "Profile",
+  "confirm_email": "En attente de vérification par e-mail",
+  "confirm_email_directions": "Veuillez vérifier votre boîte de réception pour le lien de vérification."
 }

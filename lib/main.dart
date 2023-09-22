@@ -17,6 +17,7 @@ import 'Views/Home/home.dart';
 import 'Views/SignIn/signin_landing.dart';
 import 'Views/Welcoming/welcoming.dart';
 import 'Views/Welcoming/welcoming_page_type.dart';
+import 'Views/ulr/url.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -97,7 +98,9 @@ class _IzzUpState extends State<IzzUp> with WidgetsBindingObserver {
                     : widget.isLoggedIn
                     ? const Home()
                     : const SignIn(),
-              ))),
+              )
+          )
+      ),
     );
   }
 }

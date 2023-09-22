@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:izzup/Models/user.dart';
+import 'package:izzup/Services/Firebase/app_notifications.dart';
 import 'package:izzup/Services/api.dart';
 import 'package:izzup/Services/prefs.dart';
 import 'package:location/location.dart';
@@ -9,6 +13,7 @@ import 'employer.dart';
 import 'extra.dart';
 
 class Globals {
+  static bool firebaseHandlersSet = false;
   static Company tempCompany = Company.basic;
   static Extra tempExtra = Extra.basic;
   static Employer tempEmployer = Employer.basic;
@@ -25,6 +30,7 @@ class Globals {
     profileLoaded = false;
     profile = await Api.getProfile();
     profileLoaded = true;
+    await FirebaseApi().initNotifications();
   }
 
   static initFirstCamera() async {
@@ -39,5 +45,22 @@ class Globals {
   static initLocation() async {
     Location location = Location();
     locationData = await location.getLocation();
+  }
+
+  static Future<String?> getId() async {
+    var deviceInfo = DeviceInfoPlugin();
+    if (Platform.isIOS) {
+      // import 'dart:io'
+      var iosDeviceInfo = await deviceInfo.iosInfo;
+      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+    } else if (Platform.isAndroid) {
+      var androidDeviceInfo = await deviceInfo.androidInfo;
+      return androidDeviceInfo.id; // unique ID on Android
+    }
+    return null;
+  }
+
+  static String getLocale() {
+    return Platform.localeName.split('_')[0] == 'fr' ? 'fr' : 'en';
   }
 }

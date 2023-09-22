@@ -16,7 +16,6 @@ class RegisterSuccess extends StatefulWidget {
 }
 
 class _RegisterSuccessState extends State<RegisterSuccess> {
-
   void _loadProfileAndNavigate() async {
     await Globals.loadProfile();
     Timer(const Duration(milliseconds: 750), () {

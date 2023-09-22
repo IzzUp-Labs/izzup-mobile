@@ -27,7 +27,9 @@ enum UserRole {
 
 enum UserVerificationStatus {
   verified,
-  unverified;
+  unverified,
+  needsId,
+  notValid;
 
   static fromString(String value) {
     switch (value) {
@@ -35,14 +37,18 @@ enum UserVerificationStatus {
         return UserVerificationStatus.verified;
       case 'UNVERIFIED':
         return UserVerificationStatus.unverified;
+      case 'NEED_ID':
+        return UserVerificationStatus.needsId;
+      case 'NOT_VALID':
+        return UserVerificationStatus.notValid;
       default:
-        return UserVerificationStatus.unverified;
+        return UserVerificationStatus.needsId;
     }
   }
 }
 
 class User {
-  int id;
+  String id;
   String email;
   String password;
   String lastName;
@@ -67,8 +73,7 @@ class User {
         json['photo'],
         UserRole.fromString(json['role']),
         json['id_photo'],
-        UserVerificationStatus.fromString(json['statuses'][0]['name'])
-    );
+        UserVerificationStatus.fromString(json['statuses'][0]['name']));
   }
 
   Map<String, dynamic> toJson() => {
@@ -83,6 +88,6 @@ class User {
         "id_photo": idPhoto
       };
 
-  static User basic =
-      User(0, '', '', '', '', DateTime.now(), '', UserRole.extra, '', UserVerificationStatus.unverified);
+  static User basic = User('0', '', '', '', '', DateTime.now(), '',
+      UserRole.extra, '', UserVerificationStatus.unverified);
 }

@@ -26,7 +26,7 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controller =
-  Completer<GoogleMapController>();
+      Completer<GoogleMapController>();
   final LocationService locationService = LocationService();
   late GoogleMapController mapController;
   late String cardPhoto = 'https://googleflutter.com/sample_image.jpg';
@@ -50,9 +50,12 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
   }
 
   @override
@@ -64,13 +67,13 @@ class _MapScreenState extends State<MapScreen> {
       mapTheme = value;
     });
     LocationService.getLocation().then((value) => {
-      if (value != null && value != Globals.locationData)
-        {
-          setState(() {
-            Globals.locationData = value;
-          })
-        }
-    });
+          if (value != null && value != Globals.locationData)
+            {
+              setState(() {
+                Globals.locationData = value;
+              })
+            }
+        });
     super.initState();
   }
 
@@ -81,26 +84,24 @@ class _MapScreenState extends State<MapScreen> {
       _reloadLoading = true;
     });
     setState(() {
-      _markers.removeWhere((element) => element.markerId != const MarkerId("user"));
+      _markers
+          .removeWhere((element) => element.markerId != const MarkerId("user"));
     });
     _getLocations();
     await LocationService.getLocation().then((value) => {
-      if (value != null && value != Globals.locationData) {
-        setState(() {
-          Globals.locationData = value;
-          if (Globals.locationData != null) {
-            mapController.animateCamera(
-                CameraUpdate.newLatLngZoom(
-                    LatLng(
-                        Globals.locationData!.latitude!,
-                        Globals.locationData!.longitude!
-                    ),
-                    16
-                ));
-          }
-        })
-      }
-    });
+          if (value != null && value != Globals.locationData)
+            {
+              setState(() {
+                Globals.locationData = value;
+                if (Globals.locationData != null) {
+                  mapController.animateCamera(CameraUpdate.newLatLngZoom(
+                      LatLng(Globals.locationData!.latitude!,
+                          Globals.locationData!.longitude!),
+                      16));
+                }
+              })
+            }
+        });
     setState(() {
       showMessages = false;
       _reloadLoading = false;
@@ -114,14 +115,15 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void messageTransition(MapLocation currentShownCard) async {
-    var googlePhoto = await Api.getPlacePhotoLinks(currentShownCard.company.placeId);
+    var googlePhoto =
+        await Api.getPlacePhotoLinks(currentShownCard.company.placeId);
     if (selectedLocation.isEquals(currentShownCard)) {
       setState(() {
         showMessages = !showMessages;
       });
     } else {
       setState(() {
-        if( googlePhoto != null) {
+        if (googlePhoto != null) {
           cardPhoto = googlePhoto.first;
         }
         selectedLocation = currentShownCard;
@@ -131,8 +133,10 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void getMarkers() async {
-    final Uint8List greyMarkerBytes = await getBytesFromAsset('assets/grey_marker.png', 75);
-    final Uint8List greenMarkerBytes = await getBytesFromAsset('assets/green_marker.png', 75);
+    final Uint8List greyMarkerBytes =
+        await getBytesFromAsset('assets/grey_marker.png', 75);
+    final Uint8List greenMarkerBytes =
+        await getBytesFromAsset('assets/green_marker.png', 75);
     Marker marker = Marker(
       markerId: const MarkerId("user"),
       position: Globals.locationData?.latLng ?? _kGooglePlex.target,
@@ -199,10 +203,9 @@ class _MapScreenState extends State<MapScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CachedNetworkImage(
-                            imageUrl:
-                            cardPhoto,
+                            imageUrl: cardPhoto,
                             placeholder: (context, url) =>
-                            const CircularProgressIndicator(),
+                                const CircularProgressIndicator(),
                             height: 60,
                             width: 60,
                           ),
@@ -273,7 +276,9 @@ class _MapScreenState extends State<MapScreen> {
               children: [
                 const Spacer(),
                 ElevatedButton(
-                  onPressed: () { reload(); },
+                  onPressed: () {
+                    reload();
+                  },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: AppColors.accent,
@@ -291,7 +296,7 @@ class _MapScreenState extends State<MapScreen> {
                               loaderSize: 5,
                               loaderBackground: Colors.transparent))
                       : Text(
-                    AppLocalizations.of(context)?.map_reload ?? "Reload",
+                          AppLocalizations.of(context)?.map_reload ?? "Reload",
                           textScaleFactor: ScaleSize.textScaleFactor(context),
                         ),
                 ),

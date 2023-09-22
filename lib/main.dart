@@ -6,6 +6,7 @@ import 'package:izzup/Models/extra.dart';
 import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Services/api.dart';
 import 'package:izzup/Services/colors.dart';
+import 'package:izzup/Services/Firebase/app_notifications.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Services/prefs.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +24,10 @@ Future<void> main() async {
   var hasSeenIntro = await Prefs.getBool('hasSeenIntro');
   var isLoggedIn = await _renewTokenIfPossible();
   Globals.initFirstCamera();
+
+  if (hasSeenIntro == true) {
+    await FirebaseApi().initNotifications();
+  }
 
   if (await Prefs.getBool('locationServiceEnabled') ?? false) {
     await Globals.initLocation();
@@ -63,8 +68,6 @@ class IzzUp extends StatefulWidget {
 
 class _IzzUpState extends State<IzzUp> with WidgetsBindingObserver {
 
-
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
@@ -79,6 +82,7 @@ class _IzzUpState extends State<IzzUp> with WidgetsBindingObserver {
       child: GestureDetector(
           onTap: () => context.dropFocus(),
           child: MaterialApp(
+              navigatorKey: Navigation.navigatorKey,
               title: AppLocalizations.of(context)?.appName ?? 'IzzUp',
               theme: ThemeData(
                 fontFamily: 'Cera Pro SV',

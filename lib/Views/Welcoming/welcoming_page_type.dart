@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:izzup/Models/globals.dart';
+import 'package:izzup/Services/Firebase/app_notifications.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Services/prefs.dart';
 import 'package:izzup/Views/SignIn/signin_landing.dart';
 import 'package:izzup/Views/Welcoming/welcoming.dart';
 
 import '../../Services/location.dart';
-import '../../Services/notifications.dart';
 
 enum WelcomingPageType {
   landing,
@@ -119,7 +119,7 @@ enum WelcomingPageType {
 
   Future<void> _notificationsBtnTapped(
       BuildContext context, Widget widget) async {
-    await Notifications.requestNotificationPermission(context);
+    await FirebaseApi().initNotifications();
     if (context.mounted) {
       context.navigateWithTransition(
           widget, const Welcoming(pageType: WelcomingPageType.localisation));

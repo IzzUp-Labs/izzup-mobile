@@ -2,7 +2,7 @@ import 'company.dart';
 import 'job_offer.dart';
 
 class JobOfferRequest {
-  int? id;
+  String? id;
   String jobTitle;
   String jobDescription;
   DateTime startingDate;
@@ -13,7 +13,17 @@ class JobOfferRequest {
   int acceptedSpots;
   List<JobRequests> requests;
 
-  JobOfferRequest(this.jobTitle, this.jobDescription, this.startingDate, this.workingHours, this.price, this.isAvailable, this.spots, this.acceptedSpots, this.requests, {this.id});
+  JobOfferRequest(
+      this.jobTitle,
+      this.jobDescription,
+      this.startingDate,
+      this.workingHours,
+      this.price,
+      this.isAvailable,
+      this.spots,
+      this.acceptedSpots,
+      this.requests,
+      {this.id});
 
   factory JobOfferRequest.fromJson(Map<String, dynamic> json) {
     var jobOffer = JobOfferRequest(
@@ -25,7 +35,11 @@ class JobOfferRequest {
       json['is_available'],
       json['spots'],
       json['acceptedSpots'],
-      json['requests'].map<JobRequests>((requests) => JobRequests.fromJson(requests)).toList(),
+      json['requests'] != null
+          ? json['requests']
+              .map<JobRequests>((requests) => JobRequests.fromJson(requests))
+              .toList()
+          : [],
       id: json['id'],
     );
     jobOffer.startingDate = jobOffer.startingDate.add(const Duration(hours: 2));
@@ -59,7 +73,7 @@ enum JobRequestStatus {
 }
 
 class JobRequestWithVerificationCode {
-  int? id;
+  String? id;
   JobRequestStatus status;
   String? verificationCode;
   JobOffer jobOffer;
@@ -80,7 +94,7 @@ class JobRequestWithVerificationCode {
 }
 
 class JobRequests {
-  int? id;
+  String? id;
   String status;
   ExtraRequest extra;
 
@@ -96,7 +110,7 @@ class JobRequests {
 }
 
 class ExtraRequest {
-  int? id;
+  String? id;
   String address;
   UserRequest user;
 
@@ -112,14 +126,15 @@ class ExtraRequest {
 }
 
 class UserRequest {
-  int? id;
+  String? id;
   String lastName;
   String firstName;
   DateTime dateOfBirth;
   String? photo;
   String role;
 
-  UserRequest(this.id, this.lastName, this.firstName, this.dateOfBirth, this.photo, this.role);
+  UserRequest(this.id, this.lastName, this.firstName, this.dateOfBirth,
+      this.photo, this.role);
 
   factory UserRequest.fromJson(Map<String, dynamic> json) {
     return UserRequest(

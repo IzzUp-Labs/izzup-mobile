@@ -65,101 +65,110 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: SafeArea(
-            bottom: false,
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: const Image(
-                      image: AssetImage('assets/logo.png'),
-                      width: 70,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Text(
-                    AppLocalizations.of(context)
-                            ?.signIn_letsGetToKnowEachOther ??
-                        "Let's get to know each other",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        fontSize: 32, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20, top: 20, right: 20),
-                  child: Text(
-                    AppLocalizations.of(context)
-                            ?.signIn_doYouAlreadyHaveAnAccount ??
-                        "Do you already have an account or want to create one ? Either way enter your email here and we'll do the rest 😉",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 20, right: 20, bottom: 20, top: 50),
-                  child: TextField(
-                    controller: _emailTextFieldController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey)),
-                      prefixIcon: const Icon(
-                        Icons.email,
-                        color: Colors.grey,
-                      ),
-                      border: const OutlineInputBorder(),
-                      labelText:
-                          AppLocalizations.of(context)?.signIn_enterYourEmail ??
-                              'Enter your email',
-                      labelStyle: const TextStyle(color: Colors.grey),
-                      errorText: _isValid
-                          ? null
-                          : AppLocalizations.of(context)
-                                  ?.signIn_invalidEmailAddress ??
-                              'Invalid email address',
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 20, right: 20, bottom: 20, top: 50),
-                  child: ElevatedButton(
-                    onPressed: () =>
-                        _validateEmail(_emailTextFieldController.text),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accent,
-                      minimumSize: const Size(222, 56),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30), // <-- Radius
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: SafeArea(
+        bottom: false,
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              reverse: true,
+              physics: const ClampingScrollPhysics(),
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: const Image(
+                        image: AssetImage('assets/logo.png'),
+                        width: 70,
                       ),
                     ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10),
                     child: Text(
-                      AppLocalizations.of(context)?.titles_next ?? "Next",
+                      AppLocalizations.of(context)
+                          ?.signIn_letsGetToKnowEachOther ??
+                          "Let's get to know each other",
+                      textAlign: TextAlign.center,
                       style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w600),
+                          fontSize: 32, fontWeight: FontWeight.bold),
                     ),
                   ),
-                ),
-                const Spacer(),
-                const Expanded(child: Wave()),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, top: 20, right: 20),
+                    child: Text(
+                      AppLocalizations.of(context)
+                          ?.signIn_doYouAlreadyHaveAnAccount ??
+                          "Do you already have an account or want to create one ? Either way enter your email here and we'll do the rest 😉",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20, right: 20, bottom: 20, top: 50),
+                    child: TextField(
+                      controller: _emailTextFieldController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey)),
+                        prefixIcon: const Icon(
+                          Icons.email,
+                          color: Colors.grey,
+                        ),
+                        border: const OutlineInputBorder(),
+                        labelText:
+                        AppLocalizations.of(context)?.signIn_enterYourEmail ??
+                            'Enter your email',
+                        labelStyle: const TextStyle(color: Colors.grey),
+                        errorText: _isValid
+                            ? null
+                            : AppLocalizations.of(context)
+                            ?.signIn_invalidEmailAddress ??
+                            'Invalid email address',
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20, right: 20, bottom: 20, top: 50),
+                    child: ElevatedButton(
+                      onPressed: () =>
+                          _validateEmail(_emailTextFieldController.text),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accent,
+                        minimumSize: const Size(222, 56),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30), // <-- Radius
+                        ),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)?.titles_next ?? "Next",
+                        style: const TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                  Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom))
+                ],
+              ),
+            ),
+            const Column(
+              children: [
+                Spacer(),
+                Wave(),
               ],
             ),
-          ),
+            if (_isLoading) const ClassyLoader()
+          ],
         ),
-        if (_isLoading) const ClassyLoader()
-      ],
+      ),
     );
   }
 }

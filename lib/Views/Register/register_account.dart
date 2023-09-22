@@ -61,151 +61,164 @@ class _RegisterAccountState extends State<RegisterAccount> {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         bottom: false,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: const Image(
-                  image: AssetImage('assets/logo.png'),
-                  width: 70,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Text(
-                AppLocalizations.of(context)?.register_niceToMeetYou ??
-                    "Nice to meet you !",
-                textAlign: TextAlign.center,
-                style:
-                    const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20, top: 10, right: 20),
-              child: Text(
-                widget.accountType == RegisterAccountType.jobSeeker
-                    ? AppLocalizations.of(context)
-                            ?.register_toBeginWithRegistration ??
-                        "To begin with the registration we will just need a contact email and a password for your account"
-                    : AppLocalizations.of(context)
-                            ?.register_toBeginWithRegistrationCompany ??
-                        "To begin with the registration we will just need a contact email and a password for the account linked to your business",
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 20, right: 20, bottom: 10, top: 20),
-              child: TextField(
-                controller: _emailTextFieldController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(
-                    Icons.email,
-                    color: Colors.grey,
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
-                  border: const OutlineInputBorder(),
-                  hintText:
-                      AppLocalizations.of(context)?.register_enterYourEmail ??
-                          'Enter your email',
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                  left: 20, right: 20, bottom: 10, top: 10),
+        child: Stack(
+          children: [
+            SingleChildScrollView(
               child: Column(
-                children: [
-                  TextField(
-                    controller: _passwordTFC,
-                    obscureText: !_passwordVisible,
-                    decoration: InputDecoration(
-                      labelStyle: const TextStyle(fontFamily: 'Roboto'),
-                      prefixIcon: const Icon(
-                        Icons.password,
-                        color: Colors.grey,
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey)),
-                      border: const OutlineInputBorder(),
-                      hintText: AppLocalizations.of(context)
-                              ?.register_enterYourPassword ??
-                          'Enter your password',
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _passwordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Theme.of(context).primaryColorDark,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _passwordVisible = !_passwordVisible;
-                          });
-                        },
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: const Image(
+                        image: AssetImage('assets/logo.png'),
+                        width: 70,
                       ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 10),
-                    child: FlutterPwValidator(
-                        controller: _passwordTFC,
-                        minLength: 8,
-                        numericCharCount: 2,
-                        uppercaseCharCount: 1,
-                        specialCharCount: 1,
-                        width: 400,
-                        height: 125,
-                        successColor: AppColors.accent,
-                        failureColor: Colors.deepOrange,
-                        onSuccess: () {
-                          setState(() {
-                            _isPasswordValid = true;
-                          });
-                        },
-                        onFail: () {
-                          setState(() {
-                            _isPasswordValid = false;
-                          });
-                        }),
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      AppLocalizations.of(context)?.register_niceToMeetYou ??
+                          "Nice to meet you !",
+                      textAlign: TextAlign.center,
+                      style:
+                      const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: ElevatedButton(
-                onPressed: !_isPasswordValid
-                    ? null
-                    : () {
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, top: 10, right: 20),
+                    child: Text(
+                      widget.accountType == RegisterAccountType.jobSeeker
+                          ? AppLocalizations.of(context)
+                          ?.register_toBeginWithRegistration ??
+                          "To begin with the registration we will just need a contact email and a password for your account"
+                          : AppLocalizations.of(context)
+                          ?.register_toBeginWithRegistrationCompany ??
+                          "To begin with the registration we will just need a contact email and a password for the account linked to your business",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20, right: 20, bottom: 10, top: 20),
+                    child: TextField(
+                      scrollPadding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                      controller: _emailTextFieldController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(
+                          Icons.email,
+                          color: Colors.grey,
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey)),
+                        border: const OutlineInputBorder(),
+                        hintText:
+                        AppLocalizations.of(context)?.register_enterYourEmail ??
+                            'Enter your email',
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20, right: 20, bottom: 10, top: 10),
+                    child: Column(
+                      children: [
+                        TextField(
+                          scrollPadding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                          controller: _passwordTFC,
+                          obscureText: !_passwordVisible,
+                          decoration: InputDecoration(
+                            labelStyle: const TextStyle(fontFamily: 'Roboto'),
+                            prefixIcon: const Icon(
+                              Icons.password,
+                              color: Colors.grey,
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey)),
+                            border: const OutlineInputBorder(),
+                            hintText: AppLocalizations.of(context)
+                                ?.register_enterYourPassword ??
+                                'Enter your password',
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _passwordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Theme.of(context).primaryColorDark,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10, bottom: 10),
+                          child: FlutterPwValidator(
+                              controller: _passwordTFC,
+                              minLength: 8,
+                              numericCharCount: 2,
+                              uppercaseCharCount: 1,
+                              specialCharCount: 1,
+                              width: 400,
+                              height: 125,
+                              successColor: AppColors.accent,
+                              failureColor: Colors.deepOrange,
+                              onSuccess: () {
+                                setState(() {
+                                  _isPasswordValid = true;
+                                });
+                              },
+                              onFail: () {
+                                setState(() {
+                                  _isPasswordValid = false;
+                                });
+                              }),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: ElevatedButton(
+                      onPressed: !_isPasswordValid
+                          ? null
+                          : () {
                         modifyRegistrationAccount();
                         context.push(RegisterInformations(
                             accountType: widget.accountType));
                       },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.accent,
-                  minimumSize: const Size(222, 56),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30), // <-- Radius
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accent,
+                        minimumSize: const Size(222, 56),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30), // <-- Radius
+                        ),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)?.register_continue ?? "Continue",
+                        style: const TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w600),
+                      ),
+                    ),
                   ),
-                ),
-                child: Text(
-                  AppLocalizations.of(context)?.register_continue ?? "Continue",
-                  style: const TextStyle(
-                      fontSize: 15, fontWeight: FontWeight.w600),
-                ),
+                  Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom))
+                ],
               ),
             ),
-            const Spacer(),
-            const Expanded(child: Wave()),
+            const Column(
+              children: [
+                Spacer(),
+                Wave(),
+              ],
+            ),
           ],
         ),
       ),

@@ -51,112 +51,130 @@ class _RegisterExtraAddressState extends State<RegisterExtraAddress> {
           resizeToAvoidBottomInset: false,
           body: SafeArea(
             bottom: false,
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: const Image(
-                      image: AssetImage('assets/logo.png'),
-                      width: 70,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Text(
-                    AppLocalizations.of(context)
-                            ?.register_tellUsAboutYourself ??
-                        "Tell us about your yourself",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        fontSize: 32, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Text(
-                    AppLocalizations.of(context)?.register_weNeedYourAddress ??
-                        "We need your address to provide you gigs when you don't have location services available",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: AutocompleteAddressTextfield(
-                    addressController: _addressController,
-                    inputDecoration: InputDecoration(
-                        prefixIcon: const Icon(
-                          Icons.pin_drop,
-                          color: Colors.grey,
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  reverse: true,
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: const Image(
+                            image: AssetImage('assets/logo.png'),
+                            width: 70,
+                          ),
                         ),
-                        focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey)),
-                        border: const OutlineInputBorder(),
-                        hintText:
-                            AppLocalizations.of(context)?.register_address ??
-                                'Address',
-                        errorText: _isAddressValid
-                            ? null
-                            : AppLocalizations.of(context)
-                                    ?.register_pleaseEnterAnAddress ??
-                                "Please enter an address."),
-                    getPlaceDetailCallback: (Prediction prediction) {
-                      // this method will return latlng with place detail
-                      if (kDebugMode) {
-                        print("${prediction.lat} ${prediction.lng}");
-                      }
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 20, right: 20, bottom: 20, top: 50),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (_validateFields()) {
-                        modifyRegistrationAccount();
-                        setState(() {
-                          _isLoading = true;
-                        });
-                        if (await Api.registerAndLoginExtra()) {
-                          Globals.setUserFromExtra();
-                          if (context.mounted) {
-                            context.navigateWithoutBack(const RegisterIdCard());
-                          }
-                        } else {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                        }
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accent,
-                      minimumSize: const Size(222, 56),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30), // <-- Radius
                       ),
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context)?.register_validate ??
-                          "Validate",
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w600),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          AppLocalizations.of(context)
+                                  ?.register_tellUsAboutYourself ??
+                              "Tell us about your yourself",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              fontSize: 32, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Text(
+                          AppLocalizations.of(context)
+                                  ?.register_weNeedYourAddress ??
+                              "We need your address to provide you gigs when you don't have location services available",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: AutocompleteAddressTextfield(
+                          addressController: _addressController,
+                          inputDecoration: InputDecoration(
+                              prefixIcon: const Icon(
+                                Icons.pin_drop,
+                                color: Colors.grey,
+                              ),
+                              focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey)),
+                              border: const OutlineInputBorder(),
+                              hintText: AppLocalizations.of(context)
+                                      ?.register_address ??
+                                  'Address',
+                              errorText: _isAddressValid
+                                  ? null
+                                  : AppLocalizations.of(context)
+                                          ?.register_pleaseEnterAnAddress ??
+                                      "Please enter an address."),
+                          getPlaceDetailCallback: (Prediction prediction) {
+                            // this method will return latlng with place detail
+                            if (kDebugMode) {
+                              print("${prediction.lat} ${prediction.lng}");
+                            }
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 20, right: 20, bottom: 20, top: 50),
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            if (_validateFields()) {
+                              modifyRegistrationAccount();
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              if (await Api.registerAndLoginExtra()) {
+                                Globals.setUserFromExtra();
+                                if (context.mounted) {
+                                  context.navigateWithoutBack(
+                                      const RegisterIdCard());
+                                }
+                              } else {
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.accent,
+                            minimumSize: const Size(222, 56),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(30), // <-- Radius
+                            ),
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)?.register_validate ??
+                                "Validate",
+                            style: const TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              bottom:
+                                  MediaQuery.of(context).viewInsets.bottom)),
+                    ],
                   ),
                 ),
-                const Spacer(),
-                const Wave(),
+                const Column(
+                  children: [
+                    Spacer(),
+                    Wave(),
+                  ],
+                ),
+                if (_isLoading) const ClassyLoader()
               ],
             ),
           ),
         ),
-        if (_isLoading) const ClassyLoader()
       ],
     );
   }

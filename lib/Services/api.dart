@@ -179,7 +179,7 @@ class Api {
     return 'https://maps.googleapis.com/maps/api/place/photo'
         '?maxwidth=400'
         '&photo_reference=$ref'
-        '&key=AIzaSyA0OV0UsfJbZXDg5GKvWgHhuRC5iDqlw_g';
+        '&key=AIzaSyDh1zb9PJZl-C_bqZNzg-oNhGXfdy2Z5pc';
   }
 
   static Future<bool> uploadProfilePhoto(String imagePath) async {

@@ -22,8 +22,7 @@ import '../Models/user.dart';
 import 'string_to_bool.dart';
 
 class Api {
-  static const _baseRoute =
-      'https://izzup-api-vzc7bhefca-od.a.run.app/';
+  static const _baseRoute = 'https://izzup-api-pfktdq573a-od.a.run.app/';
   static const _apiRoute = "${_baseRoute}api/v1/";
 
   static getUri(String route, [forApi = true]) {
@@ -31,7 +30,7 @@ class Api {
   }
 
   static getUriString(String route) {
-    return 'https://izzup-api-vzc7bhefca-od.a.run.app/$route';
+    return '$_baseRoute$route';
   }
 
   static Future<bool?> authCheck(String email) async {
@@ -275,7 +274,7 @@ class Api {
   }
 
   static Future<bool> uploadJobOffer(
-      int employerId, int companyId, JobOffer jobOffer) async {
+      String employerId, String companyId, JobOffer jobOffer) async {
     final authToken = await Prefs.getString('authToken');
     if (authToken == null) return false;
     var client = http.Client();
@@ -320,7 +319,7 @@ class Api {
           },
           body: jsonEncode(tags.map((e) => e.id).toList()));
     } catch (e) {
-      if (kDebugMode) print(e);
+      if (kDebugMode) print("add tags error: $e");
     } finally {
       client.close();
     }
@@ -331,7 +330,8 @@ class Api {
     if (authToken == null) return null;
     var client = http.Client();
     try {
-      var response = await client.get(getUri('company/$id'),
+      var response = await client.get(
+        getUri('company/$id'),
         headers: {
           "Content-Type": "application/json",
           'Authorization': 'Bearer $authToken',
@@ -352,7 +352,8 @@ class Api {
     if (authToken == null) false;
     var client = http.Client();
     try {
-      var response = await client.post(getUri('extra-job-request/$jobOfferId'),
+      var response = await client.post(
+        getUri('extra-job-request/$jobOfferId'),
         headers: {
           "Content-Type": "application/json",
           'Authorization': 'Bearer $authToken',
@@ -373,7 +374,8 @@ class Api {
     if (authToken == null) return null;
     var client = http.Client();
     try {
-      var response = await client.get(getUri("employer/my/jobOffers/requests"),
+      var response = await client.get(
+        getUri("employer/my/jobOffers/requests"),
         headers: {
           'Authorization': 'Bearer $authToken',
         },
@@ -391,12 +393,13 @@ class Api {
     }
   }
 
-  static Future<bool> acceptRequest(int requestId) async {
+  static Future<bool> acceptRequest(String requestId) async {
     final authToken = await Prefs.getString('authToken');
     if (authToken == null) return false;
     var client = http.Client();
     try {
-      var response = await client.patch(getUri("employer/accept/request/$requestId"),
+      var response = await client.patch(
+        getUri("employer/accept/request/$requestId"),
         headers: {
           "Content-Type": "application/json",
           'Authorization': 'Bearer $authToken',
@@ -417,8 +420,9 @@ class Api {
     if (authToken == null) return null;
     var client = http.Client();
     try {
-      var response = await client.get(getUri("extra/statistics"),
-        headers: { 'Authorization': 'Bearer $authToken'},
+      var response = await client.get(
+        getUri("extra/statistics"),
+        headers: {'Authorization': 'Bearer $authToken'},
       );
       var stats = ExtraStats.fromJson(jsonDecode(response.body));
       return stats;
@@ -435,8 +439,9 @@ class Api {
     if (authToken == null) return null;
     var client = http.Client();
     try {
-      var response = await client.get(getUri("employer/statistics"),
-        headers: { 'Authorization': 'Bearer $authToken'},
+      var response = await client.get(
+        getUri("employer/statistics"),
+        headers: {'Authorization': 'Bearer $authToken'},
       );
       var stats = EmployerStats.fromJson(jsonDecode(response.body));
       return stats;
@@ -453,8 +458,9 @@ class Api {
     if (authToken == null) return null;
     var client = http.Client();
     try {
-      var response = await client.get(getUri("extra/with/request"),
-        headers: { 'Authorization': 'Bearer $authToken'},
+      var response = await client.get(
+        getUri("extra/with/request"),
+        headers: {'Authorization': 'Bearer $authToken'},
       );
       var requests = UserWithRequests.fromJson(jsonDecode(response.body));
       return requests;
@@ -466,13 +472,14 @@ class Api {
     }
   }
 
-  static Future<bool> confirmWork(int requestId) async {
+  static Future<bool> confirmWork(String requestId) async {
     final authToken = await Globals.authToken();
     if (authToken == null) return false;
     var client = http.Client();
     try {
-      var response = await client.patch(getUri("employer/comfirm-work/$requestId"),
-        headers: { 'Authorization': 'Bearer $authToken'},
+      var response = await client.patch(
+        getUri("employer/comfirm-work/$requestId"),
+        headers: {'Authorization': 'Bearer $authToken'},
       );
       return response.statusCode == 200;
     } catch (e) {
@@ -483,7 +490,7 @@ class Api {
     }
   }
 
-  static Future<bool> finishWork(int requestId, String code) async {
+  static Future<bool> finishWork(String requestId, String code) async {
     final authToken = await Globals.authToken();
     if (authToken == null) return false;
     var client = http.Client();
@@ -501,13 +508,55 @@ class Api {
     }
   }
 
-  static Future<bool> sendProblem(int requestId) async {
+  static Future<bool> sendProblem(String requestId) async {
     final authToken = await Globals.authToken();
     if (authToken == null) return false;
     var client = http.Client();
     try {
       var response = await client.patch(
         getUri("mailing/send-problem/$requestId"),
+        headers: {'Authorization': 'Bearer $authToken'},
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      if (kDebugMode) print(e);
+      return false;
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<bool> changeFcmToken(String deviceId, String fcmToken) async {
+    final authToken = await Globals.authToken();
+    if (authToken == null) return false;
+    var client = http.Client();
+    try {
+      var response = await client.post(
+        getUri("user/device/check"),
+        body: {
+          'device_id': deviceId,
+          'fcm_token': fcmToken,
+          'device_language': Globals.getLocale()
+        },
+        headers: {'Authorization': 'Bearer $authToken'},
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      if (kDebugMode) print("$e");
+      return false;
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<bool> sendNotification() async {
+    final authToken = await Globals.authToken();
+    if (authToken == null) return false;
+    var client = http.Client();
+    try {
+      var response = await client.get(
+        Uri.parse(
+            "https://izzup-api-pfktdq573a-od.a.run.app/api/notification/send"),
         headers: {'Authorization': 'Bearer $authToken'},
       );
       return response.statusCode == 200;

@@ -3,7 +3,7 @@ import 'package:izzup/Models/tag.dart';
 import 'package:izzup/Models/user.dart';
 
 class UserWithRequests {
-  int id;
+  String id;
   String address;
   List<Tag> tags;
   List<JobRequestWithVerificationCode> requests;
@@ -16,10 +16,13 @@ class UserWithRequests {
       json['id'],
       json['address'],
       json['tags'].map<Tag>((tag) => Tag.fromJson(tag)).toList(),
-      json['requests'].map<JobRequestWithVerificationCode>((request) => JobRequestWithVerificationCode.fromJson(request)).toList(),
+      json['requests']
+          .map<JobRequestWithVerificationCode>(
+              (request) => JobRequestWithVerificationCode.fromJson(request))
+          .toList(),
       User.fromJson(json['user']),
     );
   }
 
-  static UserWithRequests basic = UserWithRequests(0, '', [], [], User.basic);
+  static UserWithRequests basic = UserWithRequests('0', '', [], [], User.basic);
 }

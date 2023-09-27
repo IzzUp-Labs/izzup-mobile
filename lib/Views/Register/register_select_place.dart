@@ -53,7 +53,7 @@ class _RegisterSelectPlaceState extends State<RegisterSelectPlace> {
   void _onYesPressed() async {
     setState(() => _isLoading = true);
     Globals.tempEmployer.company = Company(
-        0, widget.place.name, widget.place.placeId, widget.place.address, []);
+        '0', widget.place.name, widget.place.placeId, widget.place.address, []);
     Globals.tempEmployer.location = widget.place.location;
 
     if (await Api.registerAndLoginEmployer()) {

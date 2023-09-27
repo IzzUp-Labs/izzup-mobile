@@ -18,8 +18,7 @@ class ExtraStats {
         double.parse(json["accepted_request"].toString()),
         double.parse(json["rejected_request"].toString()),
         double.parse(json["waiting_request"].toString()),
-        double.parse(json["finished_request"].toString())
-    );
+        double.parse(json["finished_request"].toString()));
   }
 }
 

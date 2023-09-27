@@ -16,7 +16,6 @@ class CompanyPage extends StatefulWidget {
 
 class _CompanyPageState extends State<CompanyPage>
     with SingleTickerProviderStateMixin {
-
   _splitDate(String date) {
     final splitted = date.split(': ');
     String openingHours = splitted[1].split('–')[0];
@@ -37,7 +36,7 @@ class _CompanyPageState extends State<CompanyPage>
 
   _applyToJobOffer(int jobOfferId) async {
     bool isApplied = await Api.applyToJobOffer(jobOfferId);
-    if(isApplied) {
+    if (isApplied) {
       setState(() {
         _appliedJobOffers.add(jobOfferId);
       });
@@ -47,7 +46,7 @@ class _CompanyPageState extends State<CompanyPage>
   _getCompanyDetails() async {
     var result = await Api.getPlaceDetails(widget.company.placeId);
     setState(() {
-      if(result != null) {
+      if (result != null) {
         _companyDetails = result;
       }
     });
@@ -82,7 +81,7 @@ class _CompanyPageState extends State<CompanyPage>
             Navigator.pop(context);
           },
         ),
-        title: Text( widget.company.name ), // Nom de l'entreprise
+        title: Text(widget.company.name), // Nom de l'entreprise
       ),
       body: SafeArea(
         child: Column(
@@ -93,10 +92,12 @@ class _CompanyPageState extends State<CompanyPage>
               labelColor: const Color(0xFF00B096),
               tabs: [
                 Tab(
-                  text: AppLocalizations.of(context)?.companyDetails_about ?? 'About',
+                  text: AppLocalizations.of(context)?.companyDetails_about ??
+                      'About',
                 ),
                 Tab(
-                  text: AppLocalizations.of(context)?.companyDetails_jobs ?? 'Jobs',
+                  text: AppLocalizations.of(context)?.companyDetails_jobs ??
+                      'Jobs',
                 ),
               ],
             ),
@@ -111,7 +112,8 @@ class _CompanyPageState extends State<CompanyPage>
                         companyPhoto == ""
                             ? const CircularProgressIndicator()
                             : Container(
-                                margin: const EdgeInsets.symmetric( vertical: 10, horizontal: 20),
+                                margin: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 20),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
@@ -131,17 +133,17 @@ class _CompanyPageState extends State<CompanyPage>
                                   borderRadius: BorderRadius.circular(10),
                                   child: Image.network(
                                     companyPhoto,
-
                                   ),
                                 ),
-                            ),
+                              ),
                         const SizedBox(height: 10),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              const Icon(Icons.location_on, color: Color(0xFF00B096)),
+                              const Icon(Icons.location_on,
+                                  color: Color(0xFF00B096)),
                               const SizedBox(width: 10),
                               Text(widget.company.address),
                             ],
@@ -149,34 +151,40 @@ class _CompanyPageState extends State<CompanyPage>
                         ),
                         const SizedBox(height: 10),
                         _companyDetails['formatted_phone_number'] != null
-                            ?
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              const Icon(Icons.phone, color: Color(0xFF00B096)),
-                              const SizedBox(width: 10),
-                              Text(_companyDetails['formatted_phone_number']),
-                            ],
-                          ),
-                        ) :
-                        const SizedBox(),
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    const Icon(Icons.phone,
+                                        color: Color(0xFF00B096)),
+                                    const SizedBox(width: 10),
+                                    Text(_companyDetails[
+                                        'formatted_phone_number']),
+                                  ],
+                                ),
+                              )
+                            : const SizedBox(),
                         const SizedBox(height: 10),
                         _companyDetails['opening_hours'] != null
-                            ?
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              const Icon(Icons.access_time, color: Color(0xFF00B096)),
-                              const SizedBox(width: 10),
-                              Text(_splitDate(_companyDetails['opening_hours']['weekday_text'][DateTime.now().weekday - 1])),
-                            ],
-                          ),
-                        ) :
-                        const SizedBox(),
+                            ? Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    const Icon(Icons.access_time,
+                                        color: Color(0xFF00B096)),
+                                    const SizedBox(width: 10),
+                                    Text(_splitDate(
+                                        _companyDetails['opening_hours']
+                                                ['weekday_text']
+                                            [DateTime.now().weekday - 1])),
+                                  ],
+                                ),
+                              )
+                            : const SizedBox(),
                         const SizedBox(height: 10),
                         // Espacement entre la description de l'entreprise et la ligne
                         // Ligne verte
@@ -193,102 +201,167 @@ class _CompanyPageState extends State<CompanyPage>
                     itemCount: widget.company.jobOffers.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
-                        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 20),
                         child: Column(
                           children: [
                             Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: const Color(0xFF00B096),
-                                  width: 2,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: const Color(0xFF00B096),
+                                    width: 2,
+                                  ),
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: <Color>[
+                                      Color(0xFF00B096),
+                                      Color(0xFF008073),
+                                    ],
+                                  ),
                                 ),
-                                gradient: const LinearGradient(
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                  colors: <Color>[
-                                    Color(0xFF00B096),
-                                    Color(0xFF008073),
-                                  ],
-                                ),
-                              ),
-                              child: Column(
-                                children: [
-                                  ListTile(
-                                    title: Text(
-                                        widget.company.jobOffers[index].jobTitle,
+                                child: Column(
+                                  children: [
+                                    ListTile(
+                                      title: Text(
+                                        widget
+                                            .company.jobOffers[index].jobTitle,
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 20,
                                         ),
-                                    ),
-                                    subtitle: Text(
-                                        widget.company.jobOffers[index].jobDescription,
+                                      ),
+                                      subtitle: Text(
+                                        widget.company.jobOffers[index]
+                                            .jobDescription,
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 13,
                                         ),
-                                    ),
-                                    trailing: SizedBox(
-                                      height: double.infinity,
-                                      child: IconButton(
-                                        icon: Icon(
-                                          _appliedJobOffers.contains(widget.company.jobOffers[index].id)
-                                              ? Icons.check_circle
-                                              : Icons.add_circle_outline,
-                                          color: Colors.white,
-                                        ),
-                                        onPressed: () {
-                                          showDialog<String>(
-                                              context: context,
-                                              builder: (BuildContext context) => AlertDialog(
-                                              title: Center(child: Text(AppLocalizations.of(context)?.companyDetails_beforeApplying ?? "Before applying")),
-                                              content: Text(
-                                              AppLocalizations.of(context)?.companyDetails_areYouSure(widget.company.jobOffers[index].jobTitle, DateFormat.Hm().format(widget.company.jobOffers[index].startingDate)) ??
-                                                  "Are you sure you want to apply ?",
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            actionsAlignment: MainAxisAlignment.spaceEvenly,
-                                            actions: <Widget>[
-                                              TextButton(
-                                                onPressed: () => Navigator.pop(context, AppLocalizations.of(context)?.companyDetails_cancel ?? "Cancel"),
-                                                child: Text(AppLocalizations.of(context)?.companyDetails_cancel ?? "Cancel", style: const TextStyle(color: Colors.red)),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  final alreadyApplied = _appliedJobOffers.contains(widget.company.jobOffers[index].id);
-                                                  final id = widget.company.jobOffers[index].id;
-                                                  if (id != null && !alreadyApplied) {
-                                                    _applyToJobOffer(id);
-                                                  }
-                                                  else if (alreadyApplied) {
-                                                    final snackBar = SnackBar(
-                                                      content: Text(AppLocalizations.of(context)?.companyDetails_alreadyApplied ?? "Already applied"),
-                                                      backgroundColor: Colors.red,
-                                                    );
-                                                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                                  }
-                                                  Navigator.pop(context, AppLocalizations.of(context)?.companyDetails_apply ?? "Apply");
-                                                },
-                                                child: Text(
-                                                    AppLocalizations.of(context)?.companyDetails_apply ?? "Apply",
-                                                    style: const TextStyle(color: Color(0xFF00B096))
-                                                ),
-                                              ),
-                                            ],
-                                            elevation: 24.0,
-                                            shape: const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                                          )
-                                          );
-                                        },
                                       ),
-                                    ),
-                                  )
-                                ],
-                              )
-                            ),
+                                      trailing: SizedBox(
+                                        height: double.infinity,
+                                        child: IconButton(
+                                          icon: Icon(
+                                            _appliedJobOffers.contains(widget
+                                                    .company
+                                                    .jobOffers[index]
+                                                    .id)
+                                                ? Icons.check_circle
+                                                : Icons.add_circle_outline,
+                                            color: Colors.white,
+                                          ),
+                                          onPressed: () {
+                                            showDialog<String>(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        AlertDialog(
+                                                          title: Center(
+                                                              child: Text(AppLocalizations.of(
+                                                                          context)
+                                                                      ?.companyDetails_beforeApplying ??
+                                                                  "Before applying")),
+                                                          content: Text(
+                                                            AppLocalizations.of(context)?.companyDetails_areYouSure(
+                                                                    widget
+                                                                        .company
+                                                                        .jobOffers[
+                                                                            index]
+                                                                        .jobTitle,
+                                                                    DateFormat.Hm().format(widget
+                                                                        .company
+                                                                        .jobOffers[
+                                                                            index]
+                                                                        .startingDate)) ??
+                                                                "Are you sure you want to apply ?",
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
+                                                          actionsAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceEvenly,
+                                                          actions: <Widget>[
+                                                            TextButton(
+                                                              onPressed: () => Navigator.pop(
+                                                                  context,
+                                                                  AppLocalizations.of(
+                                                                              context)
+                                                                          ?.companyDetails_cancel ??
+                                                                      "Cancel"),
+                                                              child: Text(
+                                                                  AppLocalizations.of(
+                                                                              context)
+                                                                          ?.companyDetails_cancel ??
+                                                                      "Cancel",
+                                                                  style: const TextStyle(
+                                                                      color: Colors
+                                                                          .red)),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                final alreadyApplied =
+                                                                    _appliedJobOffers.contains(widget
+                                                                        .company
+                                                                        .jobOffers[
+                                                                            index]
+                                                                        .id);
+                                                                final id = widget
+                                                                    .company
+                                                                    .jobOffers[
+                                                                        index]
+                                                                    .id;
+                                                                if (id !=
+                                                                        null &&
+                                                                    !alreadyApplied) {
+                                                                  _applyToJobOffer(
+                                                                      id);
+                                                                } else if (alreadyApplied) {
+                                                                  final snackBar =
+                                                                      SnackBar(
+                                                                    content: Text(
+                                                                        AppLocalizations.of(context)?.companyDetails_alreadyApplied ??
+                                                                            "Already applied"),
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .red,
+                                                                  );
+                                                                  ScaffoldMessenger.of(
+                                                                          context)
+                                                                      .showSnackBar(
+                                                                          snackBar);
+                                                                }
+                                                                Navigator.pop(
+                                                                    context,
+                                                                    AppLocalizations.of(context)
+                                                                            ?.companyDetails_apply ??
+                                                                        "Apply");
+                                                              },
+                                                              child: Text(
+                                                                  AppLocalizations.of(
+                                                                              context)
+                                                                          ?.companyDetails_apply ??
+                                                                      "Apply",
+                                                                  style: const TextStyle(
+                                                                      color: Color(
+                                                                          0xFF00B096))),
+                                                            ),
+                                                          ],
+                                                          elevation: 24.0,
+                                                          shape: const RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius
+                                                                  .all(Radius
+                                                                      .circular(
+                                                                          20.0))),
+                                                        ));
+                                          },
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )),
                           ],
                         ),
                       );

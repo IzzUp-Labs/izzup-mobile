@@ -4,6 +4,8 @@ import 'package:izzup/Models/classy_loader.dart';
 import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Views/Welcoming/welcoming_page_type.dart';
 
+import '../../Models/globals.dart';
+
 class Welcoming extends StatefulWidget {
   const Welcoming({super.key, required this.pageType});
 
@@ -16,12 +18,13 @@ class Welcoming extends StatefulWidget {
 class _WelcomingState extends State<Welcoming> {
   @override
   void initState() {
-    widget.pageType.onInit();
+    setState(() {
+      widget.pageType.onInit();
+    });
     super.initState();
   }
 
   bool isFirstClick = true;
-  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -92,10 +95,12 @@ class _WelcomingState extends State<Welcoming> {
   ElevatedButton _button() {
     return ElevatedButton(
       onPressed: () {
-        setState(() => _isLoading = true);
-        widget.pageType.onBtnTapped(context, widget, firstClick: isFirstClick);
-        setState(() => isFirstClick = false);
-        setState(() => _isLoading = false);
+        if (Globals.isWelcomeLoading) return;
+        setState(() {
+          Globals.isWelcomeLoading = true;
+          widget.pageType.onBtnTapped(context, widget, firstClick: isFirstClick);
+          isFirstClick = false;
+        });
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.accent,
@@ -104,7 +109,7 @@ class _WelcomingState extends State<Welcoming> {
           borderRadius: BorderRadius.circular(12), // <-- Radius
         ),
       ),
-      child: _isLoading ? _loader() : _buttonText(),
+      child: Globals.isWelcomeLoading ? _loader() : _buttonText(),
     );
   }
 

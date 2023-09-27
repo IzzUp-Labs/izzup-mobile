@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../Models/job_offer_requests.dart';
 import '../../Services/api.dart';
 import '../../Services/colors.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LastJobOfferListPage extends StatefulWidget {
   const LastJobOfferListPage({super.key});
@@ -13,7 +13,6 @@ class LastJobOfferListPage extends StatefulWidget {
 }
 
 class _LastJobOfferListPageState extends State<LastJobOfferListPage> {
-
   List<JobOfferRequest> jobOfferRequests = [];
 
   String authToken = "";
@@ -21,7 +20,7 @@ class _LastJobOfferListPageState extends State<LastJobOfferListPage> {
   _getMyJobOffers() async {
     jobOfferRequests = (await Api.getMyJobOffers())!;
     List<JobOfferRequest> filteredJobOfferRequests = [];
-    for ( var jobOffer in jobOfferRequests) {
+    for (var jobOffer in jobOfferRequests) {
       if (jobOffer.isAvailable == false) {
         filteredJobOfferRequests.add(jobOffer);
       }
@@ -46,23 +45,30 @@ class _LastJobOfferListPageState extends State<LastJobOfferListPage> {
             await _getMyJobOffers();
           },
           child: ListView.builder(
-            itemCount: jobOfferRequests.length + 1 + (jobOfferRequests.isEmpty ? 1 : 0),
+            itemCount: jobOfferRequests.length +
+                1 +
+                (jobOfferRequests.isEmpty ? 1 : 0),
             itemBuilder: (context, index) {
               if (index == 0) {
                 return Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 10),
+                  padding: const EdgeInsets.only(
+                      left: 20, right: 20, top: 20, bottom: 10),
                   child: Text(
-                      AppLocalizations.of(context)?.jobOffersList_jobOffers ?? "Job Offers",
-                      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)
-                  ),
+                      AppLocalizations.of(context)?.jobOffersList_jobOffers ??
+                          "Job Offers",
+                      style: const TextStyle(
+                          fontSize: 32, fontWeight: FontWeight.bold)),
                 );
               } else {
                 if (jobOfferRequests.isEmpty) {
                   return Padding(
-                    padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height / 3),
+                    padding: EdgeInsets.symmetric(
+                        vertical: MediaQuery.of(context).size.height / 3),
                     child: Center(
                       child: Text(
-                        AppLocalizations.of(context)?.jobOffersList_noJobsOffersYet ?? "No job offers yet 😢",
+                        AppLocalizations.of(context)
+                                ?.jobOffersList_noJobsOffersYet ??
+                            "No job offers yet 😢",
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 20,
@@ -76,7 +82,8 @@ class _LastJobOfferListPageState extends State<LastJobOfferListPage> {
                   return Container(
                       height: 100,
                       padding: const EdgeInsets.all(20),
-                      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 20),
                       decoration: const BoxDecoration(
                         color: AppColors.accent,
                         borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -118,8 +125,7 @@ class _LastJobOfferListPageState extends State<LastJobOfferListPage> {
                           ),
                           const SizedBox(width: 20),
                         ],
-                      )
-                  );
+                      ));
                 }
               }
             },

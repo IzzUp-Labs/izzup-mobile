@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -5,9 +6,11 @@ import 'package:izzup/Models/extra.dart';
 import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Services/api.dart';
 import 'package:izzup/Services/colors.dart';
+import 'package:izzup/Services/Firebase/app_notifications.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Services/prefs.dart';
 import 'package:provider/provider.dart';
+import 'package:izzup/firebase_options.dart';
 
 import 'Models/photo.dart';
 import 'Views/Home/home.dart';
@@ -17,9 +20,14 @@ import 'Views/Welcoming/welcoming_page_type.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   var hasSeenIntro = await Prefs.getBool('hasSeenIntro');
   var isLoggedIn = await _renewTokenIfPossible();
   Globals.initFirstCamera();
+
+  if (hasSeenIntro == true) {
+    await FirebaseApi().initNotifications();
+  }
 
   if (await Prefs.getBool('locationServiceEnabled') ?? false) {
     await Globals.initLocation();
@@ -60,8 +68,6 @@ class IzzUp extends StatefulWidget {
 
 class _IzzUpState extends State<IzzUp> with WidgetsBindingObserver {
 
-
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
@@ -76,6 +82,7 @@ class _IzzUpState extends State<IzzUp> with WidgetsBindingObserver {
       child: GestureDetector(
           onTap: () => context.dropFocus(),
           child: MaterialApp(
+              navigatorKey: Navigation.navigatorKey,
               title: AppLocalizations.of(context)?.appName ?? 'IzzUp',
               theme: ThemeData(
                 fontFamily: 'Cera Pro SV',

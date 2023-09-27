@@ -477,7 +477,7 @@ class _AddJobOfferState extends State<AddJobOffer> {
               const Column(
                 children: [Spacer(), Wave()],
               ),
-              if (_isLoading) const ClassyLoader(),
+              if (_isLoading) ClassyLoader(loaderSize: MediaQuery.of(context).size.height),
               if (_success) const SuccessPopup()
             ],
           )),

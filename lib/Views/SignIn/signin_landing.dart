@@ -165,7 +165,7 @@ class _SignInState extends State<SignIn> {
                 Wave(),
               ],
             ),
-            if (_isLoading) const ClassyLoader()
+            if (_isLoading) ClassyLoader(loaderSize: MediaQuery.of(context).size.height)
           ],
         ),
       ),

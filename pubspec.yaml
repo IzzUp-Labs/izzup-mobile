@@ -71,6 +71,7 @@ dependencies:
   firebase_core: ^2.14.0
   firebase_messaging: ^14.6.7
   device_info_plus: ^9.0.3
+  url_launcher: ^6.1.14
   android_id: ^0.3.5
   flutter_rating_bar: ^4.0.1
 

@@ -6,6 +6,7 @@ import 'package:izzup/Services/api.dart';
 import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../Models/company.dart';
 import '../../Models/globals.dart';
@@ -214,46 +215,56 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _card(HomepageCardData data) {
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: _cardHeight,
-            width: _cardWidth,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-            ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-              child: Image.network(data.picLink ?? "", fit: BoxFit.fitWidth),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Flexible(
-            child: Container(
+      child: GestureDetector(
+        onTap: () {
+          print("Tapped on card");
+          print("data: ${data.link}");
+          var tapLink = data.link;
+          if(tapLink != null) {
+            _launchUrl(tapLink);
+          }
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: _cardHeight,
               width: _cardWidth,
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: Text(
-                data.title,
-                overflow: TextOverflow.ellipsis,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
+              ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
+                child: Image.network(data.picLink ?? "", fit: BoxFit.fitWidth),
               ),
             ),
-          ),
-          Flexible(
-            child: Container(
-              width: _cardWidth,
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: Text(
-                data.description,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: Colors.grey, fontSize: 12),
+            const SizedBox(height: 10),
+            Flexible(
+              child: Container(
+                width: _cardWidth,
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Text(
+                  data.title,
+                  overflow: TextOverflow.ellipsis,
+                  style:
+                      const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                ),
               ),
             ),
-          ),
-        ],
+            Flexible(
+              child: Container(
+                width: _cardWidth,
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Text(
+                  data.description,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -618,6 +629,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ],
     );
+  }
+  Future<void> _launchUrl(String url) async {
+    if (!await launchUrl(Uri.parse(url))) {
+      throw Exception('Could not launch $url');
+    }
   }
 }
 

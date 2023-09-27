@@ -1,7 +1,7 @@
 import 'package:izzup/Models/user.dart';
 
 class Message {
-  final int id;
+  final String id;
   final User author;
   final String content;
   final DateTime creationDate;

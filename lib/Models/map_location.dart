@@ -1,7 +1,7 @@
 import 'package:izzup/Models/company.dart';
 
 class MapLocation {
-  final int id;
+  final String id;
   final double longitude;
   final double latitude;
   final Company company;
@@ -13,7 +13,7 @@ class MapLocation {
         double.parse(json['latitude']), Company.fromJson(json['company']));
   }
 
-  static MapLocation basic = MapLocation(0, 0, 0, Company.basic);
+  static MapLocation basic = MapLocation('0', 0, 0, Company.basic);
 
   isEquals(MapLocation mapLocation) {
     return id == mapLocation.id &&

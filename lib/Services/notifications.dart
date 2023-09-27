@@ -48,6 +48,7 @@ class Notifications {
 
   static void _onDidReceiveLocalNotification(
       int id, String? title, String? body, String? payload) {
+    print("here");
     print(id);
     print(title);
     print(body);

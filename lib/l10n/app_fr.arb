@@ -145,5 +145,8 @@
   "companyDetails_alreadyApplied": "Vous avez déjà postulé à cette offre d'emploi",
   "createJobOffer_error": "La date ne peut pas être au passé.",
   "idConfirm_needsVerification": "Nous avons besoin de vérifier votre identité",
-  "idConfirm_lessThanHours": "La vérification prends généralement moins de 24 heures"
+  "idConfirm_lessThanHours": "La vérification prends généralement moins de 24 heures",
+  "ratingTitle": "Notez l'extra",
+  "ratingScore": "Note:",
+  "profileRecapTitle": "Profile"
 }

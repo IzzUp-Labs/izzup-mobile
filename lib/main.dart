@@ -95,8 +95,8 @@ class _IzzUpState extends State<IzzUp> with WidgetsBindingObserver {
                 child: widget.hasSeenIntro != true
                     ? const Welcoming(pageType: WelcomingPageType.landing)
                     : widget.isLoggedIn
-                        ? const Home()
-                        : const SignIn(),
+                    ? const Home()
+                    : const SignIn(),
               ))),
     );
   }

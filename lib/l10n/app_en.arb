@@ -143,5 +143,8 @@
   "companyDetails_alreadyApplied": "Already applied",
   "createJobOffer_error": "The date can not be in the past.",
   "idConfirm_needsVerification": "We need to verify your identity",
-  "idConfirm_lessThanHours": "This typically takes less than 24 hours"
+  "idConfirm_lessThanHours": "This typically takes less than 24 hours",
+  "ratingTitle": "Rate the extra",
+  "ratingScore": "Score:",
+  "profileRecapTitle": "Profile"
 }

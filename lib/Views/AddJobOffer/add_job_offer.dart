@@ -376,6 +376,8 @@ class _AddJobOfferState extends State<AddJobOffer> {
                       Padding(
                         padding: const EdgeInsets.only(left: 20, right: 20),
                         child: TextField(
+                          scrollPadding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).viewInsets.bottom + 100),
                           controller: _descriptionController,
                           keyboardType: TextInputType.multiline,
                           minLines: 4,

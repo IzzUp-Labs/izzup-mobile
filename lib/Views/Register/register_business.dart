@@ -88,131 +88,147 @@ class _RegisterBusinessState extends State<RegisterBusiness> {
           resizeToAvoidBottomInset: false,
           body: SafeArea(
             bottom: false,
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: const Image(
-                      image: AssetImage('assets/logo.png'),
-                      width: 70,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Text(
-                    AppLocalizations.of(context)
-                            ?.register_tellUsAboutYourBusiness ??
-                        "Tell us about your business",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        fontSize: 32, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Text(
-                    AppLocalizations.of(context)
-                            ?.register_theseInformationsWillBeDisplayed ??
-                        "These informations will be displayed on the company profile",
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 20, bottom: 10, left: 20, right: 20),
-                  child: TextField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                        prefixIcon: const Icon(
-                          Icons.storefront,
-                          color: Colors.grey,
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  reverse: true,
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: const Image(
+                            image: AssetImage('assets/logo.png'),
+                            width: 70,
+                          ),
                         ),
-                        focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey)),
-                        border: const OutlineInputBorder(),
-                        errorMaxLines: 2,
-                        hintText: AppLocalizations.of(context)
-                                ?.register_nameOfThePlace ??
-                            'Name of the place',
-                        errorText: _noPlaceFound
-                            ? AppLocalizations.of(context)
-                                    ?.register_noPlaceFound ??
-                                "We did not found a place matching this address and name."
-                            : _isNameValid
-                                ? null
-                                : AppLocalizations.of(context)
-                                        ?.register_pleaseProvideAName ??
-                                    "Please provide a name."),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: AutocompleteAddressTextfield(
-                    addressController: _addressController,
-                    inputDecoration: InputDecoration(
-                        prefixIcon: const Icon(
-                          Icons.pin_drop,
-                          color: Colors.grey,
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey)),
-                        border: const OutlineInputBorder(),
-                        errorMaxLines: 2,
-                        hintText:
-                            AppLocalizations.of(context)?.register_address ??
-                                'Address',
-                        errorText: _noPlaceFound
-                            ? AppLocalizations.of(context)
-                                    ?.register_noPlaceFound ??
-                                "We did not found a place matching this address and name."
-                            : _isAddressValid
-                                ? null
-                                : AppLocalizations.of(context)
-                                        ?.register_pleaseEnterAnAddress ??
-                                    "Please enter an address."),
-                    getPlaceDetailCallback: (Prediction prediction) {
-                      // this method will return latlng with place detail
-                      if (kDebugMode) {
-                        print("${prediction.lat} ${prediction.lng}");
-                      }
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: 20, right: 20, bottom: 20, top: 50),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      _onValidatePressed();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.accent,
-                      minimumSize: const Size(222, 56),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30), // <-- Radius
                       ),
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context)?.register_validate ??
-                          "Validate",
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w600),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          AppLocalizations.of(context)
+                                  ?.register_tellUsAboutYourBusiness ??
+                              "Tell us about your business",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              fontSize: 32, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Text(
+                          AppLocalizations.of(context)
+                                  ?.register_theseInformationsWillBeDisplayed ??
+                              "These informations will be displayed on the company profile",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 20, bottom: 10, left: 20, right: 20),
+                        child: TextField(
+                          controller: _nameController,
+                          decoration: InputDecoration(
+                              prefixIcon: const Icon(
+                                Icons.storefront,
+                                color: Colors.grey,
+                              ),
+                              focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey)),
+                              border: const OutlineInputBorder(),
+                              errorMaxLines: 2,
+                              hintText: AppLocalizations.of(context)
+                                      ?.register_nameOfThePlace ??
+                                  'Name of the place',
+                              errorText: _noPlaceFound
+                                  ? AppLocalizations.of(context)
+                                          ?.register_noPlaceFound ??
+                                      "We did not found a place matching this address and name."
+                                  : _isNameValid
+                                      ? null
+                                      : AppLocalizations.of(context)
+                                              ?.register_pleaseProvideAName ??
+                                          "Please provide a name."),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: AutocompleteAddressTextfield(
+                          addressController: _addressController,
+                          inputDecoration: InputDecoration(
+                              prefixIcon: const Icon(
+                                Icons.pin_drop,
+                                color: Colors.grey,
+                              ),
+                              focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey)),
+                              border: const OutlineInputBorder(),
+                              errorMaxLines: 2,
+                              hintText: AppLocalizations.of(context)
+                                      ?.register_address ??
+                                  'Address',
+                              errorText: _noPlaceFound
+                                  ? AppLocalizations.of(context)
+                                          ?.register_noPlaceFound ??
+                                      "We did not found a place matching this address and name."
+                                  : _isAddressValid
+                                      ? null
+                                      : AppLocalizations.of(context)
+                                              ?.register_pleaseEnterAnAddress ??
+                                          "Please enter an address."),
+                          getPlaceDetailCallback: (Prediction prediction) {
+                            // this method will return latlng with place detail
+                            if (kDebugMode) {
+                              print("${prediction.lat} ${prediction.lng}");
+                            }
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 20, right: 20, bottom: 20, top: 50),
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            _onValidatePressed();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.accent,
+                            minimumSize: const Size(222, 56),
+                            shape: RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.circular(30), // <-- Radius
+                            ),
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)?.register_validate ??
+                                "Validate",
+                            style: const TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                          padding: EdgeInsets.only(
+                              bottom:
+                              MediaQuery.of(context).viewInsets.bottom)),
+                    ],
                   ),
                 ),
-                const Spacer(),
-                const Expanded(child: Wave()),
+                const Column(
+                  children: [
+                    Spacer(),
+                    Wave(),
+                  ],
+                ),
+                if (_isLoading) const ClassyLoader()
               ],
             ),
           ),
         ),
-        if (_isLoading) const ClassyLoader()
       ],
     );
   }

@@ -16,7 +16,6 @@ class JobOfferListPage extends StatefulWidget {
 }
 
 class _JobOfferListPageState extends State<JobOfferListPage> {
-
   List<JobOfferRequest> jobOfferRequests = [];
 
   _getMyJobOffers() async {
@@ -28,8 +27,12 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
   }
 
   bool _jobRequestOngoing(JobOfferRequest jobOffer) {
-    var now = DateTime.parse(DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(DateTime.now()));
-    return jobOffer.startingDate.isBefore(now) && jobOffer.startingDate.add(Duration(hours: jobOffer.workingHours)).isAfter(now);
+    var now = DateTime.parse(
+        DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(DateTime.now()));
+    return jobOffer.startingDate.isBefore(now) &&
+        jobOffer.startingDate
+            .add(Duration(hours: jobOffer.workingHours))
+            .isAfter(now);
   }
 
   @override
@@ -47,23 +50,30 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
             await _getMyJobOffers();
           },
           child: ListView.builder(
-            itemCount: jobOfferRequests.length + 1 + (jobOfferRequests.isEmpty ? 1 : 0),
+            itemCount: jobOfferRequests.length +
+                1 +
+                (jobOfferRequests.isEmpty ? 1 : 0),
             itemBuilder: (context, index) {
               if (index == 0) {
                 return Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 10),
+                  padding: const EdgeInsets.only(
+                      left: 20, right: 20, top: 20, bottom: 10),
                   child: Text(
-                      AppLocalizations.of(context)?.jobOffersList_jobOffers ?? "Job Offers",
-                      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)
-                  ),
+                      AppLocalizations.of(context)?.jobOffersList_jobOffers ??
+                          "Job Offers",
+                      style: const TextStyle(
+                          fontSize: 32, fontWeight: FontWeight.bold)),
                 );
               } else {
                 if (jobOfferRequests.isEmpty) {
                   return Padding(
-                    padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height / 3),
+                    padding: EdgeInsets.symmetric(
+                        vertical: MediaQuery.of(context).size.height / 3),
                     child: Center(
                       child: Text(
-                        AppLocalizations.of(context)?.jobOffersList_noJobsOffersYet ?? "No job offers yet 😢",
+                        AppLocalizations.of(context)
+                                ?.jobOffersList_noJobsOffersYet ??
+                            "No job offers yet 😢",
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 20,
@@ -79,14 +89,20 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RequestListPage(extraRequest: jobOfferRequests[index - 1].requests, indexOfJobOffer: index - 1, jobOffer: jobOfferRequests[index - 1]),
+                          builder: (context) => RequestListPage(
+                              extraRequest:
+                                  jobOfferRequests[index - 1].requests,
+                              indexOfJobOffer: index - 1,
+                              jobOffer: jobOfferRequests[index - 1]),
                         ),
                       );
                     },
                     child: Container(
                         height: 100,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 20),
                         decoration: const BoxDecoration(
                           color: AppColors.accent,
                           borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -106,7 +122,8 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
                                 Expanded(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         jobOfferRequests[index - 1].jobTitle,
@@ -117,7 +134,8 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
                                         ),
                                       ),
                                       Text(
-                                        jobOfferRequests[index - 1].jobDescription,
+                                        jobOfferRequests[index - 1]
+                                            .jobDescription,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
@@ -131,9 +149,15 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
                                 const SizedBox(width: 20),
                                 IconButton(
                                   onPressed: () {
-                                    context.push(RequestListPage(extraRequest: jobOfferRequests[index - 1].requests, indexOfJobOffer: index - 1, jobOffer: jobOfferRequests[index - 1]));
+                                    context.push(RequestListPage(
+                                        extraRequest:
+                                            jobOfferRequests[index - 1]
+                                                .requests,
+                                        indexOfJobOffer: index - 1,
+                                        jobOffer: jobOfferRequests[index - 1]));
                                   },
-                                  icon: const Icon(Icons.keyboard_arrow_right, color: Colors.white),
+                                  icon: const Icon(Icons.keyboard_arrow_right,
+                                      color: Colors.white),
                                 ),
                               ],
                             ),
@@ -152,8 +176,7 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
                                     )),
                               )
                           ],
-                        )
-                    ),
+                        )),
                   );
                 }
               }
@@ -163,5 +186,4 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
       ),
     );
   }
-
 }

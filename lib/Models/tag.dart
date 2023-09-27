@@ -1,5 +1,5 @@
 class Tag {
-  int id;
+  String id;
   String name;
   String color;
 
@@ -17,5 +17,5 @@ class Tag {
     return {'id': id, 'name': name, 'color': color};
   }
 
-  static Tag basic = Tag(id: 0, name: '', color: '');
+  static Tag basic = Tag(id: '0', name: '', color: '');
 }

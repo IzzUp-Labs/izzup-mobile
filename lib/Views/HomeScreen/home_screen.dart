@@ -63,17 +63,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     AppLocalizations.of(context)?.homeScreen_youEarned ??
                         "You earned",
                     style: const TextStyle(
-                        fontWeight: FontWeight.w800, fontSize: 14
-                    ),
+                        fontWeight: FontWeight.w800, fontSize: 14),
                     textScaleFactor: ScaleSize.textScaleFactor(context),
                   ),
                 if (extraStats != null && extraStats?.finishedRequest != 0)
                   Text(
                     "${extraStats!.totalEarned.toString().split(".")[0]} €",
                     style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 32
-                    ),
+                        fontWeight: FontWeight.w700, fontSize: 32),
                     textScaleFactor: ScaleSize.textScaleFactor(context),
                   ),
                 if (extraStats != null && extraStats?.finishedRequest != 0)
@@ -87,19 +84,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 10,
-                              fontWeight: FontWeight.w800
-                          ),
+                              fontWeight: FontWeight.w800),
                           children: <TextSpan>[
                             TextSpan(
-                                text: extraStats!.finishedRequest.toString().split('.')[0],
-                                style: const TextStyle(
-                                    color: AppColors.accent
-
-                                )
-                            ),
+                                text: extraStats!.finishedRequest
+                                    .toString()
+                                    .split('.')[0],
+                                style:
+                                    const TextStyle(color: AppColors.accent)),
                             TextSpan(
                                 text: AppLocalizations.of(context)
-                                    ?.homeScreen_jobs ??
+                                        ?.homeScreen_jobs ??
                                     ' jobs'),
                           ],
                         ),
@@ -138,7 +133,8 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (employerStats == null || employerStats?.totalFinishedJobRequests == 0)
+                if (employerStats == null ||
+                    employerStats?.totalFinishedJobRequests == 0)
                   Text(
                     AppLocalizations.of(context)?.homeScreen_noOffersYet ??
                         "No offers yet",
@@ -148,19 +144,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontStyle: FontStyle.italic,
                         color: Colors.grey),
                   ),
-                if (employerStats != null && employerStats?.totalFinishedJobRequests != 0)
+                if (employerStats != null &&
+                    employerStats?.totalFinishedJobRequests != 0)
                   Text(
                     AppLocalizations.of(context)?.homeScreen_extras(
                             employerStats!.totalFinishedJobRequests.toInt()) ??
                         "Extras",
                     style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 32
-                    ),
+                        fontWeight: FontWeight.w700, fontSize: 32),
                   ),
-                if (employerStats != null && employerStats?.totalFinishedJobRequests != 0)
+                if (employerStats != null &&
+                    employerStats?.totalFinishedJobRequests != 0)
                   Padding(
-                    padding: EdgeInsets.only(left: MediaQuery.of(context).size.width / 6),
+                    padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width / 6),
                     child: RichText(
                       text: TextSpan(
                         text: AppLocalizations.of(context)?.homeScreen_with ??
@@ -171,11 +168,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.w800),
                         children: <TextSpan>[
                           TextSpan(
-                              text: employerStats!.totalJobOffers.toString().split('.')[0],
+                              text: employerStats!.totalJobOffers
+                                  .toString()
+                                  .split('.')[0],
                               style: const TextStyle(color: AppColors.accent)),
                           TextSpan(
                               text: AppLocalizations.of(context)
-                                  ?.homeScreen_jobOffers ??
+                                      ?.homeScreen_jobOffers ??
                                   ' job offers'),
                         ],
                       ),
@@ -227,9 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             child: ClipRRect(
               borderRadius: const BorderRadius.all(Radius.circular(20)),
-              child: Image.network(
-                  data.picLink ?? "",
-                  fit: BoxFit.fitWidth),
+              child: Image.network(data.picLink ?? "", fit: BoxFit.fitWidth),
             ),
           ),
           const SizedBox(height: 10),
@@ -241,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 data.title,
                 overflow: TextOverflow.ellipsis,
                 style:
-                const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
               ),
             ),
           ),
@@ -382,54 +379,57 @@ class _HomeScreenState extends State<HomeScreen> {
                                       padding: const EdgeInsets.all(10),
                                       child: Container(
                                         width:
-                                        MediaQuery.of(context).size.width /
-                                            7,
+                                            MediaQuery.of(context).size.width /
+                                                7,
                                         height:
-                                        MediaQuery.of(context).size.width /
-                                            7,
+                                            MediaQuery.of(context).size.width /
+                                                7,
                                         decoration: const BoxDecoration(
                                             color: Colors.white38,
                                             shape: BoxShape.circle),
                                         child: Consumer<Photo>(
                                             builder: (context, photo, child) {
-                                              return photo.photo != null
+                                          return photo.photo != null
+                                              ? ClipRRect(
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(100)),
+                                                  child: Image.file(
+                                                    photo.photo!,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                )
+                                              : Globals.profile?.photo != null
                                                   ? ClipRRect(
-                                                borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(100)),
-                                                child: Image.file(
-                                                  photo.photo!,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              )
-                                                  : Globals.profile?.photo != null
-                                                  ? ClipRRect(
-                                                borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(100)),
-                                                child: Image.network(
-                                                    Globals.profile?.photo ?? "",
-                                                    fit: BoxFit.cover),
-                                              ) :
-                                              const Icon(
-                                                Icons.person,
-                                                color: Colors.white,
-                                              );
-                                            }
-                                        ),
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .all(
+                                                              Radius.circular(
+                                                                  100)),
+                                                      child: Image.network(
+                                                          Globals.profile
+                                                                  ?.photo ??
+                                                              "",
+                                                          fit: BoxFit.cover),
+                                                    )
+                                                  : const Icon(
+                                                      Icons.person,
+                                                      color: Colors.white,
+                                                    );
+                                        }),
                                       ),
                                     ),
                                     Column(
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         if (_profileLoaded)
                                           Text(
                                             AppLocalizations.of(context)
-                                                ?.homeScreen_hi(Globals
-                                                .profile
-                                                ?.firstName ??
-                                                '') ??
+                                                    ?.homeScreen_hi(Globals
+                                                            .profile
+                                                            ?.firstName ??
+                                                        '') ??
                                                 "Hi ${Globals.profile?.firstName ?? ''},",
                                             style: const TextStyle(
                                                 color: Colors.white,
@@ -439,7 +439,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         if (_profileLoaded)
                                           Text(
                                             AppLocalizations.of(context)
-                                                ?.homeScreen_welcomeOnIzzUp ??
+                                                    ?.homeScreen_welcomeOnIzzUp ??
                                                 "Welcome on IzzUp !",
                                             style: const TextStyle(
                                               color: Colors.white,
@@ -453,7 +453,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Stack(
                               children: [
                                 if (Globals.profile?.role ==
-                                    UserRole.employer &&
+                                        UserRole.employer &&
                                     _company != null)
                                   Center(
                                     child: Padding(
@@ -461,9 +461,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           left: 35, right: 35),
                                       child: SizedBox(
                                         height:
-                                        MediaQuery.of(context).size.height /
-                                            5 +
-                                            50,
+                                            MediaQuery.of(context).size.height /
+                                                    5 +
+                                                50,
                                         child: ClipRRect(
                                           borderRadius: const BorderRadius.only(
                                               bottomLeft: Radius.circular(20),
@@ -473,12 +473,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                             color: AppColors.accent,
                                             child: Padding(
                                               padding:
-                                              const EdgeInsets.all(15.0),
+                                                  const EdgeInsets.all(15.0),
                                               child: Text(_company!.name,
                                                   style: const TextStyle(
                                                       color: Colors.white,
                                                       fontWeight:
-                                                      FontWeight.bold,
+                                                          FontWeight.bold,
                                                       fontSize: 18)),
                                             ),
                                           ),
@@ -489,23 +489,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Center(
                                   child: SizedBox(
                                     height:
-                                    MediaQuery.of(context).size.height / 5,
+                                        MediaQuery.of(context).size.height / 5,
                                     child: Column(
                                       children: [
                                         const Spacer(),
                                         Container(
                                             height: MediaQuery.of(context)
-                                                .size
-                                                .height /
+                                                    .size
+                                                    .height /
                                                 6,
                                             width: MediaQuery.of(context)
-                                                .size
-                                                .width -
+                                                    .size
+                                                    .width -
                                                 40,
                                             decoration: BoxDecoration(
                                               borderRadius:
-                                              const BorderRadius.all(
-                                                  Radius.circular(20)),
+                                                  const BorderRadius.all(
+                                                      Radius.circular(20)),
                                               color: Colors.white,
                                               boxShadow: [
                                                 BoxShadow(
@@ -518,12 +518,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ],
                                             ),
                                             child: Globals.profile?.role ==
-                                                UserRole.extra
+                                                    UserRole.extra
                                                 ? _walletWidget()
                                                 : Globals.profile?.role ==
-                                                UserRole.employer
-                                                ? companyWidget()
-                                                : null),
+                                                        UserRole.employer
+                                                    ? companyWidget()
+                                                    : null),
                                       ],
                                     ),
                                   ),
@@ -652,7 +652,7 @@ class HeaderPainter extends CustomPainter {
     final shapeBounds = Rect.fromLTRB(0, 0, size.width, size.height - 50);
     final centerAvatar = Offset(shapeBounds.center.dx, shapeBounds.bottom);
     final avatarBounds =
-    Rect.fromCircle(center: centerAvatar, radius: 50).inflate(3);
+        Rect.fromCircle(center: centerAvatar, radius: 50).inflate(3);
     _drawBackground(canvas, shapeBounds, avatarBounds);
   }
 

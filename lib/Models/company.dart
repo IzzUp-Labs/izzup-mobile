@@ -1,7 +1,7 @@
 import 'job_offer.dart';
 
 class Company {
-  int id;
+  String id;
   String name;
   String placeId;
   String address;
@@ -22,7 +22,7 @@ class Company {
                 .toList());
   }
 
-  static Company basic = Company(0, '', '', '', [JobOffer.basic]);
+  static Company basic = Company('0', '', '', '', [JobOffer.basic]);
 
   isEquals(Company company) {
     return id == company.id &&
@@ -44,6 +44,6 @@ class Company {
 
   @override
   toString() {
-    return 'Company{id: $id, name: $name, placeId: $placeId, address: $address, jobOffers: ${ jobOffers.map((jobOffer) => jobOffer.toString()).toList()}}';
+    return 'Company{id: $id, name: $name, placeId: $placeId, address: $address, jobOffers: ${jobOffers.map((jobOffer) => jobOffer.toString()).toList()}}';
   }
 }

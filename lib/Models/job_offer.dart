@@ -21,7 +21,7 @@ class JobOffer {
       {this.id});
 
   factory JobOffer.fromJson(Map<String, dynamic> json) {
-    var jobOffer =  JobOffer(
+    var jobOffer = JobOffer(
       json['job_title'],
       json['job_description'],
       DateTime.parse(json['starting_date']),

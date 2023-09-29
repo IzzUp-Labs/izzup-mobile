@@ -224,7 +224,7 @@ class _RegisterBusinessState extends State<RegisterBusiness> {
                     Wave(),
                   ],
                 ),
-                if (_isLoading) const ClassyLoader()
+                if (_isLoading) ClassyLoader(loaderSize: MediaQuery.of(context).size.height)
               ],
             ),
           ),

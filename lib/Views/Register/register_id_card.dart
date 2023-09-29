@@ -205,7 +205,7 @@ class _RegisterIdCardState extends State<RegisterIdCard> {
             ],
           ),
         ),
-        if (_isLoading) const ClassyLoader(),
+        if (_isLoading) ClassyLoader(loaderSize: MediaQuery.of(context).size.height),
       ],
     );
   }

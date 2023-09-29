@@ -161,7 +161,7 @@ class _RegisterSelectPlaceState extends State<RegisterSelectPlace> {
             ),
           ),
         ),
-        if (_isLoading) const ClassyLoader(),
+        if (_isLoading) ClassyLoader(loaderSize: MediaQuery.of(context).size.height),
       ],
     );
   }

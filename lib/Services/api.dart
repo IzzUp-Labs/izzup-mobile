@@ -347,7 +347,7 @@ class Api {
     }
   }
 
-  static Future<bool> applyToJobOffer(int jobOfferId) async {
+  static Future<bool> applyToJobOffer(String jobOfferId) async {
     final authToken = await Prefs.getString('authToken');
     if (authToken == null) false;
     var client = http.Client();

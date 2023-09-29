@@ -124,7 +124,7 @@ class _HomeState extends State<Home> {
     if (Globals.profile?.status == UserVerificationStatus.verified) {
       _checkForAwaitingRequests();
     } else {
-      /*
+      print(Globals.profile?.status);
       Timer(const Duration(milliseconds: 500), () {
         if (Globals.profile?.status == UserVerificationStatus.unverified) {
           Modals.showModalNeedsVerification();
@@ -135,7 +135,7 @@ class _HomeState extends State<Home> {
         if (Globals.profile?.status == UserVerificationStatus.notValid) {
           Modals.showModalNeedsVerification();
         }
-      });*/
+      });
     }
   }
 

@@ -21,13 +21,14 @@ void handleForegroundMessage(RemoteMessage message) {
         AccountNotificationHandler.onAccountVerified();
         break;
       case 'job-request-accepted':
+        String date = message.data['starting_date'];
+        date = date.substring(1, date.length - 1);
         JobRequestNotificationHandler.onJobRequestAccepted(
-            JobOfferRequest.fromJson(jsonDecode(message.data['job_offer'])));
+            message.data['job_title'], date);
         break;
       case 'job-request-confirmed':
-        final json = jsonDecode(message.data['job_request']);
         JobRequestNotificationHandler.onJobRequestConfirmed(
-            json['verification_code'], json['request_id']);
+            message.data['verification_code'], message.data['request_id']);
         break;
       case 'job-request-finished':
         JobRequestNotificationHandler.onJobRequestFinished();
@@ -42,6 +43,18 @@ void handleMessageOpenedApp(RemoteMessage message) {
         '\n${message.notification?.title}'
         '\n${message.notification?.body}'
         '\n${message.data}');
+  }
+  switch (message.data['type']) {
+    case 'job-request-accepted':
+      String date = message.data['starting_date'];
+      date = date.substring(1, date.length - 1);
+      JobRequestNotificationHandler.onJobRequestAccepted(
+          message.data['job_title'], date);
+      break;
+    case 'job-request-confirmed':
+      JobRequestNotificationHandler.onJobRequestConfirmed(
+          message.data['verification_code'], message.data['request_id']);
+      break;
   }
 }
 

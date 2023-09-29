@@ -29,6 +29,11 @@ class _JobOfferListPageState extends State<JobOfferListPage> {
   bool _jobRequestOngoing(JobOfferRequest jobOffer) {
     var now = DateTime.parse(
         DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(DateTime.now()));
+    print("${jobOffer.jobTitle}\n${jobOffer.startingDate}\n${jobOffer.startingDate.add(Duration(hours: jobOffer.workingHours))}\n$now");
+    print(jobOffer.startingDate.isBefore(now) &&
+        jobOffer.startingDate
+            .add(Duration(hours: jobOffer.workingHours))
+            .isAfter(now));
     return jobOffer.startingDate.isBefore(now) &&
         jobOffer.startingDate
             .add(Duration(hours: jobOffer.workingHours))

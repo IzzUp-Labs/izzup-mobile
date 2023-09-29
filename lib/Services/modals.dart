@@ -120,7 +120,7 @@ class Modals {
   }
 
   static Future<T> showJobRequestSuccessModal<T>(
-      JobOfferRequest jobOffer) async {
+      String jobTitle, DateTime startingDate) async {
     return await showModal(
         (context) => Scaffold(
                 body: Stack(
@@ -160,7 +160,7 @@ class Modals {
                       ),
                       const SizedBox(height: 100),
                       Text(
-                        jobOffer.jobTitle,
+                        jobTitle,
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 24,
@@ -169,7 +169,7 @@ class Modals {
                       const SizedBox(height: 10),
                       Text(
                         DateFormat('dd/MM - HH:mm')
-                            .format(jobOffer.startingDate),
+                            .format(startingDate),
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,

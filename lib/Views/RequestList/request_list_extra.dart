@@ -137,7 +137,8 @@ class _RequestListExtraState extends State<RequestListExtra> {
                             color: Colors.white,
                           ),
                         ],
-                      ));
+                      )
+                  );
                 }
               }
             },

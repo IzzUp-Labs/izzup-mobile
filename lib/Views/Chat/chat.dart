@@ -30,7 +30,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final textController = TextEditingController();
 
-  int authTokenId = 0;
+  String authTokenId = "";
 
   final List<Message> _messages = [];
 
@@ -63,7 +63,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    int authTokenId = JwtDecoder.decode(widget.authToken)["id"];
+    String authTokenId = JwtDecoder.decode(widget.authToken)["id"];
     //User user = User.basic;
     setState(() {
       this.authTokenId = authTokenId;
@@ -72,7 +72,7 @@ class _ChatPageState extends State<ChatPage> {
     widget.socket.on(
         'receive_all_room_messages',
         (data) => {
-              setState(() {
+          setState(() {
                 _messages.clear();
                 for (var message in data) {
                   _messages.add(Message.fromJson(message));

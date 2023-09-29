@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:izzup/Models/user.dart';
+import 'package:izzup/Views/Ratings/ratings.dart';
 import 'package:izzup/Views/Register/register_id_card.dart';
 
 import '../Models/globals.dart';
@@ -89,7 +90,8 @@ class Modals {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text("The ID you provided is not valid",
+                        Text(AppLocalizations.of(context)
+                            ?.idConfirm_notValid ?? "The ID you provided is not valid",
                           maxLines: null,
                           textAlign: TextAlign.center,
                           textScaleFactor: ScaleSize.textScaleFactor(context),
@@ -106,7 +108,7 @@ class Modals {
                         const SizedBox(height: 50),
                         ElevatedButton(
                             onPressed: () {
-                              context.navigateWithoutBack(const RegisterIdCard());
+                              context.navigateWithoutBack(const RegisterIdCard(wasNotValid: true));
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
@@ -117,7 +119,8 @@ class Modals {
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text("Re-take",
+                              child: Text(AppLocalizations.of(context)
+                                  ?.register_retake ?? "Re-take",
                                 maxLines: null,
                                 textAlign: TextAlign.center,
                                 textScaleFactor: ScaleSize.textScaleFactor(context),
@@ -149,7 +152,8 @@ class Modals {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text("We need your ID to verify your identity",
+                        Text(AppLocalizations.of(context)
+                            ?.idConfirm_needId ?? "We need your ID to verify your identity",
                           maxLines: null,
                           textAlign: TextAlign.center,
                           textScaleFactor: ScaleSize.textScaleFactor(context),
@@ -177,7 +181,8 @@ class Modals {
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text("Capture",
+                              child: Text(AppLocalizations.of(context)
+                                  ?.idConfirm_capture ?? "Capture",
                                 maxLines: null,
                                 textAlign: TextAlign.center,
                                 textScaleFactor: ScaleSize.textScaleFactor(context),
@@ -343,7 +348,7 @@ class Modals {
         isDismissible: false);
   }
 
-  static Future<T> showJobEndModalEmployer<T>(String requestId) async {
+  static Future<T> showJobEndModalEmployer<T>(String requestId, String userId) async {
     var codeController = TextEditingController();
     return await showModal(
             (context) => Scaffold(
@@ -427,7 +432,7 @@ class Modals {
                           onPressed: () async {
                             if (await Api.finishWork(
                                 requestId, codeController.text)) {
-                              if (context.mounted) context.popToHome();
+                              Modals.showRateUser(userId);
                             } else {
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -461,5 +466,12 @@ class Modals {
               ),
             )),
         isDismissible: false);
+  }
+
+  static Future<T> showRateUser<T>(String userId) async {
+    return await showModal(
+            (context) => RatingScreen(userId: userId),
+        isDismissible: false
+    );
   }
 }

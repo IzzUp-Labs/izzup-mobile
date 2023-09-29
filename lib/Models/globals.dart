@@ -68,8 +68,8 @@ class Globals {
               JobRequestStatus.waitingForVerification);
           if (requests.isNotEmpty) {
             for (var element in requests) {
-              if (element.id == null) continue;
-              Modals.showJobEndModalEmployer(element.id!);
+              if (element.id == null || element.extra.id == null) continue;
+              Modals.showJobEndModalEmployer(element.id!, element.extra.user.id!);
             }
           }
         });
@@ -126,6 +126,10 @@ class Globals {
 
   static String getLocale() {
     return Platform.localeName.split('_')[0] == 'fr' ? 'fr' : 'en';
+  }
+
+  static bool isLangFrench() {
+    return getLocale() == 'fr';
   }
 
   static logout() async {

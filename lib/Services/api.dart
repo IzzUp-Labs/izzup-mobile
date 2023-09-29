@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -11,14 +12,17 @@ import 'package:izzup/Models/user_with_request.dart';
 import 'package:izzup/Services/prefs.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
+import '../Models/badges.dart';
 import '../Models/company.dart';
 import '../Models/extra.dart';
 import '../Models/job_offer.dart';
 import '../Models/job_offer_requests.dart';
 import '../Models/map_location.dart';
 import '../Models/place.dart';
+import '../Models/rating.dart';
 import '../Models/tag.dart';
 import '../Models/user.dart';
+import '../Models/user_stats.dart';
 import 'string_to_bool.dart';
 
 class Api {
@@ -237,6 +241,21 @@ class Api {
     request.headers['Authorization'] = 'Bearer $token';
     var response = await request.send();
     return response.statusCode == 201;
+  }
+
+  static Future<bool> modifyId(String imagePath) async {
+    var request = http.MultipartRequest("PATCH", getUri('user/update-info'));
+    final token = await Prefs.getString('authToken');
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        "file",
+        imagePath,
+        contentType: MediaType('image', 'jpeg'),
+      ),
+    );
+    request.headers['Authorization'] = 'Bearer $token';
+    var response = await request.send();
+    return response.statusCode == 200;
   }
 
   static Future<List<MapLocation>?> jobOffersInRange() async {
@@ -588,7 +607,77 @@ class Api {
       return response.statusCode == 200;
     } catch (e) {
       if (kDebugMode) print("verifyPlaceId error: $e");
+      if (kDebugMode) print("sendNotification error: $e");
       return false;
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<List<Badges>?> getBadges() async {
+    final authToken = await Globals.authToken();
+    if (authToken == null) return null;
+    var client = http.Client();
+    try {
+      var response = await client.get(
+        getUri("rating/badges"),
+        headers: {'Authorization': 'Bearer $authToken'},
+      );
+      List<Badges> badges = [];
+      for (var badge in jsonDecode(response.body)) {
+        badges.add(Badges.fromJson(badge));
+      }
+      return badges;
+    } catch (e) {
+      if (kDebugMode) print("getStatsEmployer error: $e");
+      return null;
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<User?> getProfileById(String id) async {
+    final authToken = await Prefs.getString('authToken');
+    if (authToken == null) return null;
+    var client = http.Client();
+    try {
+      var response = await client.get(getUri('user/$id'), headers: {
+        'Authorization': 'Bearer $authToken',
+      });
+      final Map<String, dynamic> jsonBody = jsonDecode(response.body);
+      return User.fromJson(jsonBody);
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<bool?> rateUser(Rating rating) async {
+    final authToken = await Prefs.getString('authToken');
+    if (authToken == null) return null;
+    var client = http.Client();
+    try {
+      var response = await client.post(getUri('rating/rate-user'),
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $authToken',
+          },
+          body: json.encode(rating.toJson()));
+      return response.statusCode == 200;
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<UserStats?> getUserStats(String id) async {
+    final authToken = await Prefs.getString('authToken');
+    if (authToken == null) return null;
+    var client = http.Client();
+    try {
+      var response = await client.get(getUri('rating/user-stats/$id'), headers: {
+        'Authorization': 'Bearer $authToken',
+      });
+      var userStats = UserStats.fromJson(jsonDecode(response.body));
+      return userStats;
     } finally {
       client.close();
     }

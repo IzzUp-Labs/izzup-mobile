@@ -10,6 +10,7 @@ import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Services/prefs.dart';
 import 'package:izzup/Views/Discussions/discussions_page.dart';
+import 'package:izzup/Views/Profile/profile_recap.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -310,8 +311,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             }, Icons.handyman_rounded),
                         ],
                       ),
-                      if (user?.role.value == "EXTRA")
-                        const SizedBox(height: 20),
+                      const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                       if (user?.role.value == "EXTRA")
                         _sectionText(
                             AppLocalizations.of(context)
@@ -319,7 +322,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 "My last jobs",
                             "assets/arrow_right.png", () {
                           context.push(const LastJobRequestListPage());
-                        }, Icons.work)
+                        }, Icons.work),
+                      if (user?.role.value == "EXTRA")
+                        const SizedBox(width: 20),
+                      _sectionText(
+                          AppLocalizations.of(context)?.profileRecapTitle ??
+                              "Profile Recap",
+                          "assets/arrow_right.png", () {
+                        context.push(const ProfileRecapScreen(fromProfile: true, id: "",));
+                      }, Icons.person),
+  ]),
                     ],
                   ),
                 )

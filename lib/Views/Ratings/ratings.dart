@@ -2,18 +2,23 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/cli_commands.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:izzup/Models/globals.dart';
+import 'package:izzup/Services/navigation.dart';
 
 import '../../Models/badges.dart';
-import '../../Models/globals.dart';
+import '../../Models/rating.dart';
 import '../../Models/scale.dart';
 import '../../Models/user.dart';
 import '../../Services/api.dart';
 import '../../Services/colors.dart';
 
 class RatingScreen extends StatefulWidget {
-  const RatingScreen({super.key});
+  const RatingScreen({super.key, required this.userId});
+
+  final String userId;
 
   @override
   State<StatefulWidget> createState() => _RatingScreenState();
@@ -24,14 +29,50 @@ class _RatingScreenState extends State<RatingScreen> {
   File? image;
   double opacity = 1.0;
   bool clicked = false;
+  User ratedUser = User.basic;
+  bool isExtra = Globals.profile?.role != UserRole.extra;
+  int stars = 0;
 
-  List<Badges> badges = [
-    Badges('1', 'Ponctuel', 'assets/wallet.png'),
-    Badges('2', 'Amical', 'assets/thumbsup.png'),
-    Badges('3', 'Extraverti', 'assets/badge.png'),
-    Badges('4', 'badge4', 'assets/work_time.png'),
-    Badges('5', 'badge5', 'assets/job_hunter.png'),
-  ];
+  List<Badges> badges = [];
+  List<String> selectedBadges = [];
+  Rating rating = Rating.basic;
+
+  @override
+  void initState() {
+    super.initState();
+    _getBadges();
+    _getUser();
+  }
+
+  _getUser() async {
+    var user = await Api.getProfileById(widget.userId);
+    if (user != null) {
+      setState(() {
+        ratedUser = user;
+        _isLoading = false;
+      });
+    }
+  }
+
+  _getBadges() async {
+    var badges = await Api.getBadges();
+    if (badges != null) {
+      setState(() {
+        this.badges = badges.where((element) =>
+        isExtra ? element.is_extra : !element.is_extra
+        ).toList();
+      });
+    }
+  }
+
+  _createRating() async {
+    setState(() => _isLoading = true);
+    rating.stars = stars != 0 ? stars : null;
+    rating.targetId = ratedUser.id;
+    rating.badges = badges.isNotEmpty ? selectedBadges : null;
+    await Api.rateUser(rating);
+    if (context.mounted) context.popToHome();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +88,8 @@ class _RatingScreenState extends State<RatingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      AppLocalizations.of(context)
-                          ?.ratingTitle ??
-                          "Rate the extra",
+                      AppLocalizations.of(context)?.ratingTitle ??
+                          "Rating",
                       maxLines: null,
                       textAlign: TextAlign.center,
                       textScaleFactor: ScaleSize.textScaleFactor(context),
@@ -64,12 +104,12 @@ class _RatingScreenState extends State<RatingScreen> {
                       MediaQuery.of(context).size.width / 3,
                       height:
                       MediaQuery.of(context).size.width / 3,
-                      decoration: const BoxDecoration(
-                          color: Colors.white38,
+                      decoration: BoxDecoration(
+                          color: (image == null && ratedUser.photo == null) ? const Color(0xFFe0e0e0) : Colors.white38,
                           shape: BoxShape.circle,
-                          border: Border.fromBorderSide(
+                          border: const Border.fromBorderSide(
                               BorderSide(
-                                  color: Colors.white,
+                                  color: Colors.grey,
                                   width: 10))),
                       child: ClipRRect(
                         borderRadius: BorderRadius.all(
@@ -83,13 +123,13 @@ class _RatingScreenState extends State<RatingScreen> {
                             : image != null
                             ? Image.file(image!,
                             fit: BoxFit.cover)
-                            : user?.photo == null
+                            : ratedUser.photo == null
                             ? const Icon(
                           Icons.person,
                           color: Colors.white,
                         )
                             : Image.network(
-                            user?.photo ?? "",
+                            ratedUser.photo ?? "",
                             fit: BoxFit.cover),
                       ),
                     ),
@@ -99,7 +139,7 @@ class _RatingScreenState extends State<RatingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          user?.firstName ?? "FirstName",
+                          ratedUser.firstName,
                           maxLines: null,
                           textAlign: TextAlign.center,
                           textScaleFactor: ScaleSize.textScaleFactor(context),
@@ -108,9 +148,9 @@ class _RatingScreenState extends State<RatingScreen> {
                               fontSize: 20,
                               fontWeight: FontWeight.bold),
                         ),
-                        Padding(padding: EdgeInsets.all(10)),
+                        const Padding(padding: EdgeInsets.all(10)),
                         Text(
-                          user?.lastName ?? "LastName",
+                          ratedUser.lastName,
                           maxLines: null,
                           textAlign: TextAlign.center,
                           textScaleFactor: ScaleSize.textScaleFactor(context),
@@ -135,23 +175,32 @@ class _RatingScreenState extends State<RatingScreen> {
                           fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 10),
+                    Text(
+                        AppLocalizations.of(context)?.howWasYourTime ??
+                            "How was your time ?",
+                        style: const TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
+                        textScaleFactor: ScaleSize.textScaleFactor(context)
+                    ),
+                    const SizedBox(height: 10),
                     RatingBar.builder(
                       initialRating: 0,
                       minRating: 1,
                       direction: Axis.horizontal,
                       allowHalfRating: false,
                       itemCount: 5,
-                      itemPadding: EdgeInsets.symmetric(horizontal: 7.0),
+                      itemPadding: const EdgeInsets.symmetric(horizontal: 7.0),
                       itemBuilder: (context, _) =>
                       const Icon(
                         Icons.star,
                         color: AppColors.accent,
                       ),
                       onRatingUpdate: (rating) {
-                        print(rating); //TODO: stocker dans l'objet pour un envoi
+                        setState(() {
+                          stars = rating.toInt();
+                        });
                       },
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 50),
                     Text(
                       AppLocalizations.of(context)?.profile_badges ?? "Badges:",
                       maxLines: null,
@@ -162,38 +211,54 @@ class _RatingScreenState extends State<RatingScreen> {
                           fontSize: 20,
                           fontWeight: FontWeight.bold),
                     ),
+                    const SizedBox(height: 5),
+                    Text(
+                      AppLocalizations.of(context)?.tapOnBadge ??
+                          "Tap on a badge to add it",
+                      style: const TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
+                      textScaleFactor: ScaleSize.textScaleFactor(context),
+                    ),
                     const SizedBox(height: 10),
                     SizedBox(
-                      height: 200,
+                      height: 175,
                       width: MediaQuery.of(context).size.width,
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         children: [
-                          for (var badge in badges)
-                            _badge(badge),
+                          for (var badge in badges) _badge(badge),
                         ],
                       ),
-                    )
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        _createRating();
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF02c18a),
+                          foregroundColor: AppColors.accent,
+                          fixedSize: const Size(150, 60),
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.circular(30), // <-- Radius
+                          )),
+                      child: Text(
+                        AppLocalizations.of(context)?.ratingRate ??
+                            "Rate",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-        ],
+          ],
+        ),
       ),
-    ),
     );
-  }
-
-  User? user;
-
-  Future<void> _loadUser() async {
-    setState(() => _isLoading = true);
-    final fetchedUser = await Api.getProfile();
-    setState(() {
-      user = fetchedUser;
-      Globals.profile = fetchedUser;
-      _isLoading = false;
-    });
   }
 
   Widget _badge(Badges badge) {
@@ -206,33 +271,33 @@ class _RatingScreenState extends State<RatingScreen> {
             onTap: () {
               badge.opacity = badge.clicked ? 0.4 : 1;
               badge.clicked = !badge.clicked;
-              print(badge.opacity);
-              print(badge.clicked);
-              print("Tapped");
+              if(badge.clicked) {
+                selectedBadges.add(badge.id);
+              } else {
+                selectedBadges.remove(badge.id);
+              }
               setState(() {});
-              print(badge.opacity);
-              print(badge.clicked);
             },
             child: AnimatedOpacity(
               duration: const Duration(milliseconds: 100),
               opacity: badge.opacity,
-              child: Image.asset(
+              child: Image.network(
                 badge.image,
                 width: badge.clicked ? 120 : 100,
                 height: badge.clicked ? 120 : 100,
               ),
             ),
           ),
-          Padding(padding: const EdgeInsets.all(5)),
+          const Padding(padding: EdgeInsets.all(5)),
           Flexible(
             child: Text(
-              badge.name,
-              softWrap: true,
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-              )
+                Globals.isLangFrench() ? badge.nameFr : badge.nameEn,
+                softWrap: true,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                )
             ),
           )
         ],

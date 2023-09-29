@@ -92,14 +92,6 @@ class _ChatPageState extends State<ChatPage> {
                 _messages.add(Message.fromJson(data));
               })
             });
-    /*widget.socket.on("typing", (data) => {
-      user = User.fromJson(data["user"]),
-      setState(() {
-        if(user.id != authTokenId) {
-          isTyping = data["isTyping"];
-        }
-      })
-    });*/
   }
 
   @override

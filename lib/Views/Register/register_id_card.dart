@@ -13,7 +13,9 @@ import 'package:izzup/Views/Register/register_success.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class RegisterIdCard extends StatefulWidget {
-  const RegisterIdCard({super.key});
+  const RegisterIdCard({super.key, this.wasNotValid = false});
+
+  final bool wasNotValid;
 
   @override
   State<RegisterIdCard> createState() => _RegisterIdCardState();
@@ -53,7 +55,7 @@ class _RegisterIdCardState extends State<RegisterIdCard> {
     setState(() => _isLoading = true);
     if (imagePath == null) return false;
 
-    if (await Api.uploadIdPhoto(imagePath!)) {
+    if (widget.wasNotValid ? await Api.modifyId(imagePath!) : await Api.uploadIdPhoto(imagePath!)) {
       if (context.mounted) context.navigateWithoutBack(const RegisterSuccess());
     } else {
       setState(() => imagePath = null);

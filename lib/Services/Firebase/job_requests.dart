@@ -13,22 +13,22 @@ class JobRequestNotificationHandler {
     Modals.showJobRequestSuccessModal(jobTitle, DateTime.parse(startingDate).toLocal());
   }
 
-  static onJobRequestConfirmed(String verificationCode, String requestId) {
+  static onJobRequestConfirmed(String verificationCode, String requestId, String userId) {
     if (kDebugMode) print('Job request confirmed');
     if (Globals.profile?.role == UserRole.extra) {
       Modals.showJobEndModalExtra(verificationCode, requestId);
     } else {
-      Modals.showJobEndModalEmployer(requestId);
+      Modals.showJobEndModalEmployer(requestId, userId);
     }
   }
 
-  static onJobRequestFinished() {
+  static onJobRequestFinished(String userId) {
     if (kDebugMode) print('Job request finished');
     final BuildContext? context = Navigation.navigatorKey.currentContext;
     if (context == null) return;
 
     if (Globals.profile?.role == UserRole.extra) {
-      context.popToHome();
+      Modals.showRateUser(userId);
     }
   }
 }

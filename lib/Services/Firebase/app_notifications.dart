@@ -31,11 +31,12 @@ void handleForegroundMessage(RemoteMessage message) {
           message.data['job_title'], date);
       break;
     case 'job-request-confirmed':
+      print(message.data['user_id']);
       JobRequestNotificationHandler.onJobRequestConfirmed(
-          message.data['verification_code'], message.data['request_id']);
+          message.data['verification_code'], message.data['request_id'], message.data['user_id']);
       break;
     case 'job-request-finished':
-      JobRequestNotificationHandler.onJobRequestFinished();
+      JobRequestNotificationHandler.onJobRequestFinished(message.data['user_id']);
       break;
   }
 }
@@ -61,11 +62,12 @@ void handleMessageOpenedApp(RemoteMessage message) {
           message.data['job_title'], date);
       break;
     case 'job-request-confirmed':
+      print(message.data['user_id']);
       JobRequestNotificationHandler.onJobRequestConfirmed(
-          message.data['verification_code'], message.data['request_id']);
+          message.data['verification_code'], message.data['request_id'], message.data['user_id']);
       break;
     case 'job-request-finished':
-      JobRequestNotificationHandler.onJobRequestFinished();
+      JobRequestNotificationHandler.onJobRequestFinished(message.data['user_id']);
       break;
   }
 }

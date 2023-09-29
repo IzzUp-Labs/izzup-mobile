@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
 
@@ -13,9 +13,9 @@ class Wave extends StatelessWidget {
       config: CustomConfig(
         colors: [const Color(0xFF0081A7), AppColors.accent],
         durations: [5000, 6000],
-        heightPercentages: [0.65, 0.66],
+        heightPercentages: [0.35, 0.36],
       ),
-      size: const Size(double.infinity, 200),
+      size: const Size(double.infinity, 60),
       waveAmplitude: 3,
     );
   }

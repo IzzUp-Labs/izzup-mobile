@@ -3,6 +3,7 @@ import 'package:izzup/Services/api.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:socket_io_client/socket_io_client.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../Models/messaging_room.dart';
 import '../../Services/prefs.dart';
@@ -94,9 +95,10 @@ class _DiscussionPageState extends State<DiscussionPage> {
               color: Colors.black,
             ),
           ),
-          title: const Text(
-            "Discussions",
-            style: TextStyle(
+          title: Text(
+            AppLocalizations.of(context)?.profile_chats ??
+                "Chats",
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 20,
               fontWeight: FontWeight.bold,

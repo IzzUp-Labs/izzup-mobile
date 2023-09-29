@@ -1,5 +1,5 @@
 class JobOffer {
-  int? id;
+  String? id;
   String jobTitle;
   String jobDescription;
   DateTime startingDate;
@@ -42,7 +42,7 @@ class JobOffer {
     return {
       'job_title': jobTitle,
       'job_description': jobDescription,
-      'starting_date': startingDate.toIso8601String(),
+      'starting_date': startingDate.toUtc().toIso8601String(),
       'working_hours': workingHours,
       'price': price,
       'is_available': isAvailable,

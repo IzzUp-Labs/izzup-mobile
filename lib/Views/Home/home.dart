@@ -7,6 +7,7 @@ import 'package:izzup/Models/job_offer_requests.dart';
 import 'package:izzup/Models/user.dart';
 import 'package:izzup/Services/colors.dart';
 import 'package:izzup/Services/location.dart';
+import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Views/Map/map.dart';
 import 'package:izzup/Views/Profile/profile.dart';
 import 'package:izzup/Views/RequestList/request_list_extra.dart';
@@ -115,58 +116,13 @@ class _HomeState extends State<Home> {
     checkPerm();
     listScreens = Globals.profile?.role == UserRole.extra
         ? [
-            const HomeScreen(),
-            const MapScreen(),
-            const RequestListExtra(),
-            const ProfileScreen()
-          ]
+      const HomeScreen(),
+      const MapScreen(),
+      const RequestListExtra(),
+      const ProfileScreen()
+    ]
         : [const HomeScreen(), const JobOfferListPage(), const ProfileScreen()];
-    if (Globals.profile?.status == UserVerificationStatus.verified) {
-      _checkForAwaitingRequests();
-    } else {
-      /*
-      Timer(const Duration(milliseconds: 500), () {
-        if (Globals.profile?.status == UserVerificationStatus.unverified) {
-          Modals.showModalNeedsVerification();
-        }
-        if (Globals.profile?.status == UserVerificationStatus.needsId) {
-          Modals.showModalNeedsVerification();
-        }
-        if (Globals.profile?.status == UserVerificationStatus.notValid) {
-          Modals.showModalNeedsVerification();
-        }
-      });*/
-    }
-  }
-
-  _checkForAwaitingRequests() {
-    if (Globals.profile == null) return;
-    if (Globals.profile?.role == UserRole.extra) {
-      Api.getExtraRequests().then((value) {
-        if (value == null) return;
-        var requests = value.requests.where((element) =>
-            element.status == JobRequestStatus.waitingForVerification);
-        if (requests.isNotEmpty && requests.first.verificationCode != null) {
-          Modals.showJobEndModalExtra(
-              requests.first.verificationCode!, requests.first.id!);
-        }
-      });
-    } else {
-      Api.getMyJobOffers().then((value) {
-        if (value == null) return;
-        var requestsFromJobOffers =
-            value.map((e) => e.requests).expand((element) => element).toList();
-        var requests = requestsFromJobOffers.where((element) =>
-            JobRequestStatus.fromString(element.status) ==
-            JobRequestStatus.waitingForVerification);
-        if (requests.isNotEmpty) {
-          for (var element in requests) {
-            if (element.id == null) continue;
-            Modals.showJobEndModalEmployer(element.id!);
-          }
-        }
-      });
-    }
+    Globals.checkProfileStatus();
   }
 
   @override

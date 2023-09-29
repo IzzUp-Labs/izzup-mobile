@@ -15,24 +15,28 @@ void handleForegroundMessage(RemoteMessage message) {
         '\n${message.notification?.title}'
         '\n${message.notification?.body}'
         '\n${message.data}');
+  }
 
-    switch (message.data['type']) {
-      case 'account_verified':
-        AccountNotificationHandler.onAccountVerified();
-        break;
-      case 'job-request-accepted':
-        JobRequestNotificationHandler.onJobRequestAccepted(
-            JobOfferRequest.fromJson(jsonDecode(message.data['job_offer'])));
-        break;
-      case 'job-request-confirmed':
-        final json = jsonDecode(message.data['job_request']);
-        JobRequestNotificationHandler.onJobRequestConfirmed(
-            json['verification_code'], json['request_id']);
-        break;
-      case 'job-request-finished':
-        JobRequestNotificationHandler.onJobRequestFinished();
-        break;
-    }
+  switch (message.data['type']) {
+    case 'account_verified':
+      AccountNotificationHandler.onAccountVerified();
+      break;
+    case 'account_not_verified':
+      AccountNotificationHandler.onAccountNotVerified();
+      break;
+    case 'job-request-accepted':
+      String date = message.data['starting_date'];
+      date = date.substring(1, date.length - 1);
+      JobRequestNotificationHandler.onJobRequestAccepted(
+          message.data['job_title'], date);
+      break;
+    case 'job-request-confirmed':
+      JobRequestNotificationHandler.onJobRequestConfirmed(
+          message.data['verification_code'], message.data['request_id']);
+      break;
+    case 'job-request-finished':
+      JobRequestNotificationHandler.onJobRequestFinished();
+      break;
   }
 }
 
@@ -42,6 +46,27 @@ void handleMessageOpenedApp(RemoteMessage message) {
         '\n${message.notification?.title}'
         '\n${message.notification?.body}'
         '\n${message.data}');
+  }
+  switch (message.data['type']) {
+    case 'account_verified':
+      AccountNotificationHandler.onAccountVerified();
+      break;
+    case 'account_not_verified':
+      AccountNotificationHandler.onAccountNotVerified();
+      break;
+    case 'job-request-accepted':
+      String date = message.data['starting_date'];
+      date = date.substring(1, date.length - 1);
+      JobRequestNotificationHandler.onJobRequestAccepted(
+          message.data['job_title'], date);
+      break;
+    case 'job-request-confirmed':
+      JobRequestNotificationHandler.onJobRequestConfirmed(
+          message.data['verification_code'], message.data['request_id']);
+      break;
+    case 'job-request-finished':
+      JobRequestNotificationHandler.onJobRequestFinished();
+      break;
   }
 }
 
@@ -72,18 +97,12 @@ class FirebaseApi {
     final status = (await _firebaseMessaging.getNotificationSettings())
         .authorizationStatus;
     String? deviceId = await Globals.getId();
-
-    if (status == AuthorizationStatus.authorized &&
-        deviceId != null &&
-        fcmToken != null) {
-      if (kDebugMode) print("Sending token");
-      Api.changeFcmToken(deviceId, fcmToken);
-    }
-
-    if (kDebugMode) print("$deviceId $fcmToken");
-
-    if (status != AuthorizationStatus.authorized && deviceId != null) {
-      Api.changeFcmToken(deviceId, '');
+    if (deviceId != null) {
+      Api.changeFcmToken(
+          deviceId,
+          fcmToken ?? '',
+          status == AuthorizationStatus.authorized
+      );
     }
 
     if (!Globals.firebaseHandlersSet) {

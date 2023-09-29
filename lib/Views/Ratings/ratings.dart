@@ -153,7 +153,7 @@ class _RatingScreenState extends State<RatingScreen> {
                     ),
                     const SizedBox(height: 30),
                     Text(
-                      "Badges:",
+                      AppLocalizations.of(context)?.profile_badges ?? "Badges:",
                       maxLines: null,
                       textAlign: TextAlign.center,
                       textScaleFactor: ScaleSize.textScaleFactor(context),

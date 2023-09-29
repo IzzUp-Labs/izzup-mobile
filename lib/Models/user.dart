@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 enum UserRole {
   extra,
   employer;
@@ -57,10 +59,10 @@ class User {
   String? photo;
   UserRole role;
   String? idPhoto;
-  UserVerificationStatus status;
+  List<UserVerificationStatus> statuses;
 
   User(this.id, this.email, this.password, this.lastName, this.firstName,
-      this.dateOfBirth, this.photo, this.role, this.idPhoto, this.status);
+      this.dateOfBirth, this.photo, this.role, this.idPhoto, this.statuses);
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
@@ -73,8 +75,38 @@ class User {
         json['photo'],
         UserRole.fromString(json['role']),
         json['id_photo'],
-        UserVerificationStatus.fromString(json['statuses'][0]['name']));
+        User.statusesFromJson(json['statuses'])
+    );
   }
+
+  static List<UserVerificationStatus> statusesFromJson(List<dynamic> statuses) {
+    List<UserVerificationStatus> result = [];
+    for (var status in statuses) {
+      result.add(UserVerificationStatus.fromString(status['name']));
+    }
+    return result;
+  }
+
+  UserVerificationStatus get status {
+    if (_isIdentityVerified()) {
+      return UserVerificationStatus.verified;
+    }
+    if (_isIdentityUnverified()) {
+      return UserVerificationStatus.unverified;
+    }
+    if (_isIdNeeded()) {
+      return UserVerificationStatus.needsId;
+    }
+    if (_isIdentityNotValid()) {
+      return UserVerificationStatus.notValid;
+    }
+    return UserVerificationStatus.needsId;
+  }
+
+  bool _isIdNeeded() => statuses.contains(UserVerificationStatus.needsId);
+  bool _isIdentityUnverified() => statuses[0] == UserVerificationStatus.unverified && statuses.length == 1;
+  bool _isIdentityVerified() => statuses[0] == UserVerificationStatus.verified && statuses.length == 1;
+  bool _isIdentityNotValid() => statuses.contains(UserVerificationStatus.notValid);
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -89,5 +121,5 @@ class User {
       };
 
   static User basic = User('0', '', '', '', '', DateTime.now(), '',
-      UserRole.extra, '', UserVerificationStatus.unverified);
+      UserRole.extra, '', [UserVerificationStatus.unverified]);
 }

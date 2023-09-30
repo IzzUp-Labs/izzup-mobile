@@ -209,15 +209,14 @@ class _RegisterAccountState extends State<RegisterAccount> {
                       ),
                     ),
                   ),
-                  Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom))
+                  Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)),
+                  GestureDetector(
+                      onTap: () {
+                        print("tapped");
+                      },
+                      child: Wave()),
                 ],
               ),
-            ),
-            const Column(
-              children: [
-                Spacer(),
-                Wave(),
-              ],
             ),
           ],
         ),

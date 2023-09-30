@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:izzup/Models/Notifiers/jobOffersNotifier.dart';
 import 'package:izzup/Models/extra.dart';
 import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Services/api.dart';
@@ -12,6 +13,7 @@ import 'package:izzup/Services/prefs.dart';
 import 'package:provider/provider.dart';
 import 'package:izzup/firebase_options.dart';
 
+import 'Models/Notifiers/jobRequestNotifier.dart';
 import 'Models/photo.dart';
 import 'Views/Home/home.dart';
 import 'Views/SignIn/signin_landing.dart';
@@ -77,8 +79,15 @@ class _IzzUpState extends State<IzzUp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => Photo(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<Photo>(
+            create: (_) => Photo()),
+        ChangeNotifierProvider<JobRequestWithVerificationCodeNotifier>(
+            create: (_) => JobRequestWithVerificationCodeNotifier()),
+        ChangeNotifierProvider<JobOffersNotifier>(
+            create: (_) => JobOffersNotifier()),
+      ],
       child: GestureDetector(
           onTap: () => context.dropFocus(),
           child: MaterialApp(

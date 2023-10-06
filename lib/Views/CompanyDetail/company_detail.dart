@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:izzup/Services/api.dart';
+import 'package:provider/provider.dart';
 
 import '../../Models/company.dart';
+import '../../Models/Notifiers/jobRequestNotifier.dart';
 
 class CompanyPage extends StatefulWidget {
   const CompanyPage({super.key, required this.company});
@@ -40,6 +42,11 @@ class _CompanyPageState extends State<CompanyPage>
       setState(() {
         _appliedJobOffers.add(jobOfferId);
       });
+      if(context.mounted) {
+        var requestProvider = context.read<JobRequestWithVerificationCodeNotifier>();
+        var requests = await Api.getExtraRequests();
+        requestProvider.addJobRequestList(requests?.requests ?? []);
+      }
     }
   }
 

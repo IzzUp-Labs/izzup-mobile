@@ -3,12 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:izzup/Models/Notifiers/jobOffersNotifier.dart';
 import 'package:izzup/Models/job_offer.dart';
 import 'package:izzup/Services/api.dart';
 import 'package:izzup/Views/Popups/success.dart';
+import 'package:provider/provider.dart';
 import 'package:textfield_datepicker/textfield_dateAndTimePicker.dart';
 
 import '../../Models/classy_loader.dart';
+import '../../Models/job_offer_requests.dart';
 import '../../Models/wave.dart';
 import '../../Services/colors.dart';
 
@@ -428,6 +431,13 @@ class _AddJobOfferState extends State<AddJobOffer> {
                                 Timer(const Duration(seconds: 1), () {
                                   Navigator.pop(context);
                                 });
+                                if(context.mounted) {
+                                  var jobOffersNotifier = context.read<JobOffersNotifier>();
+                                  List<JobOfferRequest>? jobOffers = await Api.getMyJobOffers();
+                                  if(jobOffers != null) {
+                                    jobOffersNotifier.addJobOfferList(jobOffers);
+                                  }
+                                }
                               } else {
                                 setState(() {
                                   _success = false;

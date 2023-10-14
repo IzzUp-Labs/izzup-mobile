@@ -8,9 +8,9 @@ import '../modals.dart';
 import '../navigation.dart';
 
 class JobRequestNotificationHandler {
-  static onJobRequestAccepted(JobOfferRequest jobOfferRequest) {
+  static onJobRequestAccepted(String jobTitle, String startingDate) {
     if (kDebugMode) print('Job request accepted');
-    Modals.showJobRequestSuccessModal(jobOfferRequest);
+    Modals.showJobRequestSuccessModal(jobTitle, DateTime.parse(startingDate).toLocal());
   }
 
   static onJobRequestConfirmed(String verificationCode, String requestId) {
@@ -28,7 +28,7 @@ class JobRequestNotificationHandler {
     if (context == null) return;
 
     if (Globals.profile?.role == UserRole.extra) {
-      Navigator.of(context).pop();
+      context.popToHome();
     }
   }
 }

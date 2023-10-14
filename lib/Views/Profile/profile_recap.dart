@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -142,7 +141,7 @@ class _ProfileRecapScreenState extends State<ProfileRecapScreen> {
                     ),
                     const SizedBox(height: 30),
                     Text(
-                      "Badges:",
+                      AppLocalizations.of(context)?.profile_badges ?? "Badges:",
                       maxLines: null,
                       textAlign: TextAlign.center,
                       textScaleFactor: ScaleSize.textScaleFactor(context),

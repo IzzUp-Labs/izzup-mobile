@@ -22,7 +22,7 @@ import '../Models/user.dart';
 import 'string_to_bool.dart';
 
 class Api {
-  static const _baseRoute = 'https://izzup-api-pfktdq573a-od.a.run.app/';
+  static const _baseRoute = 'https://izzup-api-xfllrgcnga-ez.a.run.app/';
   static const _apiRoute = "${_baseRoute}api/v1/";
 
   static getUri(String route, [forApi = true]) {
@@ -98,7 +98,7 @@ class Api {
   static Future<bool> login(Extra extra) async {
     Map<String, dynamic> loginResult = await _login(extra);
     if (loginResult.keys.contains('token')) {
-      if (kDebugMode) print("Token updated");
+      if (kDebugMode) print("Auth token updated");
       Prefs.setString('authToken', loginResult['token']);
       return true;
     } else {
@@ -107,8 +107,35 @@ class Api {
   }
 
   static Future<bool> logout() async {
-    Prefs.setString('authToken', '');
-    return true;
+    final authToken = await Prefs.getString('authToken');
+    if (authToken == null) return false;
+    var client = http.Client();
+    try {
+      var response = await client.delete(
+          getUri('auth/logout'),
+          headers: {'Authorization': 'Bearer $authToken'}
+      );
+      if (response.statusCode != 200) return false;
+      return true;
+    } finally {
+      client.close();
+    }
+  }
+
+  static Future<bool> deleteAccount() async {
+    final authToken = await Prefs.getString('authToken');
+    if (authToken == null) return false;
+    var client = http.Client();
+    try {
+      var response = await client.delete(
+          getUri('user/delete/account'),
+          headers: {'Authorization': 'Bearer $authToken'}
+      );
+      if (response.statusCode != 200) return false;
+      return true;
+    } finally {
+      client.close();
+    }
   }
 
   static Future<List<HomepageCardData>> homepageCards() async {
@@ -340,14 +367,14 @@ class Api {
       Company company = Company.fromJson(jsonDecode(response.body));
       return company;
     } catch (e) {
-      if (kDebugMode) print(e);
+      if (kDebugMode) print("getCompanyById error: $e");
       return null;
     } finally {
       client.close();
     }
   }
 
-  static Future<bool> applyToJobOffer(int jobOfferId) async {
+  static Future<bool> applyToJobOffer(String jobOfferId) async {
     final authToken = await Prefs.getString('authToken');
     if (authToken == null) false;
     var client = http.Client();
@@ -362,7 +389,7 @@ class Api {
       if (response.statusCode != 201) return false;
       return true;
     } catch (e) {
-      if (kDebugMode) print(e);
+      if (kDebugMode) print("applyToJobOffer error: $e");
       return false;
     } finally {
       client.close();
@@ -386,7 +413,7 @@ class Api {
       }
       return jobOffers;
     } catch (e) {
-      if (kDebugMode) print(e);
+      if (kDebugMode) print("getMyJobOffers error: $e");
       return [];
     } finally {
       client.close();
@@ -408,7 +435,7 @@ class Api {
       if (response.statusCode != 200) return false;
       return true;
     } catch (e) {
-      if (kDebugMode) print(e);
+      if (kDebugMode) print("acceptRequest error: $e");
       return false;
     } finally {
       client.close();
@@ -427,7 +454,7 @@ class Api {
       var stats = ExtraStats.fromJson(jsonDecode(response.body));
       return stats;
     } catch (e) {
-      if (kDebugMode) print(e);
+      if (kDebugMode) print("getStatsExtra error: $e");
       return null;
     } finally {
       client.close();
@@ -446,7 +473,7 @@ class Api {
       var stats = EmployerStats.fromJson(jsonDecode(response.body));
       return stats;
     } catch (e) {
-      if (kDebugMode) print(e);
+      if (kDebugMode) print("getStatsEmployer error: $e");
       return null;
     } finally {
       client.close();
@@ -465,7 +492,7 @@ class Api {
       var requests = UserWithRequests.fromJson(jsonDecode(response.body));
       return requests;
     } catch (e) {
-      if (kDebugMode) print(e);
+      if (kDebugMode) print("getExtraRequests error: $e");
       return null;
     } finally {
       client.close();
@@ -483,7 +510,7 @@ class Api {
       );
       return response.statusCode == 200;
     } catch (e) {
-      if (kDebugMode) print(e);
+      if (kDebugMode) print("confirmWork error: $e");
       return false;
     } finally {
       client.close();
@@ -501,7 +528,7 @@ class Api {
       );
       return response.statusCode == 200;
     } catch (e) {
-      if (kDebugMode) print(e);
+      if (kDebugMode) print("finishWork error: $e");
       return false;
     } finally {
       client.close();
@@ -519,14 +546,14 @@ class Api {
       );
       return response.statusCode == 200;
     } catch (e) {
-      if (kDebugMode) print(e);
+      if (kDebugMode) print("sendProblem error: $e");
       return false;
     } finally {
       client.close();
     }
   }
 
-  static Future<bool> changeFcmToken(String deviceId, String fcmToken) async {
+  static Future<bool> changeFcmToken(String deviceId, String fcmToken, bool notificationsEnabled) async {
     final authToken = await Globals.authToken();
     if (authToken == null) return false;
     var client = http.Client();
@@ -536,32 +563,31 @@ class Api {
         body: {
           'device_id': deviceId,
           'fcm_token': fcmToken,
-          'device_language': Globals.getLocale()
+          'device_language': Globals.getLocale(),
+          'notification_enabled': notificationsEnabled.toString()
         },
         headers: {'Authorization': 'Bearer $authToken'},
       );
       return response.statusCode == 200;
     } catch (e) {
-      if (kDebugMode) print("$e");
+      if (kDebugMode) print("changeFcmToken error: $e");
       return false;
     } finally {
       client.close();
     }
   }
 
-  static Future<bool> sendNotification() async {
+  static Future<bool> verifyPlaceId(String placeId) async {
     final authToken = await Globals.authToken();
     if (authToken == null) return false;
     var client = http.Client();
     try {
-      var response = await client.get(
-        Uri.parse(
-            "https://izzup-api-pfktdq573a-od.a.run.app/api/notification/send"),
-        headers: {'Authorization': 'Bearer $authToken'},
+      var response = await client.post(
+        getUri("google-places/verify/$placeId"),
       );
       return response.statusCode == 200;
     } catch (e) {
-      if (kDebugMode) print(e);
+      if (kDebugMode) print("verifyPlaceId error: $e");
       return false;
     } finally {
       client.close();

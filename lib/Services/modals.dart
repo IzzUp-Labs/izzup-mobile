@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:izzup/Models/user.dart';
+import 'package:izzup/Views/Register/register_id_card.dart';
 
+import '../Models/globals.dart';
 import '../Models/job_offer_requests.dart';
 import '../Models/scale.dart';
 import 'api.dart';
@@ -25,8 +28,8 @@ class Modals {
 
   static Future<T> showModalNeedsVerification<T>() async {
     return await showModal(
-        (context) => Scaffold(
-                body: Stack(
+            (context) => Scaffold(
+            body: Stack(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(20),
@@ -37,7 +40,7 @@ class Modals {
                       children: [
                         Text(
                           AppLocalizations.of(context)
-                                  ?.idConfirm_needsVerification ??
+                              ?.idConfirm_needsVerification ??
                               "We need to verify your identity",
                           maxLines: null,
                           textAlign: TextAlign.center,
@@ -48,11 +51,14 @@ class Modals {
                               fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 50),
-                        Image.asset("assets/verification.png", height: 200),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 50),
+                          child: Image.asset("assets/identity_verification.png", height: 300),
+                        ),
                         const SizedBox(height: 50),
                         Text(
                           AppLocalizations.of(context)
-                                  ?.idConfirm_lessThanHours ??
+                              ?.idConfirm_lessThanHours ??
                               "This typically takes less than 24 hours",
                           maxLines: null,
                           textAlign: TextAlign.center,
@@ -73,8 +79,8 @@ class Modals {
 
   static Future<T> showModalNotValid<T>() async {
     return await showModal(
-        (context) => Scaffold(
-                body: Stack(
+            (context) => Scaffold(
+            body: Stack(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(20),
@@ -83,10 +89,7 @@ class Modals {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          AppLocalizations.of(context)
-                                  ?.idConfirm_needsVerification ??
-                              "We need to verify your identity",
+                        Text("The ID you provided is not valid",
                           maxLines: null,
                           textAlign: TextAlign.center,
                           textScaleFactor: ScaleSize.textScaleFactor(context),
@@ -96,19 +99,34 @@ class Modals {
                               fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 50),
-                        Image.asset("assets/verification.png", height: 200),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 50),
+                          child: Image.asset("assets/computer_error.png", height: 300),
+                        ),
                         const SizedBox(height: 50),
-                        Text(
-                          AppLocalizations.of(context)
-                                  ?.idConfirm_lessThanHours ??
-                              "This typically takes less than 24 hours",
-                          maxLines: null,
-                          textAlign: TextAlign.center,
-                          textScaleFactor: ScaleSize.textScaleFactor(context),
-                          style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 24,
-                              fontStyle: FontStyle.italic),
+                        ElevatedButton(
+                            onPressed: () {
+                              context.navigateWithoutBack(const RegisterIdCard());
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              minimumSize: const Size(150, 60),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(100), // <-- Radius
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: Text("Re-take",
+                                maxLines: null,
+                                textAlign: TextAlign.center,
+                                textScaleFactor: ScaleSize.textScaleFactor(context),
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            )
                         ),
                       ],
                     ),
@@ -119,11 +137,70 @@ class Modals {
         isDismissible: false);
   }
 
-  static Future<T> showJobRequestSuccessModal<T>(
-      JobOfferRequest jobOffer) async {
+  static Future<T> showModalNeedsId<T>() async {
     return await showModal(
-        (context) => Scaffold(
-                body: Stack(
+            (context) => Scaffold(
+            body: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text("We need your ID to verify your identity",
+                          maxLines: null,
+                          textAlign: TextAlign.center,
+                          textScaleFactor: ScaleSize.textScaleFactor(context),
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 50),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 50),
+                          child: Image.asset("assets/identity_card.png", height: 300),
+                        ),
+                        const SizedBox(height: 50),
+                        ElevatedButton(
+                            onPressed: () {
+                              context.navigateWithoutBack(const RegisterIdCard());
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.accent,
+                              minimumSize: const Size(150, 60),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(100), // <-- Radius
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: Text("Capture",
+                                maxLines: null,
+                                textAlign: TextAlign.center,
+                                textScaleFactor: ScaleSize.textScaleFactor(context),
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold
+                                ),
+                              ),
+                            )
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            )),
+        isDismissible: false);
+  }
+
+  static Future<T> showJobRequestSuccessModal<T>(String jobTitle, DateTime startingDate) async {
+    return await showModal(
+            (context) => Scaffold(
+            body: Stack(
               children: [
                 Container(
                   decoration: const BoxDecoration(
@@ -151,7 +228,7 @@ class Modals {
                       const SizedBox(height: 20),
                       Text(
                         AppLocalizations.of(context)
-                                ?.jobSuccess_offerAccepted ??
+                            ?.jobSuccess_offerAccepted ??
                             "A job offer has been accepted !",
                         style: const TextStyle(
                             color: Colors.white,
@@ -160,7 +237,7 @@ class Modals {
                       ),
                       const SizedBox(height: 100),
                       Text(
-                        jobOffer.jobTitle,
+                        jobTitle,
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 24,
@@ -169,7 +246,7 @@ class Modals {
                       const SizedBox(height: 10),
                       Text(
                         DateFormat('dd/MM - HH:mm')
-                            .format(jobOffer.startingDate),
+                            .format(startingDate),
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
@@ -178,7 +255,7 @@ class Modals {
                       const SizedBox(height: 100),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          context.popToHome();
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -186,7 +263,7 @@ class Modals {
                             fixedSize: const Size(150, 60),
                             shape: RoundedRectangleBorder(
                               borderRadius:
-                                  BorderRadius.circular(30), // <-- Radius
+                              BorderRadius.circular(30), // <-- Radius
                             )),
                         child: Text(
                           AppLocalizations.of(context)?.jobSuccess_super ??
@@ -208,8 +285,8 @@ class Modals {
   static Future<T> showJobEndModalExtra<T>(
       String code, String requestId) async {
     return await showModal(
-        (context) => Scaffold(
-                body: Stack(
+            (context) => Scaffold(
+            body: Stack(
               children: [
                 Positioned(
                   top: 20,
@@ -221,7 +298,7 @@ class Modals {
                     ),
                     onPressed: () {
                       Api.sendProblem(requestId);
-                      Navigator.of(context).pop();
+                      context.popToHome();
                     },
                   ),
                 ),
@@ -269,8 +346,8 @@ class Modals {
   static Future<T> showJobEndModalEmployer<T>(String requestId) async {
     var codeController = TextEditingController();
     return await showModal(
-        (context) => Scaffold(
-                body: GestureDetector(
+            (context) => Scaffold(
+            body: GestureDetector(
               onTap: () {
                 FocusScope.of(context).requestFocus(FocusNode());
               },
@@ -286,7 +363,7 @@ class Modals {
                       ),
                       onPressed: () {
                         Api.sendProblem(requestId);
-                        Navigator.of(context).pop();
+                        context.popToHome();
                       },
                     ),
                   ),
@@ -309,7 +386,7 @@ class Modals {
                         const SizedBox(height: 5),
                         Text(
                           AppLocalizations.of(context)
-                                  ?.jobConfirm_giveCodeFromEmployee ??
+                              ?.jobConfirm_giveCodeFromEmployee ??
                               "Enter the code provided by your employee",
                           style: const TextStyle(
                               color: Colors.grey,
@@ -325,8 +402,8 @@ class Modals {
                               controller: codeController,
                               textInputAction: TextInputAction.done,
                               keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                      signed: true),
+                              const TextInputType.numberWithOptions(
+                                  signed: true),
                               textAlign: TextAlign.center,
                               decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
@@ -350,14 +427,14 @@ class Modals {
                           onPressed: () async {
                             if (await Api.finishWork(
                                 requestId, codeController.text)) {
-                              if (context.mounted) Navigator.of(context).pop();
+                              if (context.mounted) context.popToHome();
                             } else {
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                         content: Text(
                                             AppLocalizations.of(context)
-                                                    ?.jobConfirm_wrongCode ??
+                                                ?.jobConfirm_wrongCode ??
                                                 "Wrong code")));
                               }
                             }

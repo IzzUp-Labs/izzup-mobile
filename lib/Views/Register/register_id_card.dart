@@ -142,7 +142,7 @@ class _RegisterIdCardState extends State<RegisterIdCard> {
                                             imagePath = image.path;
                                           });
                                         } catch (e) {
-                                          if (kDebugMode) print(e);
+                                          if (kDebugMode) print("picture take error: $e");
                                         }
                                       },
                                       child: const Icon(Icons.camera_alt),

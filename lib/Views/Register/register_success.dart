@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:izzup/Models/classy_loader.dart';
 import 'package:izzup/Models/globals.dart';
 import 'package:izzup/Services/navigation.dart';
 import 'package:izzup/Views/Home/home.dart';
@@ -69,9 +70,14 @@ class _RegisterSuccessState extends State<RegisterSuccess> {
                 const Spacer(),
                 Center(
                   child: Image(
-                    image: const AssetImage('assets/thumbsup.png'),
+                    image: const AssetImage('assets/employee_of_the_month.png'),
                     height: MediaQuery.of(context).size.height / 3,
                   ),
+                ),
+                const SizedBox(height: 100),
+                const ClassyLoader(
+                    loaderBackground: Colors.transparent,
+                    loaderSize: 30,
                 ),
                 const Spacer()
               ],

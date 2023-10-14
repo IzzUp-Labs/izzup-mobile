@@ -4,6 +4,10 @@ import 'package:page_transition/page_transition.dart';
 extension Navigation on BuildContext {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+  void popToHome() {
+    Navigator.popUntil(this, (route) => route.isFirst);
+  }
+
   void dropFocus() {
     FocusScope.of(this).unfocus();
   }

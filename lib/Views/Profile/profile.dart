@@ -175,7 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           const Padding(
                               padding:
-                                  EdgeInsets.only(top: 20, left: 20, right: 20),
+                              EdgeInsets.only(top: 20, left: 20, right: 20),
                               child: Row()),
                           SizedBox(
                             height: MediaQuery.of(context).size.height / 3.5,
@@ -189,7 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 24),
                                   textScaleFactor:
-                                      ScaleSize.textScaleFactor(context),
+                                  ScaleSize.textScaleFactor(context),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(10),
@@ -199,75 +199,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         context: context,
                                         builder: (context) => Material(
                                             child: SafeArea(
-                                          top: false,
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              ListTile(
-                                                title: Text(
-                                                  AppLocalizations.of(context)
+                                              top: false,
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  ListTile(
+                                                    title: Text(
+                                                      AppLocalizations.of(context)
                                                           ?.homeProfile_camera ??
-                                                      'Camera',
-                                                  textScaleFactor:
+                                                          'Camera',
+                                                      textScaleFactor:
                                                       ScaleSize.textScaleFactor(
                                                           context),
-                                                ),
-                                                leading:
+                                                    ),
+                                                    leading:
                                                     const Icon(Icons.camera),
-                                                onTap: () => pickImage(
-                                                    ImageSource.camera),
-                                              ),
-                                              ListTile(
-                                                title: Text(
-                                                  AppLocalizations.of(context)
+                                                    onTap: () => pickImage(
+                                                        ImageSource.camera),
+                                                  ),
+                                                  ListTile(
+                                                    title: Text(
+                                                      AppLocalizations.of(context)
                                                           ?.homeProfile_gallery ??
-                                                      'Gallery',
-                                                  textScaleFactor:
+                                                          'Gallery',
+                                                      textScaleFactor:
                                                       ScaleSize.textScaleFactor(
                                                           context),
-                                                ),
-                                                leading:
+                                                    ),
+                                                    leading:
                                                     const Icon(Icons.photo),
-                                                onTap: () => pickImage(
-                                                    ImageSource.gallery),
-                                              )
-                                            ],
-                                          ),
-                                        )),
+                                                    onTap: () => pickImage(
+                                                        ImageSource.gallery),
+                                                  )
+                                                ],
+                                              ),
+                                            )),
                                       );
                                     },
                                     child: Container(
                                       width:
-                                          MediaQuery.of(context).size.width / 3,
+                                      MediaQuery.of(context).size.width / 3,
                                       height:
-                                          MediaQuery.of(context).size.width / 3,
-                                      decoration: const BoxDecoration(
-                                          color: Colors.white38,
+                                      MediaQuery.of(context).size.width / 3,
+                                      decoration: BoxDecoration(
+                                          color: (image == null && user?.photo == null) ? const Color(0xFFe0e0e0) : Colors.white38,
                                           shape: BoxShape.circle,
-                                          border: Border.fromBorderSide(
+                                          border: const Border.fromBorderSide(
                                               BorderSide(
-                                                  color: Colors.white,
+                                                  color: Colors.grey,
                                                   width: 10))),
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(
                                                 MediaQuery.of(context)
-                                                        .size
-                                                        .width /
+                                                    .size
+                                                    .width /
                                                     3)),
                                         child: _isLoading
                                             ? null
                                             : image != null
-                                                ? Image.file(image!,
-                                                    fit: BoxFit.cover)
-                                                : user?.photo == null
-                                                    ? const Icon(
-                                                        Icons.person,
-                                                        color: Colors.white,
-                                                      )
-                                                    : Image.network(
-                                                        user?.photo ?? "",
-                                                        fit: BoxFit.cover),
+                                            ? Image.file(image!,
+                                            fit: BoxFit.cover)
+                                            : user?.photo == null
+                                            ? const Icon(
+                                          Icons.person,
+                                          color: Colors.white,
+                                        )
+                                            : Image.network(
+                                            user?.photo ?? "",
+                                            fit: BoxFit.cover),
                                       ),
                                     ),
                                   ),
@@ -303,7 +303,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           if (user?.role.value == "EMPLOYER")
                             _sectionText(
                                 AppLocalizations.of(context)
-                                        ?.homeProfile_myContracts ??
+                                    ?.homeProfile_myContracts ??
                                     "My contracts",
                                 "assets/arrow_right.png", () {
                               context.push(const LastJobOfferListPage());
@@ -315,7 +315,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       if (user?.role.value == "EXTRA")
                         _sectionText(
                             AppLocalizations.of(context)
-                                    ?.homeProfile_myLastJobs ??
+                                ?.homeProfile_myLastJobs ??
                                 "My last jobs",
                             "assets/arrow_right.png", () {
                           context.push(const LastJobRequestListPage());
@@ -331,30 +331,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
           top: 20,
           right: 20,
           child: SafeArea(
-            child: Container(
-              height: 40,
-              width: 75,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.white,
-              ),
-              child: TextButton(
-                onPressed: () {
-                  Prefs.remove("authToken");
-                  Prefs.remove("userEmail");
-                  Prefs.remove("userPwd");
-                  context.navigateWithoutBack(const SignIn());
-                },
-                child: Text(
-                  "Logout",
-                  style: const TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+            child: IconButton(
+              icon: const Icon(Icons.settings, color: Color(0xFFe0e0e0)),
+              onPressed: () {
+                showFloatingModalBottomSheet(
+                  context: context,
+                  builder: (context) => Material(
+                      child: SafeArea(
+                        top: false,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            ListTile(
+                              title: Text(
+                                AppLocalizations.of(context)
+                                    ?.profile_logout ??
+                                    'Logout',
+                                textScaleFactor:
+                                ScaleSize.textScaleFactor(
+                                    context),
+                              ),
+                              leading:
+                              const Icon(Icons.logout),
+                              onTap: () async {
+                                setState(() => _isLoading = true);
+                                await Globals.logout();
+                                setState(() => _isLoading = false);
+                              },
+                            ),
+                            ListTile(
+                              title: Text(
+                                  AppLocalizations.of(context)
+                                      ?.profile_deleteMyAccount ??
+                                      'Delete my account',
+                                  textScaleFactor: ScaleSize.textScaleFactor(context),
+                                  style: const TextStyle(color: Colors.red)
+                              ),
+                              leading:
+                              const Icon(Icons.delete_forever, color: Colors.red),
+                              onTap: () => showDialog(context: context, builder: (BuildContext context) => AlertDialog(
+                                title: Text(AppLocalizations.of(context)?.profile_deleteMyAccount_alertTitle ?? "Account Deletion"),
+                                content: Text(AppLocalizations.of(context)?.profile_deleteMyAccount_alertContent ?? "Are you sure you want to delete your account ?"),
+                                actions: [
+                                  TextButton(onPressed: () => Navigator.pop(context), child: Text(AppLocalizations.of(context)?.profile_no ?? "No", style: const TextStyle(color: Colors.black))),
+                                  TextButton(onPressed: () => Globals.deleteAccount(), child: Text(AppLocalizations.of(context)?.profile_yes ?? "Yes", style: const TextStyle(color: Colors.red))),
+                                ],
+                              )
+                              ),
+                            )
+                          ],
+                        ),
+                      )
                   ),
-                  textScaleFactor: ScaleSize.textScaleFactor(context),
-                ),
-              ),
+                );
+              },
             ),
           ),
         )
@@ -394,7 +424,7 @@ class HeaderPainter extends CustomPainter {
     final shapeBounds = Rect.fromLTRB(0, 0, size.width, size.height - 50);
     final centerAvatar = Offset(shapeBounds.center.dx, shapeBounds.bottom);
     final avatarBounds =
-        Rect.fromCircle(center: centerAvatar, radius: 50).inflate(3);
+    Rect.fromCircle(center: centerAvatar, radius: 50).inflate(3);
     _drawBackground(canvas, shapeBounds, avatarBounds);
   }
 
@@ -426,8 +456,8 @@ Future<T> showFloatingModalBottomSheet<T>({
       context: context,
       builder: builder,
       containerWidget: (_, animation, child) => FloatingModal(
-            child: child,
-          ),
+        child: child,
+      ),
       expand: false);
 
   return result;

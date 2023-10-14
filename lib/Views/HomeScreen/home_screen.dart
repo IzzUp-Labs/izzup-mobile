@@ -217,8 +217,6 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
       child: GestureDetector(
         onTap: () {
-          print("Tapped on card");
-          print("data: ${data.link}");
           var tapLink = data.link;
           if(tapLink != null) {
             _launchUrl(tapLink);
@@ -554,10 +552,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Padding(
                         padding: EdgeInsets.only(
                             bottom: MediaQuery.of(context).size.height / 5),
-                        child: const Center(
+                        child: Center(
                           child: Text(
-                            "🏃 Loading data...",
-                            style: TextStyle(
+                            "🏃 ${AppLocalizations
+                                .of(context)
+                                ?.homeScreen_loadingData ?? "Loading Data"}...",
+                            style: const TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20),

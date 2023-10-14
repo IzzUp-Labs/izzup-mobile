@@ -26,12 +26,14 @@ class _RegisterBusinessState extends State<RegisterBusiness> {
   bool _isAddressValid = true;
   bool _isLoading = false;
   bool _noPlaceFound = false;
+  bool _placeIsAlreadyTaken = false;
 
   bool _validateFields() {
     setState(() {
       _isNameValid = true;
       _isAddressValid = true;
       _noPlaceFound = false;
+      _placeIsAlreadyTaken = false;
     });
 
     bool noErrors = true;
@@ -64,10 +66,16 @@ class _RegisterBusinessState extends State<RegisterBusiness> {
       final place =
           await Api.getPlace(_nameController.text, _addressController.text);
       if (place != null) {
-        final placePhotoLinks = await Api.getPlacePhotoLinks(place.placeId);
-        if (context.mounted) {
-          Navigator.of(context)
-              .push(RegisterSelectPlaceRoute(place, placePhotoLinks));
+        if (!(await Api.verifyPlaceId(place.placeId))) {
+          setState(() {
+            _placeIsAlreadyTaken = true;
+          });
+        } else {
+          final placePhotoLinks = await Api.getPlacePhotoLinks(place.placeId);
+          if (context.mounted) {
+            Navigator.of(context)
+                .push(RegisterSelectPlaceRoute(place, placePhotoLinks));
+          }
         }
       } else {
         setState(() {
@@ -144,7 +152,9 @@ class _RegisterBusinessState extends State<RegisterBusiness> {
                               hintText: AppLocalizations.of(context)
                                       ?.register_nameOfThePlace ??
                                   'Name of the place',
-                              errorText: _noPlaceFound
+                              errorText: _placeIsAlreadyTaken ?
+                                  AppLocalizations.of(context)?.register_placeAlreadyTaken ?? "This place has already been registered please contact our support if you think there has been a mistake."
+                                  : _noPlaceFound
                                   ? AppLocalizations.of(context)
                                           ?.register_noPlaceFound ??
                                       "We did not found a place matching this address and name."

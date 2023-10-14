@@ -34,9 +34,9 @@ class _CompanyPageState extends State<CompanyPage>
   late TabController _tabController;
   int _currentTab = 0;
 
-  final List<int> _appliedJobOffers = [];
+  final List<String> _appliedJobOffers = [];
 
-  _applyToJobOffer(int jobOfferId) async {
+  _applyToJobOffer(String jobOfferId) async {
     bool isApplied = await Api.applyToJobOffer(jobOfferId);
     if (isApplied) {
       setState(() {

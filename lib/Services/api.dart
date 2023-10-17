@@ -597,8 +597,6 @@ class Api {
   }
 
   static Future<bool> verifyPlaceId(String placeId) async {
-    final authToken = await Globals.authToken();
-    if (authToken == null) return false;
     var client = http.Client();
     try {
       var response = await client.post(
